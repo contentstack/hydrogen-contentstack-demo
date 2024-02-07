@@ -1,7 +1,6 @@
 import {NavLink} from '@remix-run/react';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
 import {useRootLoaderData} from '~/root';
-import '../styles/pages.css';
 
 export function Footer({
   menu,
@@ -9,59 +8,53 @@ export function Footer({
 }: FooterQuery & {shop: HeaderQuery['shop']}) {
   return (
     <footer className="footer">
-      {/* {menu && shop?.primaryDomain?.url && (
+      {menu && shop?.primaryDomain?.url && (
         <FooterMenu menu={menu} primaryDomainUrl={shop.primaryDomain.url} />
-      )} */}
-      <p>Subscribe to our emails</p>
-      <div>
-        <input className="footer_email" type="email" placeholder="Email" />
-      </div>
+      )}
     </footer>
   );
 }
 
-// function FooterMenu({
-//   menu,
-//   primaryDomainUrl,
-// }: {
-//   menu: FooterQuery['menu'];
-//   primaryDomainUrl: HeaderQuery['shop']['primaryDomain']['url'];
-// }) {
-//   const {publicStoreDomain} = useRootLoaderData();
+function FooterMenu({
+  menu,
+  primaryDomainUrl,
+}: {
+  menu: FooterQuery['menu'];
+  primaryDomainUrl: HeaderQuery['shop']['primaryDomain']['url'];
+}) {
+  const {publicStoreDomain} = useRootLoaderData();
 
-//   return (
-//     // <nav className="footer-menu" role="navigation">
-//     //   {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
-//     //     if (!item.url) return null;
-//     //     // if the url is internal, we strip the domain
-//     //     const url =
-//     //       item.url.includes('myshopify.com') ||
-//     //       item.url.includes(publicStoreDomain) ||
-//     //       item.url.includes(primaryDomainUrl)
-//     //         ? new URL(item.url).pathname
-//     //         : item.url;
-//     //     const isExternal = !url.startsWith('/');
-//     //     return isExternal ? (
-//     //       <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
-//     //         {item.title}
-//     //       </a>
-//     //     ) : (
-//     //       <NavLink
-//     //         end
-//     //         key={item.id}
-//     //         prefetch="intent"
-//     //         style={activeLinkStyle}
-//     //         to={url}
-//     //       >
-//     //         {item.title}
-//     //       </NavLink>
-//     //     );
-//     //   })}
-//     // </nav>
-
-//     <h1>Thanks for Subscribing</h1>
-//   );
-// }
+  return (
+    <nav className="footer-menu" role="navigation">
+      {(menu || FALLBACK_FOOTER_MENU).items.map((item) => {
+        if (!item.url) return null;
+        // if the url is internal, we strip the domain
+        const url =
+          item.url.includes('myshopify.com') ||
+          item.url.includes(publicStoreDomain) ||
+          item.url.includes(primaryDomainUrl)
+            ? new URL(item.url).pathname
+            : item.url;
+        const isExternal = !url.startsWith('/');
+        return isExternal ? (
+          <a href={url} key={item.id} rel="noopener noreferrer" target="_blank">
+            {item.title}
+          </a>
+        ) : (
+          <NavLink
+            end
+            key={item.id}
+            prefetch="intent"
+            style={activeLinkStyle}
+            to={url}
+          >
+            {item.title}
+          </NavLink>
+        );
+      })}
+    </nav>
+  );
+}
 
 const FALLBACK_FOOTER_MENU = {
   id: 'gid://shopify/Menu/199655620664',
