@@ -135,8 +135,7 @@ aside li {
   padding: 0 1rem;
   position: sticky;
   top: 0;
-  z-index: 999;
-  border-bottom: .1rem solid rgba(18,18,18, 0.08);
+  z-index: 1;
 }
 
 .header-menu-mobile-toggle {
@@ -178,11 +177,8 @@ aside li {
 * --------------------------------------------------
 */
 .footer {
-  /* background: var(--color-dark); */
-  border-top: .1rem solid rgba(18,18,18, 0.08);
+  background: var(--color-dark);
   margin-top: auto;
-  padding: 36px;
-  text-align: center;
 }
 
 .footer-menu-missing {
@@ -329,7 +325,6 @@ aside li {
   display: grid;
   grid-gap: 1.5rem;
   grid-template-columns: repeat(2, 1fr);
-  margin: 0 80px;
   @media (min-width: 45em) {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -347,23 +342,12 @@ aside li {
 .collections-grid {
   display: grid;
   grid-gap: 1.5rem;
-  /* grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr)); */
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr));
   margin-bottom: 2rem;
-  grid-template-columns: repeat(2, 1fr);
-  @media (min-width: 45em) {
-    grid-template-columns: repeat(4, 1fr);
-  }
 }
 
 .collection-item img {
   height: auto;
-  margin-bottom: 30px;
-}
-
-.collection-item {
-  /* width: 300px;
-  max-height: 300px; */
-  margin: 40px;
 }
 
 /*
@@ -398,8 +382,6 @@ aside li {
 */
 .product {
   display: grid;
-  margin-top: 50px;
-  margin-bottom: 50px;
   @media (min-width: 45em) {
     grid-template-columns: 1fr 1fr;
     grid-gap: 4rem;
@@ -418,8 +400,6 @@ aside li {
 .product-image img {
   height: auto;
   width: 100%;
-  object-fit: contain;
-  border: .1rem solid rgba(18,18,18, 0.08);
 }
 
 .product-main {

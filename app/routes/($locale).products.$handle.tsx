@@ -115,9 +115,10 @@ function redirectToFirstVariant({
 
 export default function Product() {
   const {product, variants} = useLoaderData<typeof loader>();
+  console.log('PRODUCT LANDING PAGE', product);
   const {selectedVariant} = product;
   return (
-    <div className="product">
+    <div className="product container">
       <ProductImage image={selectedVariant?.image} />
       <ProductMain
         selectedVariant={selectedVariant}
@@ -235,7 +236,10 @@ function ProductForm({
         options={product.options}
         variants={variants}
       >
-        {({option}) => <ProductOptions key={option.name} option={option} />}
+        {({option}) => {
+          return <ProductOptions key={option.name} option={option} />;
+        }}
+        {/* <ProductOptions option={product.options as any} />; */}
       </VariantSelector>
       <br />
       <AddToCartButton
