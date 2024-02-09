@@ -2,10 +2,11 @@ import {useLoaderData, Link} from '@remix-run/react';
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Pagination, getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
+import '../styles/pages.css';
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   const paginationVariables = getPaginationVariables(request, {
-    pageBy: 4,
+    pageBy: 8,
   });
 
   const {collections} = await context.storefront.query(COLLECTIONS_QUERY, {
@@ -17,19 +18,26 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
-
   return (
-    <div className="collections">
+    <div className="collections container pg_bt">
       <h1>Collections</h1>
       <Pagination connection={collections}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
-            <PreviousLink>
-              {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
+            <PreviousLink className="load_more">
+              {isLoading ? (
+                'Loading...'
+              ) : (
+                <span className="load_more">↑ Load previous</span>
+              )}
             </PreviousLink>
             <CollectionsGrid collections={nodes} />
-            <NextLink>
-              {isLoading ? 'Loading...' : <span>Load more ↓</span>}
+            <NextLink className="load_more">
+              {isLoading ? (
+                'Loading...'
+              ) : (
+                <span className="load_more">Load more ↓</span>
+              )}
             </NextLink>
           </div>
         )}
@@ -74,7 +82,7 @@ function CollectionItem({
           loading={index < 3 ? 'eager' : undefined}
         />
       )}
-      <h5>{collection.title}</h5>
+      <p className="product_cta">{collection.title}</p>
     </Link>
   );
 }
@@ -84,6 +92,7 @@ const COLLECTIONS_QUERY = `#graphql
     id
     title
     handle
+    description
     image {
       id
       url
