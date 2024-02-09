@@ -1,0 +1,9 @@
+/.cache
+/build
+/dist
+/public/build
+/.mf
+.env
+.shopify
+/node_modules
+/README 2.md
