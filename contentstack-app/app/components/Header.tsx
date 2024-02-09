@@ -3,7 +3,6 @@ import {Suspense} from 'react';
 import type {HeaderQuery} from 'storefrontapi.generated';
 import type {LayoutProps} from './Layout';
 import {useRootLoaderData} from '~/root';
-import contentstack_logo from '../../public/contentstack_logo.svg';
 
 type HeaderProps = Pick<LayoutProps, 'header' | 'cart' | 'isLoggedIn'>;
 
@@ -14,7 +13,7 @@ export function Header({header, isLoggedIn, cart}: HeaderProps) {
   return (
     <header className="header">
       <NavLink prefetch="intent" to="/" style={activeLinkStyle} end>
-        <img alt="contentstack" src={contentstack_logo} height="30px"></img>
+        <strong>{shop.name}</strong>
       </NavLink>
       <HeaderMenu
         menu={menu}
