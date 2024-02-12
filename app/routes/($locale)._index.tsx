@@ -2,10 +2,7 @@ import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Await, useLoaderData, Link, type MetaFunction} from '@remix-run/react';
 import {Fragment, Suspense} from 'react';
 import {Image, Money} from '@shopify/hydrogen';
-import type {
-  FeaturedCollectionFragment,
-  RecommendedProductsQuery,
-} from 'storefrontapi.generated';
+import type {RecommendedProductsQuery} from 'storefrontapi.generated';
 import banner from '../../public/banner.svg';
 import '../styles/pages.css';
 import {getEntryByUid} from '~/components/contentstack-sdk';
@@ -16,8 +13,6 @@ export const meta: MetaFunction = () => {
 
 export async function loader({context}: LoaderFunctionArgs) {
   const {storefront} = context;
-  const {collections} = await storefront.query(FEATURED_COLLECTION_QUERY);
-  const featuredCollection = collections.nodes[0];
   const recommendedProducts = storefront.query(RECOMMENDED_PRODUCTS_QUERY);
   const envConfig = context.env;
   const fetchData = async () => {
@@ -27,6 +22,7 @@ export async function loader({context}: LoaderFunctionArgs) {
         entryUid: 'blt9743f5cf3740e66a',
         envConfig,
       });
+      console.info('HOMEPAGE CMS DATA', result);
       return result;
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -34,7 +30,6 @@ export async function loader({context}: LoaderFunctionArgs) {
     }
   };
   return defer({
-    featuredCollection,
     recommendedProducts,
     fetchedData: await fetchData(),
   });
@@ -42,35 +37,14 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  console.info('HOMEPAGE CMS DATA', data.fetchedData);
   return (
     <div className="home flex pg_bt">
-      {/* <FeaturedCollection collection={data.featuredCollection} /> */}
       <RecommendedProducts
         products={data.recommendedProducts}
         cmsData={data.fetchedData}
       />
     </div>
-  );
-}
-
-function FeaturedCollection({
-  collection,
-}: {
-  collection: FeaturedCollectionFragment;
-}) {
-  if (!collection) return null;
-  const image = collection?.image;
-  return (
-    <Link
-      className="featured-collection"
-      to={`/collections/${collection.handle}`}
-    >
-      {image && (
-        <div className="featured-collection-image">
-          <Image data={image} sizes="100vw" />
-        </div>
-      )}
-    </Link>
   );
 }
 
@@ -121,7 +95,6 @@ function RecommendedProducts({
                             <Link
                               className="recommended-product"
                               to={`/products/${product.handle}`}
-                              // style={{width: '500px'}}
                             >
                               {product.images.nodes[0] && (
                                 <Image
@@ -130,8 +103,6 @@ function RecommendedProducts({
                                   sizes="(min-width: 45em) 20vw, 50vw"
                                 />
                               )}
-                              {/* <span style={{textAlign: 'center'}}> */}
-                              {/* <h4>{product.title}</h4> */}
                               <p className="product_cta">{product.title}</p>
                               <small>
                                 <Money
@@ -139,7 +110,6 @@ function RecommendedProducts({
                                   data={product.priceRange.minVariantPrice}
                                 />
                               </small>
-                              {/* </span> */}
                             </Link>
                           ))}
                       </Fragment>
