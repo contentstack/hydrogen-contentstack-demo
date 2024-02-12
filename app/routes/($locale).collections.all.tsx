@@ -36,6 +36,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
         entryUid: 'blt9743f5cf3740e66a',
         envConfig,
       });
+      console.info(result, 'RESULTS OF CMS DATA');
       return result;
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -50,6 +51,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export default function Productpage() {
   const data = useLoaderData<typeof loader>();
+  console.info('PRODUCT PAGE CMS DATA', data.fetchedData);
   return (
     <div className="home flex container pg_bt">
       <Pagination connection={data?.recommendedProducts?.products}>
@@ -84,7 +86,7 @@ function RecommendedProducts({
   products: any;
   cmsData: any;
 }) {
-  console.log('product*****', products);
+  console.log('product*****', products, cmsData);
   return (
     <div>
       <Suspense fallback={<div>Loading...</div>}>
