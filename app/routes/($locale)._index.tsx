@@ -15,6 +15,7 @@ export async function loader({context}: LoaderFunctionArgs) {
   const {storefront} = context;
   const recommendedProducts = storefront.query(RECOMMENDED_PRODUCTS_QUERY);
   const envConfig = context.env;
+  console.info('ENV CONFIG HOME PAGE', envConfig);
   const fetchData = async () => {
     try {
       const result = await getEntryByUid({
@@ -37,7 +38,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
-  console.info('HOMEPAGE CMS DATA', data.fetchedData);
+  console.info('HOMEPAGE CMS DATA', data);
   return (
     <div className="home flex pg_bt">
       <RecommendedProducts
