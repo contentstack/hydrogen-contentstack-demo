@@ -29,6 +29,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   );
 
   const envConfig = context.env;
+  console.info('ENV CONFIG IN PRODUCT PAGE', envConfig);
   const fetchData = async () => {
     try {
       const result = await getEntryByUid({
