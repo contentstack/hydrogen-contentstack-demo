@@ -16,6 +16,7 @@ export async function loader({context}: LoaderFunctionArgs) {
         entryUid: 'blta3850ce0d777edd0',
         envConfig,
       });
+      console.info(result, 'RESULTS OF CMS DATA IN ABOUT US PAGE');
       return result;
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -29,6 +30,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
+  console.info('ABOUT US CMS DATA', data.fetchedData);
   return (
     <div className="home flex pg_bt">
       <RecommendedProducts cmsData={data.fetchedData} />
