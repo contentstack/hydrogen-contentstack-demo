@@ -10,7 +10,7 @@ This demo is compatible with `@shopify/hydrogen >= 2024.01` built on Remix.
 
 Hydrogen Contentstack Demo is our customized [Hydrogen][hydrogen-github] starter that presents a real-world example of how Contentstack and Structured Content can elevate your custom Shopify storefronts.
 
-It's designed to be used, which syncs products and collections from your Shopify storefront to your Contentstack Account.
+It's designed to be used, which syncs products and collections from your Shopify storefront to your Stack in Contentstack.
 
 This starter showcases a few patterns you can adopt when creating your own custom storefronts. Use Contentstack and Hydrogen to delight customers with rich, shoppable editorial experiences that best tell your story.
 
