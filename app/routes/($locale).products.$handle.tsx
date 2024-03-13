@@ -115,7 +115,6 @@ function redirectToFirstVariant({
 
 export default function Product() {
   const {product, variants} = useLoaderData<typeof loader>();
-  console.log('PRODUCT LANDING PAGE', product);
   const {selectedVariant} = product;
   return (
     <div className="product container">
@@ -155,7 +154,21 @@ function ProductMain({
   selectedVariant: ProductFragment['selectedVariant'];
   variants: Promise<ProductVariantsQuery>;
 }) {
-  const {title, descriptionHtml} = product;
+  const {title, descriptionHtml, metafield} = product;
+  const valueMap = new Map();
+  metafield.reference.fields.forEach((field: any) => {
+    valueMap.set(field.key, field.value);
+  });
+  function generateStars(rating: any) {
+    const roundedRating = Math.round(parseFloat(rating));
+    const fullStars = '★'.repeat(roundedRating);
+    const emptyStars = '☆'.repeat(5 - roundedRating);
+    return fullStars + emptyStars;
+  }
+
+  const rating = '4.4';
+  const stars = generateStars(rating);
+
   return (
     <div className="product-main">
       <h1>{title}</h1>
@@ -190,6 +203,34 @@ function ProductMain({
       </p>
       <br />
       <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
+      <br />
+      <div
+        className="star_rating"
+        dangerouslySetInnerHTML={{
+          __html: stars,
+        }}
+      />
+      <br />
+      <p>
+        <strong>Reviews</strong>
+      </p>
+      <br />
+      {/* <ReviewCollapseView reviewContent={valueMap.get('product_review')} /> */}
+      <div
+        dangerouslySetInnerHTML={{
+          __html: valueMap.get('shipping_return_policy'),
+        }}
+      />
+      <br />
+      <p>
+        <strong>Shipping and Return</strong>
+      </p>
+      <br />
+      <div
+        dangerouslySetInnerHTML={{
+          __html: valueMap.get('shipping_return_policy'),
+        }}
+      />
       <br />
     </div>
   );
@@ -402,6 +443,19 @@ const PRODUCT_QUERY = `#graphql
   ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
       ...Product
+      metafield(namespace: "custom", key: "information") {
+              key
+              value
+              reference {
+                    ... on Metaobject {
+                      id
+                      fields {
+                        key
+                        value
+                      }
+                    }
+              }
+        }
     }
   }
   ${PRODUCT_FRAGMENT}
