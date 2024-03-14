@@ -1,5 +1,5 @@
 .bodyCss {
-    font-weight: 300;
+    font-weight: 500;
 }
 .product_css {
 font-size: 40px;
@@ -12,7 +12,16 @@ font-weight: 400;
 
 .gap {
     gap: 35px;
+    padding-left: 40px;
 }
+ .pg_lt{
+    padding-left: 40px;
+ }
+
+.mg_0 {
+    margin: 0 !important;
+}
+
 .home {
     flex-direction: column-reverse;
 }
@@ -31,10 +40,9 @@ font-weight: 400;
 }
 .home_page_banner{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     flex-direction: column;
-    align-items: center;
-    margin-bottom: 30px;
+    align-items: flex-start;
     height: 800px;
     background-image: url(public/banner.svg);
     position: relative;
@@ -54,7 +62,8 @@ font-weight: 400;
     letter-spacing: -.03em;
     color: white;
     z-index: 2;
-    /* font-weight: 400; */
+    padding-left: 40px;
+    padding-top: 64px;
 }
 .banner_repo_cta {
     z-index: 2;
@@ -98,7 +107,7 @@ font-weight: 400;
         font-size: 13px;
     }
     .recommended-product {
-        /* text-align: center; */
+        text-align: center;
         text-transform: uppercase;
     }
     .product_price {
@@ -128,6 +137,7 @@ font-weight: 400;
     border: 0;
     padding: 0 10px;
     cursor: pointer;
+    margin-bottom: 30px;
 }
 .footer_email {
     margin-top: 20px !important;
@@ -148,3 +158,47 @@ font-weight: 400;
     display: flex;
     justify-content: center;
 }
+
+.star_rating {
+    font-size: 26px;
+}
+
+.collection_wrapper {
+    background-color: #F0EEFD;
+    /* height: 855px; */
+}
+
+.collection-item {
+    margin: 9px !important;
+}
+
+
+.collection_heading {
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.collection_image {
+    position: relative;
+}
+
+.collection_content {
+    position: absolute;
+    padding: 20px;
+    color: white;
+    z-index: 2;
+    font-size: 24px !important;
+}
+.feature-products-grid {
+    display: grid;
+    grid-gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    margin: 0 80px;
+    @media (min-width: 45em) {
+      grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.feature-product img {
+    height: auto;
+  }
