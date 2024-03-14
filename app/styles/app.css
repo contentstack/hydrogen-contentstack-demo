@@ -132,7 +132,7 @@ aside li {
   background: #fff;
   display: flex;
   height: var(--header-height);
-  padding: 0 1rem;
+  padding: 0 3rem;
   position: sticky;
   top: 0;
   z-index: 999;
@@ -331,7 +331,7 @@ aside li {
   grid-template-columns: repeat(2, 1fr);
   margin: 0 80px;
   @media (min-width: 45em) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
@@ -350,8 +350,11 @@ aside li {
   /* grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr)); */
   margin-bottom: 2rem;
   grid-template-columns: repeat(2, 1fr);
+  /* grid-template-columns: 1fr 2fr; */
   @media (min-width: 45em) {
     grid-template-columns: repeat(4, 1fr);
+    /* grid-template-columns: repeat(1fr, 2fr); */
+    /* grid-template-columns:  40px auto; */
   }
 }
 
