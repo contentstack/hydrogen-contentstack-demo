@@ -20,8 +20,6 @@ export async function loader({params, context}: LoaderFunctionArgs) {
           entryUid: 'bltb5740faf62d6dde3',
           envConfig,
         });
-        
-        console.log('Result:*************', result);  // Log the result
         return result;
       } catch (error) {
         console.error("ERROR", error);

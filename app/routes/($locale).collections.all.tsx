@@ -84,7 +84,6 @@ function RecommendedProducts({
   products: any;
   cmsData: any;
 }) {
-  console.log('product*****', products, cmsData);
   return (
     <div>
       <Suspense fallback={<div>Loading...</div>}>
@@ -92,18 +91,12 @@ function RecommendedProducts({
           <div className="featuredContent">
             <h2 className="product_css">{cmsData.product_title}</h2>
           </div>
-          <div className="recommended-products-grid">
+          <div className="feature-products-grid">
             {products?.map((product: any) => {
-              console.log('product', product?.images?.nodes);
               return (
                 <Fragment key={product.id}>
-                  {/* { */}
-                  {/* product?.images?.nodes[0] && */}
-                  {/* product?.images?.nodes.length > 0  */}
-                  {/* && ( */}
-                  {/* // || (product.images.nodes[0] != null */}
                   <Link
-                    className="recommended-product"
+                    className="feature-product"
                     to={`/products/${product.handle}`}
                   >
                     {product.images.nodes[0] ? (
@@ -119,14 +112,7 @@ function RecommendedProducts({
                         alt="No Image"
                         style={{height: '85% !important'}}
                       />
-                      // <Image
-                      //   data={NoImg}
-                      //   aspectRatio="1/1"
-                      //   sizes="(min-width: 45em) 20vw, 50vw"
-                      // />
                     )}
-                    {/* <span style={{textAlign: 'center'}}> */}
-                    {/* <h4>{product.title}</h4> */}
                     <p className="product_cta">{product.title}</p>
                     <small>
                       <Money
@@ -134,11 +120,7 @@ function RecommendedProducts({
                         data={product.priceRange.minVariantPrice}
                       />
                     </small>
-                    {/* </span> */}
                   </Link>
-                  {/* // )
-                    // )
-                  // } */}
                 </Fragment>
               );
             })}
@@ -158,6 +140,10 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     handle
     priceRange {
       minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
         amount
         currencyCode
       }
