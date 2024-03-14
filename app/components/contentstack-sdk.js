@@ -1,5 +1,4 @@
 import * as contentstack from 'contentstack';
-import * as Utils from '@contentstack/utils';
 const Stack = (envConfig) => {
   return contentstack.Stack({
     api_key: envConfig.CONTENTSTACK_API_KEY,
