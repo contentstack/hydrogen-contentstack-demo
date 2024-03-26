@@ -168,7 +168,8 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     products(first: $first,
         last: $last,
         before: $startCursor,
-        after: $endCursor
+        after: $endCursor,
+        sortKey: UPDATED_AT
         ) {
         nodes {
             ...Product

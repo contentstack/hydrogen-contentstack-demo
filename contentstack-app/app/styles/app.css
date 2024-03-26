@@ -18,7 +18,6 @@ img {
 * --------------------------------------------------
 */
 aside {
-  border: 1px solid red;
   background: var(--color-light);
   box-shadow: 0 0 50px rgba(0, 0, 0, 0.3);
   height: 100vh;
