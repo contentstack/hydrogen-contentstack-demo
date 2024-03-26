@@ -43,11 +43,12 @@ function RecommendedProducts({
 }) {
   return (
     <div>
-      <div className="container">
-        <h1 className=" bodyCss">{cmsData?.heading}</h1>
-        <p>{cmsData?.description}</p>
+      <div className="about_page_banner">
+        <h1 className=" bodyCss about_heading">{cmsData?.heading}</h1>
       </div>
-      <br />
+      <div className="container">
+        <p className="about_description">{cmsData?.description}</p>
+      </div>
     </div>
   );
 }
