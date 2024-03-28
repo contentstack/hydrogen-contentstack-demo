@@ -51,23 +51,20 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export default function Productpage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home flex container pg_bt">
+    <div className="home flex pg_bt">
       <Pagination connection={data?.recommendedProducts?.products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
-            {/* <PreviousLink className="load_more">
-                {isLoading ? (
-                  'Loading...'
-                ) : (
-                  <span className="load_more">↑ Load previous</span>
-                )}
-              </PreviousLink> */}
             <RecommendedProducts products={nodes} cmsData={data.fetchedData} />
             <NextLink className="load_more">
               {isLoading ? (
                 'Loading...'
               ) : (
-                <span className="load_more">Load more ↓</span>
+                <div className="center">
+                  <span className="view_allproducts load_more">
+                    Load more ↓
+                  </span>
+                </div>
               )}
             </NextLink>
           </div>
@@ -114,6 +111,7 @@ function RecommendedProducts({
                       />
                     )}
                     <p className="product_cta">{product.title}</p>
+                    <small className="product_small_cta">{product.title}</small>
                     <small>
                       <Money
                         className="product_price"
@@ -170,6 +168,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         before: $startCursor,
         after: $endCursor,
         sortKey: UPDATED_AT
+        reverse: true
         ) {
         nodes {
             ...Product

@@ -36,7 +36,11 @@ export default function Collections() {
               {isLoading ? (
                 'Loading...'
               ) : (
-                <span className="load_more">Load more ↓</span>
+                <div className="center">
+                  <span className="view_allproducts load_more">
+                    Load more ↓
+                  </span>
+                </div>
               )}
             </NextLink>
           </div>

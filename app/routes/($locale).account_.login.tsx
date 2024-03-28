@@ -5,6 +5,7 @@ import {
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
 import {Form, Link, useActionData, type MetaFunction} from '@remix-run/react';
+import '../styles/pages.css';
 
 type ActionResponse = {
   error: string | null;
@@ -72,11 +73,11 @@ export default function Login() {
   const error = data?.error || null;
 
   return (
-    <div className="login">
+    <div className="login container">
       <h1>Sign in.</h1>
       <Form method="POST">
-        <fieldset>
-          <label htmlFor="email">Email address</label>
+        <fieldset className="fieldset">
+          {/* <label htmlFor="email">Email address</label> */}
           <input
             id="email"
             name="email"
@@ -85,10 +86,11 @@ export default function Login() {
             required
             placeholder="Email address"
             aria-label="Email address"
+            className="footer_email login-email"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
-          <label htmlFor="password">Password</label>
+          {/* <label htmlFor="password">Password</label> */}
           <input
             id="password"
             name="password"
@@ -96,6 +98,7 @@ export default function Login() {
             autoComplete="current-password"
             placeholder="Password"
             aria-label="Password"
+            className="footer_email login-email"
             minLength={8}
             required
           />
