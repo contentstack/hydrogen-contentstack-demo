@@ -21,8 +21,8 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   const fetchData = async () => {
     try {
       const result = await getEntryByUid({
-        contentTypeUid: 'shopify_home',
-        entryUid: 'blt9743f5cf3740e66a',
+        contentTypeUid: 'shopify_footer',
+        entryUid: 'blte6a28f48813275ca',
         envConfig,
       });
       return result;

@@ -488,8 +488,18 @@ aside li {
 
 .product h1 {
   margin-top: 0;
+  font-size: 40px;
+  font-weight: 400;
+  line-height: 60px;
 }
-
+.product {
+  .description {
+    p{
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+    }
+}}
 .product-images {
   display: grid;
   grid-gap: 1rem;
@@ -499,7 +509,7 @@ aside li {
   height: auto;
   width: 100%;
   object-fit: contain;
-  border: 0.1rem solid rgba(18, 18, 18, 0.08);
+  /* border: 0.1rem solid rgba(18, 18, 18, 0.08); */
 }
 
 .product-main {
@@ -511,10 +521,21 @@ aside li {
 .product-price-on-sale {
   display: flex;
   grid-gap: 0.5rem;
+  align-items: center;
+  .price {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 36px;
+  }
 }
 
 .product-price-on-sale s {
   opacity: 0.5;
+  .comparePrice {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+  }
 }
 
 .product-options-grid {

@@ -23,7 +23,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   const {storefront} = context;
   const recommendedProducts = storefront.query(RECOMMENDED_PRODUCTS_QUERY);
   const newarrivalproducts = await storefront.query(NEW_ARRIVALS_QUERY);
-  const bestseller = await storefront.query(FEATURED_COLLECTION_QUERY);
+  const bestseller = await storefront.query(BEST_SELLER_QUERY);
   const topcategories = await storefront.query(TOP_CATEGORIES_QUERY);
 
   const envConfig = context.env;
@@ -47,7 +47,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   const {collections} = await context.storefront.query(COLLECTIONS_QUERY, {
     variables: paginationVariables,
   });
-
+  console.info('Top categoriesssss', topcategories.collections.edges[0].node);
   return defer({
     topcategories,
     bestseller,
@@ -58,34 +58,11 @@ export async function loader({context, request}: LoaderFunctionArgs) {
   });
 }
 
-function filterCategoriesWithBestSellers(data) {
-  const categoriesWithBestSellers = [];
-
-  data.edges.forEach((collection) => {
-    const products = collection.node.products.edges;
-    const hasBestSeller = products.some(
-      (product) => product.node.productType === 'Best Seller',
-    );
-
-    if (hasBestSeller) {
-      categoriesWithBestSellers.push({
-        id: collection.node.id,
-        products: products.filter(
-          (product) => product.node.productType === 'Best Seller',
-        ),
-        title: collection.node.title,
-        image: collection.node.image.url,
-      });
-    }
-  });
-  return categoriesWithBestSellers;
-}
-
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
-  const categoriesWithBestSellers = filterCategoriesWithBestSellers(
-    data?.topcategories?.collections,
-  );
+  // const categoriesWithBestSellers = filterCategoriesWithBestSellers(
+  //   data?.topcategories?.collections,
+  // );
 
   return (
     <div className="home flex pg_bt">
@@ -94,7 +71,8 @@ export default function Homepage() {
         products={data.recommendedProducts}
         cmsData={data.fetchedData}
         collections={data.collections.nodes}
-        categoriesWithBestSellers={categoriesWithBestSellers}
+        topCategory={data?.topcategories}
+        bestSeller={data.bestseller}
       />
     </div>
   );
@@ -136,60 +114,87 @@ function CollectionItem({
   );
 }
 
+function BestSellerCta({node, cmsData}: {node: any; cmsData: any}) {
+  return (
+    <div className="best-sell-cta">
+      <p className="best-sell-cta-heading">{node?.title}</p>
+      <Link
+        to={`/products/${node.handle}`}
+        key={node.id}
+        prefetch="intent"
+        className="best-sell-cta1 view_allproducts"
+      >
+        {cmsData.best_seller.shop_cta.cta_title.title}
+      </Link>
+    </div>
+  );
+}
+
 function RecommendedProducts({
   products,
   cmsData,
   collections,
   newarrivalproducts,
+  topCategory,
+  bestSeller,
 }: {
   products: Promise<RecommendedProductsQuery>;
   cmsData: Awaited<ReturnType<typeof getEntryByUid>>;
   collections: CollectionFragment[];
   newarrivalproducts: Promise<any>;
+  bestSeller: any;
+  topCategory: any;
 }) {
+  console.info('top category', bestSeller, cmsData);
   return (
     <div>
       <div className="home_page_banner">
         <div className="container">
-          <h5 className="page_banner_heading">{cmsData?.banner_heading}</h5>
+          <h5 className="page_banner_heading">
+            {cmsData?.banner?.banner_heading}
+          </h5>
           <h1 className="page_banner_content bodyCss">
-            {cmsData?.banner_title}
+            {cmsData?.banner?.banner_title}
           </h1>
-          {cmsData?.banner_description ? (
+          {cmsData?.banner?.banner_description ? (
             <div
               className="banner-description"
               dangerouslySetInnerHTML={{
-                __html: cmsData?.banner_description,
+                __html: cmsData?.banner?.banner_description,
               }}
             />
           ) : (
             ''
           )}
           <div className="flex">
-            {cmsData.button.repo.cta_title.title ? (
+            {cmsData?.banner?.button.repo.cta_title.title ? (
               <a
-                href={cmsData?.button?.repo?.cta_title?.href}
+                href={cmsData?.banner?.button?.repo?.cta_title?.href}
                 rel="noreferrer"
                 target={
-                  cmsData.button.repo.open_in_new_tab ? '_blank' : '_self'
+                  cmsData.banner?.button.repo.open_in_new_tab
+                    ? '_blank'
+                    : '_self'
                 }
                 className="banner_repo_cta"
               >
-                {cmsData.button.repo.cta_title.title}
+                {cmsData.banner?.button.repo.cta_title.title}
               </a>
             ) : (
               ''
             )}
-            {cmsData.button.products.cta_title.title ? (
+            {cmsData.banner?.button.products.cta_title.title ? (
               <a
-                href={cmsData.button.products.cta_title.href}
+                href={cmsData.banner?.button.products.cta_title.href}
                 rel="noreferrer"
                 target={
-                  cmsData.button.products.open_in_new_tab ? '_blank' : '_self'
+                  cmsData.banner?.button.products.open_in_new_tab
+                    ? '_blank'
+                    : '_self'
                 }
                 className="banner_repo_cta"
               >
-                {cmsData.button.products.cta_title.title}
+                {cmsData.banner?.button.products.cta_title.title}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="24"
@@ -216,6 +221,7 @@ function RecommendedProducts({
           {({products}) => {
             return (
               <div>
+                {/* Feature Product section */}
                 <div className="featured_wrapper container">
                   <div className="featuredContent">
                     <h2 className="bodyCss feature_heading">
@@ -234,6 +240,7 @@ function RecommendedProducts({
                       </Link>
                     </div>
                   </div>
+                  {/* Feature Product section */}
                   <div className="recommended-products-grid">
                     {products.nodes.map((product) => {
                       return (
@@ -268,18 +275,19 @@ function RecommendedProducts({
                     })}
                   </div>
                 </div>
+                {/* New Arrival section */}
                 <div className="new_arrival_wrap">
                   <div className="featured_wrapper container">
-                    <div className="row newarrival_wrap">
+                    <div className="row explore_Sec_row">
                       <div className="newArrival_col_small">
-                        <h2 className="bodyCss feature_heading">
+                        <h2 className="bodyCss feature_heading uppercase">
                           {cmsData?.new_arrival_title}
                         </h2>
                         <Image
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="1/1"
                           data={
-                            newarrivalproducts?.collection?.products?.nodes[0]
+                            newarrivalproducts?.collection?.products?.nodes[2]
                               ?.images?.nodes[0]
                           }
                           // loading={index < 3 ? 'eager' : undefined}
@@ -302,7 +310,7 @@ function RecommendedProducts({
                             // alt={collection?.image?.altText || collection?.title}
                             aspectRatio="1/1"
                             data={
-                              newarrivalproducts?.collection?.products?.nodes[2]
+                              newarrivalproducts?.collection?.products?.nodes[0]
                                 ?.images?.nodes[0]
                             }
                             // loading={index < 3 ? 'eager' : undefined}
@@ -319,6 +327,141 @@ function RecommendedProducts({
                     </div>
                   </div>
                 </div>
+                {/* top category section */}
+                <div>
+                  <div className="featured_wrapper container">
+                    <h2 className="bodyCss feature_heading">
+                      {cmsData.top_category_title}
+                    </h2>
+                    <div className="row ">
+                      <div className="col-left-top-cat">
+                        <Link
+                          className={` flex`}
+                          key={topCategory?.collections?.edges[7].node?.id}
+                          to={`/collections/${topCategory?.collections?.edges[7].node?.handle}`}
+                          prefetch="intent"
+                        >
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="1/1"
+                            data={
+                              topCategory?.collections?.edges[7].node?.image
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className="top-cat-img flex"
+                          />
+                        </Link>
+                        <Link
+                          className={`flex`}
+                          key={topCategory?.collections?.edges[2].node?.id}
+                          to={`/collections/${topCategory?.collections?.edges[2].node?.handle}`}
+                          prefetch="intent"
+                        >
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="2/1"
+                            data={
+                              topCategory?.collections?.edges[2].node?.image
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className=" top-cat-img flex"
+                          />
+                        </Link>
+                      </div>
+                      <div className="col-left-top-cat">
+                        <div className="row top-cat-row1-sec">
+                          {/* <div className="col-left-top-cat"> */}
+                          <Link
+                            className={` flex col-left-top-cat`}
+                            key={topCategory?.collections?.edges[6].node?.id}
+                            to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
+                            prefetch="intent"
+                          >
+                            <Image
+                              // alt={collection?.image?.altText || collection?.title}
+                              aspectRatio="1/1"
+                              data={
+                                topCategory?.collections?.edges[6].node?.image
+                              }
+                              // loading={index < 3 ? 'eager' : undefined}
+                              className="mg-lt top-cat-img flex"
+                            />
+                          </Link>
+                          <Link
+                            className={` flex col-left-top-cat`}
+                            key={topCategory?.collections?.edges[5].node?.id}
+                            to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
+                            prefetch="intent"
+                          >
+                            <Image
+                              // alt={collection?.image?.altText || collection?.title}
+                              aspectRatio="1/1"
+                              data={
+                                topCategory?.collections?.edges[5].node?.image
+                              }
+                              // loading={index < 3 ? 'eager' : undefined}
+                              className="mg-lt top-cat-img flex"
+                            />
+                          </Link>
+                          {/* </div> */}
+                        </div>
+                        <div className="row top-cat-row2-sec ">
+                          {/* <div className="col-left-top-cat"> */}
+                          <Link
+                            className={` flex col-left-top-cat`}
+                            key={topCategory?.collections?.edges[4].node?.id}
+                            to={`/collections/${topCategory?.collections?.edges[4].node?.handle}`}
+                            prefetch="intent"
+                          >
+                            <Image
+                              // alt={collection?.image?.altText || collection?.title}
+                              aspectRatio="1/1"
+                              data={
+                                topCategory?.collections?.edges[4].node?.image
+                              }
+                              // loading={index < 3 ? 'eager' : undefined}
+                              className="mg-lt top-cat-img flex"
+                            />
+                          </Link>
+                          <Link
+                            className={` flex col-left-top-cat`}
+                            key={topCategory?.collections?.edges[3].node?.id}
+                            to={`/collections/${topCategory?.collections?.edges[3].node?.handle}`}
+                            prefetch="intent"
+                          >
+                            <Image
+                              // alt={collection?.image?.altText || collection?.title}
+                              aspectRatio="1/1"
+                              data={
+                                topCategory?.collections?.edges[3].node?.image
+                              }
+                              // loading={index < 3 ? 'eager' : undefined}
+                              className=" mg-lt top-cat-img flex"
+                            />
+                          </Link>
+                          {/* </div> */}
+                        </div>
+                        <Link
+                          className={` flex `}
+                          key={topCategory?.collections?.edges[1].node?.id}
+                          to={`/collections/${topCategory?.collections?.edges[1].node?.handle}`}
+                          prefetch="intent"
+                        >
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="2/1"
+                            data={
+                              topCategory?.collections?.edges[1].node?.image
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className="mg-lt top-cat-img flex"
+                          />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {/* New Collection section  */}
                 <div className="collection_wrapper featured_wrapper">
                   <div className="container">
                     <div className="row explore_Sec_row">
@@ -347,52 +490,151 @@ function RecommendedProducts({
                     </div>
                   </div>
                 </div>
+                {/* Offer setion */}
+                <div className="container">
+                  <div className="row offers_row">
+                    <div className="offers_col_img">
+                      <img
+                        src={OffersImage}
+                        alt={cmsData?.offer_section?.image?.filename}
+                        className="offers_image"
+                      ></img>
+                    </div>
+                    <div className="offers_col_dark">
+                      <p className="offers_title">
+                        {cmsData?.offer_section?.offer_title}
+                      </p>
+                      <h2 className="offers_subTitle">
+                        {cmsData?.offer_section?.offer_subtitle}
+                      </h2>
+                      <Link
+                        to={cmsData?.offer_section?.cta?.cta_title?.href}
+                        rel="noreferrer"
+                        className="offers_cta"
+                      >
+                        {cmsData?.offer_section?.cta?.cta_title?.title}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            clipRule="evenodd"
+                            d="M14.5074 6.69672L19.2803 11.4697C19.5732 11.7626 19.5732 12.2375 19.2803 12.5304L14.5074 17.3033C14.2145 17.5962 13.7396 17.5962 13.4467 17.3033C13.1538 17.0104 13.1538 16.5356 13.4467 16.2427L16.9393 12.75H5.25C4.83579 12.75 4.5 12.4142 4.5 12C4.5 11.5858 4.83579 11.25 5.25 11.25H16.9393L13.4467 7.75738C13.1538 7.46449 13.1538 6.98961 13.4467 6.69672C13.7396 6.40383 14.2145 6.40383 14.5074 6.69672Z"
+                            fill="white"
+                          />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                {/* Best seller section */}
+                <div>
+                  <div className="featured_wrapper container">
+                    <div className="featuredContent">
+                      <div>
+                        <h2 className="bodyCss feature_heading">
+                          {cmsData.best_seller.title}
+                        </h2>
+                        <p>{cmsData.best_seller.description}</p>
+                      </div>
+
+                      <div className="center">
+                        <Link
+                          to={cmsData.best_seller.view_product.cta_title.href}
+                          rel="noreferrer"
+                          target={
+                            cmsData.best_seller.view_product.open_in_new_tab
+                              ? '_blank'
+                              : '_self'
+                          }
+                          className="view_allproducts"
+                        >
+                          {cmsData.best_seller.view_product.cta_title.title}
+                        </Link>
+                      </div>
+                    </div>
+
+                    <div className="row  pg-t">
+                      <div className="col-left-best-seller">
+                        <div className="best-sell-img">
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="2/1"
+                            data={
+                              bestSeller?.collection?.products?.nodes[0]?.images
+                                ?.nodes[0]
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className="top-cat-img flex "
+                          />
+                          <BestSellerCta
+                            node={bestSeller?.collection?.products?.nodes[0]}
+                            cmsData={cmsData}
+                          />
+                        </div>
+                        <div className="best-sell-img">
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="1/0.734"
+                            data={
+                              bestSeller?.collection?.products?.nodes[1]?.images
+                                ?.nodes[0]
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className="peral-foot flex "
+                          />
+                          <BestSellerCta
+                            node={bestSeller?.collection?.products?.nodes[1]}
+                            cmsData={cmsData}
+                          />
+                        </div>
+                      </div>
+                      <div className="col-right-best-seller">
+                        <div className="best-sell-img">
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="1/1"
+                            data={
+                              bestSeller?.collection?.products?.nodes[2]?.images
+                                ?.nodes[0]
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className="mg-lt top-cat-img flex "
+                          />
+                          <BestSellerCta
+                            node={bestSeller?.collection?.products?.nodes[2]}
+                            cmsData={cmsData}
+                          />
+                        </div>
+                        <div className="best-sell-img">
+                          <Image
+                            // alt={collection?.image?.altText || collection?.title}
+                            aspectRatio="1/1"
+                            data={
+                              bestSeller?.collection?.products?.nodes[3]?.images
+                                ?.nodes[0]
+                            }
+                            // loading={index < 3 ? 'eager' : undefined}
+                            className="mg-lt top-cat-img flex "
+                          />
+                          <BestSellerCta
+                            node={bestSeller?.collection?.products?.nodes[3]}
+                            cmsData={cmsData}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           }}
         </Await>
       </Suspense>
-      <br />
-      <div className="container">
-        <div className="row offers_row">
-          <div className="offers_col_img">
-            <img
-              src={OffersImage}
-              alt={cmsData?.offer_section?.image?.filename}
-              className="offers_image"
-            ></img>
-          </div>
-          <div className="offers_col_dark">
-            <p className="offers_title">
-              {cmsData?.offer_section?.offer_title}
-            </p>
-            <h2 className="offers_subTitle">
-              {cmsData?.offer_section?.offer_subtitle}
-            </h2>
-            <Link
-              to={cmsData?.offer_section?.cta?.cta_title?.href}
-              rel="noreferrer"
-              className="offers_cta"
-            >
-              {cmsData?.offer_section?.cta?.cta_title?.title}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path
-                  fillRule="evenodd"
-                  clipRule="evenodd"
-                  d="M14.5074 6.69672L19.2803 11.4697C19.5732 11.7626 19.5732 12.2375 19.2803 12.5304L14.5074 17.3033C14.2145 17.5962 13.7396 17.5962 13.4467 17.3033C13.1538 17.0104 13.1538 16.5356 13.4467 16.2427L16.9393 12.75H5.25C4.83579 12.75 4.5 12.4142 4.5 12C4.5 11.5858 4.83579 11.25 5.25 11.25H16.9393L13.4467 7.75738C13.1538 7.46449 13.1538 6.98961 13.4467 6.69672C13.7396 6.40383 14.2145 6.40383 14.5074 6.69672Z"
-                  fill="white"
-                />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -425,6 +667,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     id
     title
     handle
+    productType
     priceRange {
       minVariantPrice {
         amount
@@ -475,7 +718,7 @@ const COLLECTIONS_QUERY = `#graphql
     $startCursor: String
   ) @inContext(country: $country, language: $language) {
     collections(
-      first: 4,
+      first: 3,
       last: $last,
       before: $startCursor,
       after: $endCursor,
@@ -525,50 +768,14 @@ query FeaturedCollection($country: CountryCode, $language: LanguageCode)
   }
 }` as const;
 
-const BEST_SELLERS_QUERY = `#graphql
-fragment BestSeller on collection {
-  id
-  title
-  handle
-  productType
-  priceRange {
-    minVariantPrice {
-      amount
-      currencyCode
-    }
-  }
-  images(first: 1) {
-    nodes {
-      id
-      url
-      altText
-      width
-      height
-      productType
-    }
-  }
-}query BestSellers ($country: CountryCode, $language: LanguageCode)
-@inContext(country: $country, language: $language) {
-  collection(handle: "filterable-collection") {
-    handle
-    products(first: 10, filters: { productType: "shoes"}) {
-      edges {
-        node {
-          handle
-          productType
-        }
-      }
-    }
-  }
-}` as const;
-
 const TOP_CATEGORIES_QUERY = `#graphql
   query FeaturedCollection($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-      collections(first:5) {
+      collections(first:8, reverse:true) {
         edges {
           node {
             title
+            handle
             id
             image {
               id
@@ -592,3 +799,27 @@ const TOP_CATEGORIES_QUERY = `#graphql
       }
   }
 ` as const;
+
+const BEST_SELLER_QUERY = `#graphql
+query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+@inContext(country: $country, language: $language) {
+  collection(handle: "womens-fashion") {
+    handle
+    products(first: 4) {
+      nodes{
+        id
+        title
+        handle
+        images(first: 1) {
+          nodes {
+            id
+            url
+            altText
+            width
+            height
+          }
+        }
+      }
+    }
+  }
+}` as const;
