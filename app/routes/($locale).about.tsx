@@ -1,19 +1,18 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {useLoaderData, type MetaFunction} from '@remix-run/react';
 import '../styles/pages.css';
-import {getEntryByUid} from '~/components/contentstack-sdk';
+import {getEntry} from '~/components/contentstack-sdk';
 
 export const meta: MetaFunction = () => {
-  return [{title: 'Hydrogen | Home'}];
+  return [{title: 'Hydrogen | About Us'}];
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
   const envConfig = context.env;
   const fetchData = async () => {
     try {
-      const result = await getEntryByUid({
+      const result = await getEntry({
         contentTypeUid: 'about_us',
-        entryUid: 'blta3850ce0d777edd0',
         envConfig,
       });
       return result;
@@ -39,7 +38,7 @@ export default function Homepage() {
 function RecommendedProducts({
   cmsData,
 }: {
-  cmsData: Awaited<ReturnType<typeof getEntryByUid>>;
+  cmsData: Awaited<ReturnType<typeof getEntry>>;
 }) {
   return (
     <div>
