@@ -1,45 +1,13 @@
 import {NavLink, useLoaderData, type MetaFunction} from '@remix-run/react';
 import type {FooterQuery, HeaderQuery} from 'storefrontapi.generated';
-import {useRootLoaderData} from '~/root';
-// import {useLoaderData} from '@remix-run/react';
-
 import '../styles/pages.css';
-import {getPaginationVariables} from '@shopify/hydrogen';
-import type {LoaderFunctionArgs} from '@shopify/remix-oxygen';
-import {defer} from '@shopify/remix-oxygen';
-import {getEntryByUid} from './contentstack-sdk';
 import contentstack_logo from '../../public/cms_white_logo.svg';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
 };
 
-export async function loader({context, request}: LoaderFunctionArgs) {
-  const {storefront} = context;
-  // const recommendedProducts = storefront.query(RECOMMENDED_PRODUCTS_QUERY);
-  const envConfig = context.env;
-  const fetchData = async () => {
-    try {
-      const result = await getEntryByUid({
-        contentTypeUid: 'shopify_footer',
-        entryUid: 'blte6a28f48813275ca',
-        envConfig,
-      });
-      return result;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('ERROR', error);
-    }
-  };
-  return defer({
-    // recommendedProducts,
-    fetchedData: await fetchData(),
-    // collections,
-  });
-}
-
-export function Footer() {
-  const data = useLoaderData<typeof loader>();
+export function Footer(fetchdata: any) {
   return (
     <footer className="footer_wrapper">
       <div className="container">

@@ -51,11 +51,11 @@ export default function Recover() {
   const action = useActionData<ActionResponse>();
 
   return (
-    <div className="account-recover">
-      <div>
+    <div className="account-recover login container">
+      <div className="recover">
         {action?.resetRequested ? (
           <>
-            <h1>Request Sent.</h1>
+            <h1>Request Sent</h1>
             <p>
               If that email address is in our system, you will receive an email
               with instructions about how to reset your password in a few
@@ -66,15 +66,14 @@ export default function Recover() {
           </>
         ) : (
           <>
-            <h1>Forgot Password.</h1>
+            <h1>Forgot Password</h1>
             <p>
               Enter the email address associated with your account to receive a
               link to reset your password.
             </p>
             <br />
             <Form method="POST">
-              <fieldset>
-                <label htmlFor="email">Email</label>
+              <fieldset className="fieldset">
                 <input
                   aria-label="Email address"
                   autoComplete="email"
@@ -85,23 +84,27 @@ export default function Recover() {
                   placeholder="Email address"
                   required
                   type="email"
+                  className="footer_email login-email"
                 />
               </fieldset>
-              {action?.error ? (
+              {action?.error && (
                 <p>
                   <mark>
                     <small>{action.error}</small>
                   </mark>
                 </p>
-              ) : (
-                <br />
               )}
-              <button type="submit">Request Reset Link</button>
+              <button
+                className="banner_repo_cta update recover-cta"
+                type="submit"
+              >
+                Request Reset Link
+              </button>
             </Form>
             <div>
               <br />
               <p>
-                <Link to="/account/login">Login →</Link>
+                <Link to="/account/login">Return to Sign In →</Link>
               </p>
             </div>
           </>

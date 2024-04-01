@@ -74,7 +74,7 @@ export default function Login() {
 
   return (
     <div className="login container">
-      <h1>Sign in.</h1>
+      <h1>Sign in</h1>
       <Form method="POST">
         <fieldset className="fieldset">
           {/* <label htmlFor="email">Email address</label> */}
@@ -103,25 +103,26 @@ export default function Login() {
             required
           />
         </fieldset>
-        {error ? (
+        {error && (
           <p>
             <mark>
               <small>{error}</small>
+              {/* <p>Invalid input</p> */}
             </mark>
           </p>
-        ) : (
-          <br />
         )}
-        <button type="submit">Sign in</button>
+        <button className="banner_repo_cta update" type="submit">
+          Sign in
+        </button>
       </Form>
       <br />
-      <div>
-        <p>
+      <div className="options">
+        <div className="forgot-password">
           <Link to="/account/recover">Forgot password →</Link>
-        </p>
-        <p>
-          <Link to="/account/register">Register →</Link>
-        </p>
+        </div>
+        <div className="register">
+          <Link to="/account/register">Create An Account →</Link>
+        </div>
       </div>
     </div>
   );

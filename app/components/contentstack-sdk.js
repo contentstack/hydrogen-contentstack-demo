@@ -16,26 +16,7 @@ export const getEntry = async ({contentTypeUid, envConfig}) => {
       .find()
       .then(
         (result) => {
-          resolve(result);
-        },
-        (error) => {
-          reject(error);
-        },
-      );
-  });
-};
-
-export const getEntryByUid = async ({contentTypeUid, entryUid, envConfig}) => {
-  return new Promise((resolve, reject) => {
-    const blogQuery = Stack(envConfig)
-      .ContentType(contentTypeUid)
-      .Entry(entryUid);
-    blogQuery
-      .toJSON()
-      .fetch()
-      .then(
-        (result) => {
-          resolve(result);
+          resolve(result[0][0]);
         },
         (error) => {
           reject(error);

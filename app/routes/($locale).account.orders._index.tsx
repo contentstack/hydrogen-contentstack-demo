@@ -5,6 +5,7 @@ import type {
   CustomerOrdersFragment,
   OrderItemFragment,
 } from 'storefrontapi.generated';
+import '../styles/pages.css';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders'}];
@@ -50,9 +51,9 @@ export default function Orders() {
   const {customer} = useLoaderData<{customer: CustomerOrdersFragment}>();
   const {orders, numberOfOrders} = customer;
   return (
-    <div className="orders">
+    <div className="order_status">
       <h2>
-        Orders <small>({numberOfOrders})</small>
+        Your Orders <small>({numberOfOrders})</small>
       </h2>
       <br />
       {orders.nodes.length ? <OrdersTable orders={orders} /> : <EmptyOrders />}
@@ -90,11 +91,13 @@ function OrdersTable({orders}: Pick<CustomerOrdersFragment, 'orders'>) {
 
 function EmptyOrders() {
   return (
-    <div>
+    <div className="empty_orders">
       <p>You haven&apos;t placed any orders yet.</p>
       <br />
       <p>
-        <Link to="/collections">Start Shopping →</Link>
+        <Link className="view_allproducts shop" to="/collections/all">
+          SHOP NOW →
+        </Link>
       </p>
     </div>
   );

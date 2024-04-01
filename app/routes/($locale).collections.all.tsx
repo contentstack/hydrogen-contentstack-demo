@@ -9,7 +9,7 @@ import {
   Pagination,
 } from '@shopify/hydrogen';
 import '../styles/pages.css';
-import {getEntryByUid} from '~/components/contentstack-sdk';
+import {getEntry} from '~/components/contentstack-sdk';
 import NoImg from '../../public/NoImg.svg';
 
 export const meta: MetaFunction = () => {
@@ -28,12 +28,11 @@ export async function loader({context, request}: LoaderFunctionArgs) {
     },
   );
 
-  const envConfig = context.env;
+  const envConfig = context?.env;
   const fetchData = async () => {
     try {
-      const result = await getEntryByUid({
+      const result = await getEntry({
         contentTypeUid: 'shopify_home',
-        entryUid: 'blt9743f5cf3740e66a',
         envConfig,
       });
       return result;
@@ -55,7 +54,7 @@ export default function Productpage() {
       <Pagination connection={data?.recommendedProducts?.products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
-            <RecommendedProducts products={nodes} cmsData={data.fetchedData} />
+            <RecommendedProducts products={nodes} cmsData={data?.fetchedData} />
             <NextLink className="load_more">
               {isLoading ? (
                 'Loading...'
@@ -82,52 +81,79 @@ function RecommendedProducts({
   cmsData: any;
 }) {
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="featured_wrapper container">
-          <div className="featuredContent">
-            <h2 className="product_css">{cmsData.product_title}</h2>
-          </div>
-          <div className="feature-products-grid">
-            {products?.map((product: any) => {
-              return (
-                <Fragment key={product.id}>
-                  <Link
-                    className="feature-product"
-                    to={`/products/${product.handle}`}
-                  >
-                    {product.images.nodes[0] ? (
-                      <Image
-                        data={product.images.nodes[0]}
-                        aspectRatio="1/1"
-                        sizes="(min-width: 45em) 20vw, 50vw"
-                      />
-                    ) : (
-                      // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                      <img
-                        src={NoImg}
-                        alt="No Image"
-                        style={{height: '85% !important'}}
-                      />
-                    )}
-                    <p className="product_cta">{product.title}</p>
-                    <small className="product_small_cta">{product.title}</small>
-                    <small>
-                      <Money
-                        className="product_price"
-                        data={product.priceRange.minVariantPrice}
-                      />
-                    </small>
-                  </Link>
-                </Fragment>
-              );
-            })}
-          </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="featured_wrapper container">
+        <div className="featuredContent">
+          <h2 className="product_css">{cmsData?.product_title}</h2>
         </div>
-      </Suspense>
-
-      <br />
-    </div>
+        <div className="feature-products-grid">
+          {products?.map((product: any) => {
+            const originalPrice = parseFloat(
+              product?.compareAtPriceRange?.minVariantPrice?.amount,
+            );
+            const discountedPrice = parseFloat(
+              product?.priceRange?.minVariantPrice?.amount,
+            );
+            let percentageOff;
+            if (
+              originalPrice &&
+              discountedPrice &&
+              discountedPrice < originalPrice
+            ) {
+              percentageOff = originalPrice - discountedPrice;
+            }
+            return (
+              <Fragment key={product?.id}>
+                <Link
+                  className="feature-product"
+                  to={`/products/${product?.handle}`}
+                >
+                  {product?.images?.nodes[0] ? (
+                    <Image
+                      data={product?.images?.nodes[0]}
+                      aspectRatio="1/1"
+                      sizes="(min-width: 45em) 20vw, 50vw"
+                    />
+                  ) : (
+                    // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                    <img
+                      src={NoImg}
+                      alt="No Image"
+                      style={{height: '85% !important'}}
+                    />
+                  )}
+                  <p className="product_cta">{product?.title}</p>
+                  <small className="product_small_cta">{product?.title}</small>
+                  <small>
+                    <div className="product-price-on-sale">
+                      {product?.priceRange ? (
+                        <Money
+                          className="price"
+                          data={product?.priceRange?.minVariantPrice}
+                        />
+                      ) : null}
+                      <s>
+                        <Money
+                          className="comparePrice"
+                          data={product?.compareAtPriceRange?.minVariantPrice}
+                        />
+                      </s>
+                      {percentageOff ? (
+                        <p className="comparePrice">
+                          (${percentageOff.toFixed(2)} OFF)
+                        </p>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </small>
+                </Link>
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
+    </Suspense>
   );
 }
 
@@ -145,6 +171,13 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         amount
         currencyCode
       }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      
     }
     images(first: 1) {
       nodes {
