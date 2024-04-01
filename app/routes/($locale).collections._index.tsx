@@ -23,18 +23,18 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
   return (
-    <div className="collections container pg_bt">
+    <div className="collections container pg-bt">
       <h1>Collections</h1>
       <Pagination connection={collections}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
             <CollectionsGrid collections={nodes} />
-            <NextLink className="load_more">
+            <NextLink className="load-more">
               {isLoading ? (
                 'Loading...'
               ) : (
                 <div className="center">
-                  <span className="view_allproducts load_more">
+                  <span className="view-all-products load-more">
                     Load more ↓
                   </span>
                 </div>
@@ -83,7 +83,7 @@ function CollectionItem({
           loading={index < 3 ? 'eager' : undefined}
         />
       )}
-      <p className="collection_cta ">{collection?.title}</p>
+      <p className="collection-cta ">{collection?.title}</p>
     </Link>
   );
 }

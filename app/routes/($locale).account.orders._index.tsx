@@ -51,7 +51,7 @@ export default function Orders() {
   const {customer} = useLoaderData<{customer: CustomerOrdersFragment}>();
   const {orders, numberOfOrders} = customer;
   return (
-    <div className="order_status">
+    <div className="order-status">
       <h2>
         Your Orders <small>({numberOfOrders})</small>
       </h2>
@@ -91,11 +91,11 @@ function OrdersTable({orders}: Pick<CustomerOrdersFragment, 'orders'>) {
 
 function EmptyOrders() {
   return (
-    <div className="empty_orders">
+    <div className="empty-orders">
       <p>You haven&apos;t placed any orders yet.</p>
       <br />
       <p>
-        <Link className="view_allproducts shop" to="/collections/all">
+        <Link className="view-all-products shop" to="/collections/all">
           SHOP NOW →
         </Link>
       </p>

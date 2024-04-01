@@ -60,7 +60,7 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home flex pg_bt">
+    <div className="home flex">
       <RecommendedProducts
         newarrivalproducts={data?.newarrivalproducts}
         products={data?.recommendedProducts}
@@ -95,15 +95,15 @@ function CollectionItem({
           aspectRatio="1/1"
           data={collection?.image}
           loading={index < 3 ? 'eager' : undefined}
-          className="collection_image"
+          className="collection-image"
         />
       )}
-      <div className="collection_info">
+      <div className="collection-info">
         <p>
-          <small className="collection_small_text">{collection?.title}</small>
+          <small className="collection-small-text">{collection?.title}</small>
         </p>
-        <p className="collection_description">{collection?.description}</p>
-        <p className="collection_product_count">{`${collection?.products?.edges?.length} Products`}</p>
+        <p className="collection-description">{collection?.description}</p>
+        <p className="collection-product-count">{`${collection?.products?.edges?.length} Products`}</p>
       </div>
     </Link>
   );
@@ -117,7 +117,7 @@ function BestSellerCta({node, cmsData}: {node: any; cmsData: any}) {
         to={`/products/${node.handle}`}
         key={node?.id}
         prefetch="intent"
-        className="best-sell-cta1 view_allproducts"
+        className="best-sell-cta1 view-all-products"
       >
         {cmsData?.best_seller?.shop_cta?.cta_title?.title}
       </Link>
@@ -142,12 +142,12 @@ function RecommendedProducts({
 }) {
   return (
     <div>
-      <div className="home_page_banner">
+      <div className="home-page-banner">
         <div className="container">
-          <h5 className="page_banner_heading">
+          <h5 className="page-banner-heading">
             {cmsData?.banner?.banner_heading}
           </h5>
-          <h1 className="page_banner_content bodyCss">
+          <h1 className="page-banner-content bodyCss">
             {cmsData?.banner?.banner_title}
           </h1>
           {cmsData?.banner?.banner_description ? (
@@ -168,7 +168,7 @@ function RecommendedProducts({
                   href={button?.cta_title?.href}
                   rel="noreferrer"
                   target={button?.open_in_new_tab ? '_blank' : '_self'}
-                  className="banner_repo_cta"
+                  className="banner-repo-cta"
                 >
                   {button?.cta_title?.title}
                 </a>
@@ -185,9 +185,9 @@ function RecommendedProducts({
             return (
               <div>
                 {/* Feature Product section */}
-                <div className="featured_wrapper container">
-                  <div className="featuredContent">
-                    <h2 className="bodyCss feature_heading">
+                <div className="featured-wrapper container">
+                  <div className="featured-content">
+                    <h2 className="bodyCss feature-heading">
                       {cmsData?.feature_title}
                     </h2>
                     <div className="center">
@@ -199,7 +199,7 @@ function RecommendedProducts({
                             ? '_blank'
                             : '_self'
                         }
-                        className="view_allproducts"
+                        className="view-all-products"
                       >
                         {cmsData?.view_all_product?.cta_title?.title}
                       </Link>
@@ -238,10 +238,10 @@ function RecommendedProducts({
                                     sizes="(min-width: 45em) 20vw, 50vw"
                                   />
                                 )}
-                                <h4 className="product_cta">
+                                <h4 className="product-cta">
                                   {product?.title}
                                 </h4>
-                                <small className="product_small_cta">
+                                <small className="product-small-cta">
                                   {product?.title}
                                 </small>
                                 {/* <> */}
@@ -279,11 +279,11 @@ function RecommendedProducts({
                   </div>
                 </div>
                 {/* New Arrival section */}
-                <div className="new_arrival_wrap">
-                  <div className="featured_wrapper container">
-                    <div className="row explore_Sec_row">
-                      <div className="newArrival_col_small">
-                        <h2 className="bodyCss feature_heading uppercase">
+                <div className="new-arrival-wrap">
+                  <div className="featured-wrapper container">
+                    <div className="row explore-sec-row">
+                      <div className="newArrival-col-small">
+                        <h2 className="bodyCss feature-heading uppercase">
                           {cmsData?.new_arrival_title}
                         </h2>
                         <div className="best-sell-img">
@@ -302,13 +302,13 @@ function RecommendedProducts({
                                 ?.id
                             }
                             prefetch="intent"
-                            className="new_arrival_cta view_allproducts"
+                            className="new-arrival-cta view-all-products"
                           >
                             {cmsData?.best_seller?.shop_cta?.cta_title?.title}
                           </Link>
                         </div>
                       </div>
-                      <div className="newArrival_col_large">
+                      <div className="newArrival-col-large">
                         <div className="row">
                           <div className="best-sell-img">
                             <Image
@@ -326,7 +326,7 @@ function RecommendedProducts({
                                   ?.nodes[1]?.id
                               }
                               prefetch="intent"
-                              className="new_arrival_cta view_allproducts"
+                              className="new-arrival-cta view-all-products"
                             >
                               {cmsData?.best_seller?.shop_cta?.cta_title?.title}
                             </Link>
@@ -348,14 +348,14 @@ function RecommendedProducts({
                                   ?.nodes[0]?.id
                               }
                               prefetch="intent"
-                              className="new_arrival_cta view_allproducts"
+                              className="new-arrival-cta view-all-products"
                             >
                               {cmsData?.best_seller?.shop_cta?.cta_title?.title}
                             </Link>
                           </div>
                         </div>
                         <h2
-                          className="new_arrival_heading"
+                          className="new-arrival-heading"
                           dangerouslySetInnerHTML={{
                             __html: cmsData?.new_arrival_description,
                           }}
@@ -365,8 +365,8 @@ function RecommendedProducts({
                   </div>
                 </div>
                 {/* top category section */}
-                <div className="featured_wrapper container">
-                  <h2 className="bodyCss feature_heading">
+                <div className="featured-wrapper container">
+                  <h2 className="bodyCss feature-heading">
                     {cmsData?.top_category_title}
                   </h2>
                   <div className="row ">
@@ -485,29 +485,29 @@ function RecommendedProducts({
                   </div>
                 </div>
                 {/* New Collection section  */}
-                <div className="collection_wrapper featured_wrapper">
+                <div className="collection-wrapper featured-wrapper">
                   <div className="container">
-                    <div className="row explore_Sec_row">
+                    <div className="row explore-sec-row">
                       <div className="col-left explore_section_left">
                         <CollectionItem
                           collection={collections[0]}
                           index={0}
-                          className="mg_b32 small_img"
+                          className="mg-b32 small-img"
                         />
                         <CollectionItem
                           collection={collections[1]}
                           index={0}
-                          className="small_img"
+                          className="small-img"
                         />
                       </div>
                       <div className="col-right">
-                        <h2 className="bodyCss collection_heading">
+                        <h2 className="bodyCss collection-heading">
                           {cmsData?.collection_heading}
                         </h2>
                         <CollectionItem
                           collection={collections[2]}
                           index={0}
-                          className="collection_img_large"
+                          className="collection-img-large"
                         />
                       </div>
                     </div>
@@ -515,25 +515,25 @@ function RecommendedProducts({
                 </div>
                 {/* Offer setion */}
                 <div className="container">
-                  <div className="row offers_row">
-                    <div className="offers_col_img">
+                  <div className="row offers-row">
+                    <div className="offers-col-img">
                       <img
                         src={OffersImage}
                         alt={cmsData?.offer_section?.image?.filename}
-                        className="offers_image"
+                        className="offers-image"
                       ></img>
                     </div>
-                    <div className="offers_col_dark">
-                      <p className="offers_title">
+                    <div className="offers-col-dark">
+                      <p className="offers-title">
                         {cmsData?.offer_section?.offer_title}
                       </p>
-                      <h2 className="offers_subTitle">
+                      <h2 className="offers-sub-title">
                         {cmsData?.offer_section?.offer_subtitle}
                       </h2>
                       <Link
                         to={cmsData?.offer_section?.cta?.cta_title?.href}
                         rel="noreferrer"
-                        className="offers_cta"
+                        className="offers-cta"
                       >
                         {cmsData?.offer_section?.cta?.cta_title?.title}
                         <svg
@@ -555,10 +555,10 @@ function RecommendedProducts({
                   </div>
                 </div>
                 {/* Best seller section */}
-                <div className="featured_wrapper container">
-                  <div className="featuredContent">
+                <div className="featured-wrapper container">
+                  <div className="featured-content">
                     <div>
-                      <h2 className="bodyCss feature_heading">
+                      <h2 className="bodyCss feature-heading">
                         {cmsData?.best_seller?.title}
                       </h2>
                       <p>{cmsData?.best_seller?.description}</p>
@@ -573,7 +573,7 @@ function RecommendedProducts({
                             ? '_blank'
                             : '_self'
                         }
-                        className="view_allproducts"
+                        className="view-all-products"
                       >
                         {cmsData?.best_seller?.view_product?.cta_title?.title}
                       </Link>

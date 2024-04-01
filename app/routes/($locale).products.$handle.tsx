@@ -157,9 +157,9 @@ export default function Product() {
       </div>
       <div className="related-wrapper">
         <Suspense fallback={<div>Loading...</div>}>
-          <div className="featured_wrapper container">
-            <div className="featuredContent">
-              <h2 className="product_css">{fetchedData?.heading}</h2>
+          <div className="featured-wrapper container">
+            <div className="featured-content">
+              <h2 className="product-css">{fetchedData?.heading}</h2>
             </div>
             <div className="feature-products-grid">
               {relatedProductQueryResults?.productRecommendations?.map(
@@ -184,13 +184,13 @@ export default function Product() {
                             style={{height: '85% !important'}}
                           />
                         )}
-                        <p className="product_cta">{product?.title}</p>
-                        <small className="product_small_cta">
+                        <p className="product-cta">{product?.title}</p>
+                        <small className="product-small-cta">
                           {product?.title}
                         </small>
                         <>
                           <Money
-                            className="product_price"
+                            className="product-price"
                             data={product?.priceRange?.minVariantPrice}
                           />
                         </>
@@ -284,7 +284,7 @@ function ProductMain({
       <br />
       {stars && (
         <div
-          className="star_rating"
+          className="star-rating"
           dangerouslySetInnerHTML={{
             __html: stars,
           }}
@@ -451,7 +451,7 @@ function AddToCartButton({
             value={JSON.stringify(analytics)}
           />
           <button
-            className="banner_repo_cta"
+            className="banner-repo-cta"
             type="submit"
             onClick={onClick}
             disabled={disabled ?? fetcher.state !== 'idle'}
