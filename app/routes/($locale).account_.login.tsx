@@ -86,7 +86,7 @@ export default function Login() {
             required
             placeholder="Email address"
             aria-label="Email address"
-            className="footer_email login-email"
+            className="footer-email login-email"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
@@ -98,7 +98,7 @@ export default function Login() {
             autoComplete="current-password"
             placeholder="Password"
             aria-label="Password"
-            className="footer_email login-email"
+            className="footer-email login-email"
             minLength={8}
             required
           />
@@ -111,7 +111,7 @@ export default function Login() {
             </mark>
           </p>
         )}
-        <button className="banner_repo_cta update" type="submit">
+        <button className="banner-repo-cta update" type="submit">
           Sign in
         </button>
       </Form>

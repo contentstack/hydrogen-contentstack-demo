@@ -119,7 +119,7 @@ export default function Register() {
             required
             placeholder="Email address"
             aria-label="Email address"
-            className="footer_email login-email"
+            className="footer-email login-email"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
@@ -131,7 +131,7 @@ export default function Register() {
             placeholder="Password"
             aria-label="Password"
             minLength={8}
-            className="footer_email login-email"
+            className="footer-email login-email"
             required
           />
           <input
@@ -142,7 +142,7 @@ export default function Register() {
             placeholder="Re-enter password"
             aria-label="Re-enter password"
             minLength={8}
-            className="footer_email login-email"
+            className="footer-email login-email"
             required
           />
         </fieldset>
@@ -155,7 +155,7 @@ export default function Register() {
         ) : (
           <br />
         )}
-        <button className="banner_repo_cta update recover-cta" type="submit">
+        <button className="banner-repo-cta update recover-cta" type="submit">
           Create Account
         </button>
       </Form>

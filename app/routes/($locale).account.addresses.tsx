@@ -219,11 +219,11 @@ export default function Addresses() {
   const {defaultAddress, addresses} = customer;
 
   return (
-    <div className="account-addresses order_status">
+    <div className="account-addresses order-status">
       <h2>Addresses</h2>
       <br />
       {!addresses.nodes.length ? (
-        <div className="empty_orders">
+        <div className="empty-orders">
           <p>You have no addresses saved.</p>
         </div>
       ) : (

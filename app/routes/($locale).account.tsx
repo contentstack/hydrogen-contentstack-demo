@@ -106,7 +106,7 @@ function AccountLayout({
     : 'Account Details';
 
   return (
-    <div className="container order_page ">
+    <div className="container order-page ">
       <h1>{heading}</h1>
       <div className="account flex">
         <br />
@@ -137,21 +137,21 @@ function AccountMenu() {
       <NavLink
         to="/account/orders"
         style={isActiveStyle}
-        className="view_allproducts acc_cta"
+        className="view-all-products acc-cta"
       >
         Orders &nbsp;
       </NavLink>
       <NavLink
         to="/account/profile"
         style={isActiveStyle}
-        className="view_allproducts acc_cta"
+        className="view-all-products acc-cta"
       >
         Profile &nbsp;
       </NavLink>
       <NavLink
         to="/account/addresses"
         style={isActiveStyle}
-        className="view_allproducts acc_cta"
+        className="view-all-products acc-cta"
       >
         {' '}
         Addresses &nbsp;
@@ -164,7 +164,7 @@ function AccountMenu() {
 function Logout() {
   return (
     <Form className="account-logout" method="POST" action="/account/logout">
-      <button className="view_allproducts acc_cta logout" type="submit">
+      <button className="view-all-products acc-cta logout" type="submit">
         Logout →
       </button>
     </Form>

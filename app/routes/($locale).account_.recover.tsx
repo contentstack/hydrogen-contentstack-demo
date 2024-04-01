@@ -84,7 +84,7 @@ export default function Recover() {
                   placeholder="Email address"
                   required
                   type="email"
-                  className="footer_email login-email"
+                  className="footer-email login-email"
                 />
               </fieldset>
               {action?.error && (
@@ -95,7 +95,7 @@ export default function Recover() {
                 </p>
               )}
               <button
-                className="banner_repo_cta update recover-cta"
+                className="banner-repo-cta update recover-cta"
                 type="submit"
               >
                 Request Reset Link

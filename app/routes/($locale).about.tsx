@@ -29,7 +29,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home flex pg_bt">
+    <div className="home flex pg-bt">
       <RecommendedProducts cmsData={data.fetchedData} />
     </div>
   );
@@ -42,11 +42,16 @@ function RecommendedProducts({
 }) {
   return (
     <div>
-      <div className="about_page_banner">
-        <h1 className=" bodyCss about_heading">{cmsData?.heading}</h1>
+      <div className="about-page-banner">
+        <h1 className=" bodyCss about-heading">{cmsData?.heading}</h1>
       </div>
       <div className="container">
-        <p className="about_description">{cmsData?.description}</p>
+        <p
+          className="about-description"
+          dangerouslySetInnerHTML={{
+            __html: cmsData?.description,
+          }}
+        />
       </div>
     </div>
   );

@@ -50,17 +50,17 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export default function Productpage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home flex pg_bt">
+    <div className="home flex pg-bt">
       <Pagination connection={data?.recommendedProducts?.products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
             <RecommendedProducts products={nodes} cmsData={data?.fetchedData} />
-            <NextLink className="load_more">
+            <NextLink className="load-more">
               {isLoading ? (
                 'Loading...'
               ) : (
                 <div className="center">
-                  <span className="view_allproducts load_more">
+                  <span className="view-all-products load-more">
                     Load more ↓
                   </span>
                 </div>
@@ -82,9 +82,9 @@ function RecommendedProducts({
 }) {
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <div className="featured_wrapper container">
-        <div className="featuredContent">
-          <h2 className="product_css">{cmsData?.product_title}</h2>
+      <div className="featured-wrapper container">
+        <div className="featured-content">
+          <h2 className="product-css">{cmsData?.product_title}</h2>
         </div>
         <div className="feature-products-grid">
           {products?.map((product: any) => {
@@ -122,8 +122,7 @@ function RecommendedProducts({
                       style={{height: '85% !important'}}
                     />
                   )}
-                  <p className="product_cta">{product?.title}</p>
-                  <small className="product_small_cta">{product?.title}</small>
+                  <p className="product-cta">{product?.title}</p>
                   <small>
                     <div className="product-price-on-sale">
                       {product?.priceRange ? (

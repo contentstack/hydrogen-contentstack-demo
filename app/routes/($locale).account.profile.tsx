@@ -115,7 +115,7 @@ export default function AccountProfile() {
   const customer = action?.customer ?? account?.customer;
 
   return (
-    <div className="account-profile order_status ">
+    <div className="account-profile order-status ">
       <h2>Your profile</h2>
       <br />
       <Form method="PUT">
@@ -128,7 +128,7 @@ export default function AccountProfile() {
             placeholder="First name"
             aria-label="First name"
             defaultValue={customer.firstName ?? ''}
-            className="footer_email login-email"
+            className="footer-email login-email"
             minLength={2}
           />
           <input
@@ -139,7 +139,7 @@ export default function AccountProfile() {
             placeholder="Last name"
             aria-label="Last name"
             defaultValue={customer.lastName ?? ''}
-            className="footer_email login-email"
+            className="footer-email login-email"
             minLength={2}
           />
           <input
@@ -149,7 +149,7 @@ export default function AccountProfile() {
             autoComplete="tel"
             placeholder="Mobile"
             aria-label="Mobile"
-            className="footer_email login-email"
+            className="footer-email login-email"
             defaultValue={customer.phone ?? ''}
           />
           <input
@@ -160,7 +160,7 @@ export default function AccountProfile() {
             required
             placeholder="Email address"
             aria-label="Email address"
-            className="footer_email login-email"
+            className="footer-email login-email"
             defaultValue={customer.email ?? ''}
           />
           <div className="account-profile-marketing">
@@ -170,7 +170,6 @@ export default function AccountProfile() {
               type="checkbox"
               placeholder="Accept marketing"
               aria-label="Accept marketing"
-              // className="footer_email login-email"
               defaultChecked={customer.acceptsMarketing}
             />
             <label htmlFor="acceptsMarketing">
@@ -188,7 +187,7 @@ export default function AccountProfile() {
             autoComplete="current-password"
             placeholder="Current password"
             aria-label="Current password"
-            className="footer_email login-email"
+            className="footer-email login-email"
             minLength={8}
           />
           <input
@@ -197,7 +196,7 @@ export default function AccountProfile() {
             type="password"
             placeholder="New password"
             aria-label="New password"
-            className="footer_email login-email"
+            className="footer-email login-email"
             minLength={8}
           />
 
@@ -208,7 +207,7 @@ export default function AccountProfile() {
             type="password"
             placeholder="New password (confirm)"
             aria-label="New password confirm"
-            className="footer_email login-email"
+            className="footer-email login-email"
             minLength={8}
           />
           <small>Passwords must be at least 8 characters.</small>
@@ -223,7 +222,7 @@ export default function AccountProfile() {
           <br />
         )}
         <button
-          className="banner_repo_cta update"
+          className="banner-repo-cta update"
           type="submit"
           disabled={state !== 'idle'}
         >

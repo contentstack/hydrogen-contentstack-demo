@@ -51,12 +51,12 @@ export default function Collection() {
             </PreviousLink>
             <ProductsGrid products={nodes} />
             <br />
-            <NextLink className="load_more">
+            <NextLink className="load-more">
               {isLoading ? (
                 'Loading...'
               ) : (
                 <div className="center">
-                  <span className="view_allproducts load_more">
+                  <span className="view-all-products load-more">
                     Load more ↓
                   </span>
                 </div>
