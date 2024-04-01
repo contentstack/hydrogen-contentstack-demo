@@ -214,14 +214,14 @@ function RecommendedProducts({
                       const discountedPrice = parseFloat(
                         product?.priceRange?.minVariantPrice?.amount,
                       );
-                      let percentageOff;
+                      let priceOff;
 
                       if (
                         originalPrice &&
                         discountedPrice &&
                         discountedPrice < originalPrice
                       ) {
-                        percentageOff = originalPrice - discountedPrice;
+                        priceOff = originalPrice - discountedPrice;
                       }
                       return (
                         <Fragment key={product?.id}>
@@ -263,9 +263,9 @@ function RecommendedProducts({
                                       }
                                     />
                                   </s>
-                                  {percentageOff ? (
+                                  {priceOff ? (
                                     <p className="comparePrice">
-                                      (${percentageOff.toFixed(2)} OFF)
+                                      (${priceOff.toFixed(2)} OFF)
                                     </p>
                                   ) : (
                                     ''

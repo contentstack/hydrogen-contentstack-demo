@@ -100,10 +100,10 @@ function ProductItem({
   const discountedPrice = parseFloat(
     product?.priceRange?.minVariantPrice?.amount,
   );
-  let percentageOff;
+  let priceOff;
 
   if (originalPrice && discountedPrice && discountedPrice < originalPrice) {
-    percentageOff = originalPrice - discountedPrice;
+    priceOff = originalPrice - discountedPrice;
   }
   return (
     <Link
@@ -136,8 +136,8 @@ function ProductItem({
               data={product?.compareAtPriceRange?.minVariantPrice}
             />
           </s>
-          {percentageOff ? (
-            <p className="comparePrice">(${percentageOff.toFixed(2)} OFF)</p>
+          {priceOff ? (
+            <p className="comparePrice">(${priceOff.toFixed(2)} OFF)</p>
           ) : (
             ''
           )}
