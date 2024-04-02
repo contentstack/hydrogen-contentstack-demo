@@ -252,16 +252,24 @@ function RecommendedProducts({
                                       }
                                     />
                                   ) : null}
-                                  <s>
-                                    <Money
-                                      className="comparePrice"
-                                      data={
-                                        product?.compareAtPriceRange
-                                          ?.minVariantPrice
-                                      }
-                                    />
-                                  </s>
-                                  {priceOff ? (
+                                  {product?.priceRange?.minVariantPrice
+                                    ?.amount <
+                                  product?.compareAtPriceRange?.minVariantPrice
+                                    ?.amount ? (
+                                    <s>
+                                      <Money
+                                        className="comparePrice"
+                                        data={
+                                          product?.compareAtPriceRange
+                                            ?.minVariantPrice
+                                        }
+                                      />
+                                    </s>
+                                  ) : (
+                                    ''
+                                  )}
+
+                                  {priceOff > 0 ? (
                                     <p className="comparePrice">
                                       (${priceOff.toFixed(2)} OFF)
                                     </p>
