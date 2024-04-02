@@ -5,6 +5,7 @@ import {
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
 import {Form, Link, useActionData, type MetaFunction} from '@remix-run/react';
+import '../styles/pages.css';
 
 type ActionResponse = {
   error: string | null;
@@ -72,11 +73,11 @@ export default function Login() {
   const error = data?.error || null;
 
   return (
-    <div className="login">
-      <h1>Sign in.</h1>
+    <div className="login container">
+      <h1>Sign in</h1>
       <Form method="POST">
-        <fieldset>
-          <label htmlFor="email">Email address</label>
+        <fieldset className="fieldset">
+          {/* <label htmlFor="email">Email address</label> */}
           <input
             id="email"
             name="email"
@@ -85,10 +86,11 @@ export default function Login() {
             required
             placeholder="Email address"
             aria-label="Email address"
+            className="footer-email login-email"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
-          <label htmlFor="password">Password</label>
+          {/* <label htmlFor="password">Password</label> */}
           <input
             id="password"
             name="password"
@@ -96,29 +98,31 @@ export default function Login() {
             autoComplete="current-password"
             placeholder="Password"
             aria-label="Password"
+            className="footer-email login-email"
             minLength={8}
             required
           />
         </fieldset>
-        {error ? (
+        {error && (
           <p>
             <mark>
               <small>{error}</small>
+              {/* <p>Invalid input</p> */}
             </mark>
           </p>
-        ) : (
-          <br />
         )}
-        <button type="submit">Sign in</button>
+        <button className="banner-repo-cta update" type="submit">
+          Sign in
+        </button>
       </Form>
       <br />
-      <div>
-        <p>
+      <div className="options">
+        <div className="forgot-password">
           <Link to="/account/recover">Forgot password →</Link>
-        </p>
-        <p>
-          <Link to="/account/register">Register →</Link>
-        </p>
+        </div>
+        <div className="register">
+          <Link to="/account/register">Create An Account →</Link>
+        </div>
       </div>
     </div>
   );
