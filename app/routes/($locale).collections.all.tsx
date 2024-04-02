@@ -81,78 +81,100 @@ function RecommendedProducts({
   cmsData: any;
 }) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="featured-wrapper container">
-        <div className="featured-content">
-          <h2 className="product-css">{cmsData?.product_title}</h2>
-        </div>
-        <div className="feature-products-grid">
-          {products?.map((product: any) => {
-            const originalPrice = parseFloat(
-              product?.compareAtPriceRange?.minVariantPrice?.amount,
-            );
-            const discountedPrice = parseFloat(
-              product?.priceRange?.minVariantPrice?.amount,
-            );
-            let priceOff;
-            if (
-              originalPrice &&
-              discountedPrice &&
-              discountedPrice < originalPrice
-            ) {
-              priceOff = originalPrice - discountedPrice;
-            }
-            return (
-              <Fragment key={product?.id}>
-                <Link
-                  className="feature-product"
-                  to={`/products/${product?.handle}`}
-                >
-                  {product?.images?.nodes[0] ? (
-                    <Image
-                      data={product?.images?.nodes[0]}
-                      aspectRatio="1/1"
-                      sizes="(min-width: 45em) 20vw, 50vw"
-                    />
-                  ) : (
-                    // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                    <img
-                      src={NoImg}
-                      alt="No Image"
-                      style={{height: '85% !important'}}
-                    />
-                  )}
-                  <p className="product-cta">{product?.title}</p>
-                  <small>
-                    <div className="product-price-on-sale">
-                      {product?.priceRange ? (
-                        <Money
-                          className="price"
-                          data={product?.priceRange?.minVariantPrice}
-                        />
-                      ) : null}
-                      <s>
-                        <Money
-                          className="comparePrice"
-                          data={product?.compareAtPriceRange?.minVariantPrice}
-                        />
-                      </s>
-                      {priceOff ? (
-                        <p className="comparePrice">
-                          (${priceOff.toFixed(2)} OFF)
-                        </p>
-                      ) : (
-                        ''
-                      )}
-                    </div>
-                  </small>
-                </Link>
-              </Fragment>
-            );
-          })}
-        </div>
+    <>
+      <div className="breadcrumbs" style={{minWidth: '1600px'}}>
+        <ul>
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/collections/all">Featured Products</a>
+          </li>
+        </ul>
       </div>
-    </Suspense>
+      <div></div>
+
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="featured-wrapper container">
+          <div className="featured-content">
+            <h2 className="product-css">{cmsData?.product_title}</h2>
+          </div>
+          <div className="feature-products-grid">
+            {products?.map((product: any) => {
+              const originalPrice = parseFloat(
+                product?.compareAtPriceRange?.minVariantPrice?.amount,
+              );
+              const discountedPrice = parseFloat(
+                product?.priceRange?.minVariantPrice?.amount,
+              );
+              let priceOff;
+              if (
+                originalPrice &&
+                discountedPrice &&
+                discountedPrice < originalPrice
+              ) {
+                priceOff = originalPrice - discountedPrice;
+              }
+              return (
+                <Fragment key={product?.id}>
+                  <Link
+                    className="feature-product"
+                    to={`/products/${product?.handle}`}
+                  >
+                    {product?.images?.nodes[0] ? (
+                      <Image
+                        data={product?.images?.nodes[0]}
+                        aspectRatio="1/1"
+                        sizes="(min-width: 45em) 20vw, 50vw"
+                      />
+                    ) : (
+                      // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                      <img
+                        src={NoImg}
+                        alt="No Image"
+                        style={{height: '85% !important'}}
+                      />
+                    )}
+                    <p className="product-cta">{product?.title}</p>
+                    <small>
+                      <div className="product-price-on-sale">
+                        {product?.priceRange ? (
+                          <Money
+                            className="price"
+                            data={product?.priceRange?.minVariantPrice}
+                          />
+                        ) : null}
+                        {product?.priceRange?.minVariantPrice?.amount <
+                        product?.compareAtPriceRange?.minVariantPrice
+                          ?.amount ? (
+                          <s>
+                            <Money
+                              className="comparePrice"
+                              data={
+                                product?.compareAtPriceRange?.minVariantPrice
+                              }
+                            />
+                          </s>
+                        ) : (
+                          ''
+                        )}
+                        {priceOff  >0? (
+                          <p className="comparePrice">
+                            (${priceOff.toFixed(2)} OFF)
+                          </p>
+                        ) : (
+                          ''
+                        )}
+                      </div>
+                    </small>
+                  </Link>
+                </Fragment>
+              );
+            })}
+          </div>
+        </div>
+      </Suspense>
+    </>
   );
 }
 
