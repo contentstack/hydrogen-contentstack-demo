@@ -82,7 +82,7 @@ function RecommendedProducts({
 }) {
   return (
     <>
-      <div className="breadcrumbs" style={{minWidth: '1600px'}}>
+      <div className="breadcrumbs container">
         <ul>
           <li>
             <a href="/">Home</a>
@@ -124,8 +124,8 @@ function RecommendedProducts({
                     {product?.images?.nodes[0] ? (
                       <Image
                         data={product?.images?.nodes[0]}
-                        aspectRatio="1/1"
-                        sizes="(min-width: 45em) 20vw, 50vw"
+                        aspectRatio="1/2"
+                        // sizes="(min-width: 45em) 20vw, 50vw"
                       />
                     ) : (
                       // eslint-disable-next-line jsx-a11y/img-redundant-alt
@@ -221,7 +221,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         last: $last,
         before: $startCursor,
         after: $endCursor,
-        sortKey: UPDATED_AT
+        sortKey: CREATED_AT
         reverse: true
         ) {
         nodes {
