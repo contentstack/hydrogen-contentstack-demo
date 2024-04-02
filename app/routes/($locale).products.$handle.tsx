@@ -1,4 +1,4 @@
-import {Suspense} from 'react';
+import {Fragment, Suspense} from 'react';
 import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {
   Await,
@@ -12,6 +12,7 @@ import type {
   ProductVariantsQuery,
   ProductVariantFragment,
 } from 'storefrontapi.generated';
+import NoImg from '../../public/NoImg.svg';
 
 import {
   Image,
@@ -26,6 +27,7 @@ import type {
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/utils';
+import {getEntry} from '~/components/contentstack-sdk';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
@@ -47,6 +49,20 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
       !option.name.startsWith('fbclid'),
   );
 
+  const envConfig = context?.env;
+  const fetchData = async () => {
+    try {
+      const result = await getEntry({
+        contentTypeUid: 'product_detail_page',
+        envConfig,
+      });
+      return result;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('ERROR', error);
+    }
+  };
+
   if (!handle) {
     throw new Error('Expected product handle to be defined');
   }
@@ -55,16 +71,23 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   const {product} = await storefront.query(PRODUCT_QUERY, {
     variables: {handle, selectedOptions},
   });
-
   if (!product?.id) {
     throw new Response(null, {status: 404});
   }
+  const productID = product?.id;
+  // Fetch related products using the product ID
+  const relatedProductQueryResults = await storefront.query(
+    RELATED_PRODUCT_QUERY,
+    {
+      variables: {productID}, // Pass the product ID as the $productID variable
+    },
+  );
 
-  const firstVariant = product.variants.nodes[0];
+  const firstVariant = product.variants?.nodes[0];
   const firstVariantIsDefault = Boolean(
-    firstVariant.selectedOptions.find(
+    firstVariant?.selectedOptions?.find(
       (option: SelectedOption) =>
-        option.name === 'Title' && option.value === 'Default Title',
+        option?.name === 'Title' && option?.value === 'Default Title',
     ),
   );
 
@@ -87,7 +110,12 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     variables: {handle},
   });
 
-  return defer({product, variants});
+  return defer({
+    product,
+    variants,
+    fetchedData: await fetchData(),
+    relatedProductQueryResults,
+  });
 }
 
 function redirectToFirstVariant({
@@ -97,15 +125,15 @@ function redirectToFirstVariant({
   product: ProductFragment;
   request: Request;
 }) {
-  const url = new URL(request.url);
-  const firstVariant = product.variants.nodes[0];
+  const url = new URL(request?.url);
+  const firstVariant = product?.variants?.nodes[0];
 
   return redirect(
     getVariantUrl({
-      pathname: url.pathname,
-      handle: product.handle,
-      selectedOptions: firstVariant.selectedOptions,
-      searchParams: new URLSearchParams(url.search),
+      pathname: url?.pathname,
+      handle: product?.handle,
+      selectedOptions: firstVariant?.selectedOptions,
+      searchParams: new URLSearchParams(url?.search),
     }),
     {
       status: 302,
@@ -114,17 +142,68 @@ function redirectToFirstVariant({
 }
 
 export default function Product() {
-  const {product, variants} = useLoaderData<typeof loader>();
+  const {product, variants, relatedProductQueryResults, fetchedData} =
+    useLoaderData<typeof loader>();
   const {selectedVariant} = product;
   return (
-    <div className="product container">
-      <ProductImage image={selectedVariant?.image} />
-      <ProductMain
-        selectedVariant={selectedVariant}
-        product={product}
-        variants={variants}
-      />
-    </div>
+    <>
+      <div className="product container">
+        <ProductImage image={selectedVariant?.image} />
+        <ProductMain
+          selectedVariant={selectedVariant}
+          product={product}
+          variants={variants}
+        />
+      </div>
+      <div className="related-wrapper">
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="featured-wrapper container">
+            <div className="featured-content">
+              <h2 className="product-css">{fetchedData?.heading}</h2>
+            </div>
+            <div className="feature-products-grid">
+              {relatedProductQueryResults?.productRecommendations?.map(
+                (product: any) => {
+                  return (
+                    <Fragment key={product?.id}>
+                      <Link
+                        className="feature-product"
+                        to={`/products/${product?.handle}`}
+                      >
+                        {product?.images?.nodes[0] ? (
+                          <Image
+                            data={product?.images?.nodes[0]}
+                            aspectRatio="1/1"
+                            sizes="(min-width: 45em) 20vw, 50vw"
+                          />
+                        ) : (
+                          // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                          <img
+                            src={NoImg}
+                            alt="No Image"
+                            style={{height: '85% !important'}}
+                          />
+                        )}
+                        <p className="product-cta">{product?.title}</p>
+                        <small className="product-small-cta">
+                          {product?.title}
+                        </small>
+                        <>
+                          <Money
+                            className="product-price"
+                            data={product?.priceRange?.minVariantPrice}
+                          />
+                        </>
+                      </Link>
+                    </Fragment>
+                  );
+                },
+              )}
+            </div>
+          </div>
+        </Suspense>
+      </div>
+    </>
   );
 }
 
@@ -135,10 +214,10 @@ function ProductImage({image}: {image: ProductVariantFragment['image']}) {
   return (
     <div className="product-image">
       <Image
-        alt={image.altText || 'Product Image'}
+        alt={image?.altText ?? 'Product Image'}
         aspectRatio="1/1"
         data={image}
-        key={image.id}
+        key={image?.id}
         sizes="(min-width: 45em) 50vw, 100vw"
       />
     </div>
@@ -156,7 +235,7 @@ function ProductMain({
 }) {
   const {title, descriptionHtml, metafield} = product;
   const valueMap = new Map();
-  metafield.reference.fields.forEach((field: any) => {
+  metafield?.reference?.fields.forEach((field: any) => {
     valueMap.set(field.key, field.value);
   });
   function generateStars(rating: any) {
@@ -172,6 +251,11 @@ function ProductMain({
   return (
     <div className="product-main">
       <h1>{title}</h1>
+      <br />
+      <div
+        className="description"
+        dangerouslySetInnerHTML={{__html: descriptionHtml}}
+      />
       <ProductPrice selectedVariant={selectedVariant} />
       <br />
       <Suspense
@@ -191,46 +275,52 @@ function ProductMain({
             <ProductForm
               product={product}
               selectedVariant={selectedVariant}
-              variants={data.product?.variants.nodes || []}
+              variants={data?.product?.variants.nodes || []}
             />
           )}
         </Await>
       </Suspense>
+
       <br />
+      {stars && (
+        <div
+          className="star-rating"
+          dangerouslySetInnerHTML={{
+            __html: stars,
+          }}
+        />
+      )}
+
       <br />
-      <p>
-        <strong>Description</strong>
-      </p>
+      {valueMap.get('product_review') && (
+        <>
+          <p>
+            <strong>Reviews</strong>
+          </p>
+          <br />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: valueMap.get('product_review'),
+            }}
+          />
+        </>
+      )}
+
       <br />
-      <div dangerouslySetInnerHTML={{__html: descriptionHtml}} />
-      <br />
-      <div
-        className="star_rating"
-        dangerouslySetInnerHTML={{
-          __html: stars,
-        }}
-      />
-      <br />
-      <p>
-        <strong>Reviews</strong>
-      </p>
-      <br />
-      {/* <ReviewCollapseView reviewContent={valueMap.get('product_review')} /> */}
-      <div
-        dangerouslySetInnerHTML={{
-          __html: valueMap.get('shipping_return_policy'),
-        }}
-      />
-      <br />
-      <p>
-        <strong>Shipping and Return</strong>
-      </p>
-      <br />
-      <div
-        dangerouslySetInnerHTML={{
-          __html: valueMap.get('shipping_return_policy'),
-        }}
-      />
+      {valueMap.get('shipping_return_policy') && (
+        <>
+          <p>
+            <strong>Shipping and Return</strong>
+          </p>
+          <br />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: valueMap.get('shipping_return_policy'),
+            }}
+          />
+        </>
+      )}
+
       <br />
     </div>
   );
@@ -245,12 +335,16 @@ function ProductPrice({
     <div className="product-price">
       {selectedVariant?.compareAtPrice ? (
         <>
-          <p>Sale</p>
           <br />
           <div className="product-price-on-sale">
-            {selectedVariant ? <Money data={selectedVariant.price} /> : null}
+            {selectedVariant ? (
+              <Money className="price" data={selectedVariant?.price} />
+            ) : null}
             <s>
-              <Money data={selectedVariant.compareAtPrice} />
+              <Money
+                className="comparePrice"
+                data={selectedVariant?.compareAtPrice}
+              />
             </s>
           </div>
         </>
@@ -278,13 +372,13 @@ function ProductForm({
         variants={variants}
       >
         {({option}) => {
-          return <ProductOptions key={option.name} option={option} />;
+          return <ProductOptions key={option?.name} option={option} />;
         }}
         {/* <ProductOptions option={product.options as any} />; */}
       </VariantSelector>
       <br />
       <AddToCartButton
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
+        disabled={!selectedVariant || !selectedVariant?.availableForSale}
         onClick={() => {
           window.location.href = window.location.href + '#cart-aside';
         }}
@@ -292,7 +386,7 @@ function ProductForm({
           selectedVariant
             ? [
                 {
-                  merchandiseId: selectedVariant.id,
+                  merchandiseId: selectedVariant?.id,
                   quantity: 1,
                 },
               ]
@@ -307,14 +401,14 @@ function ProductForm({
 
 function ProductOptions({option}: {option: VariantOption}) {
   return (
-    <div className="product-options" key={option.name}>
-      <h5>{option.name}</h5>
+    <div className="product-options" key={option?.name}>
+      <h5>{option?.name}</h5>
       <div className="product-options-grid">
-        {option.values.map(({value, isAvailable, isActive, to}) => {
+        {option?.values?.map(({value, isAvailable, isActive, to}) => {
           return (
             <Link
               className="product-options-item"
-              key={option.name + value}
+              key={option?.name + value}
               prefetch="intent"
               preventScrollReset
               replace
@@ -357,18 +451,37 @@ function AddToCartButton({
             value={JSON.stringify(analytics)}
           />
           <button
+            className="banner-repo-cta"
             type="submit"
             onClick={onClick}
             disabled={disabled ?? fetcher.state !== 'idle'}
           >
             {children}
           </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            viewBox="0 0 32 32"
+            fill="none"
+            className="svg-icon"
+          >
+            <path
+              d="M11.9979 12.9704C12.4865 12.7141 13.0901 12.9029 13.346 13.3921C13.5994 13.8764 13.98 14.2821 14.4469 14.5655C14.9138 14.8488 15.4491 14.9991 15.995 15C16.541 15.0009 17.0768 14.8524 17.5446 14.5706C18.0124 14.2888 18.3944 13.8843 18.6494 13.4009C18.9069 12.9125 19.5111 12.7257 19.9989 12.9836C20.4866 13.2415 20.6732 13.8465 20.4156 14.3349C19.9907 15.1405 19.354 15.8146 18.5744 16.2843C17.7947 16.754 16.9017 17.0015 15.9917 17C15.0818 16.9985 14.1896 16.7481 13.4115 16.2758C12.6334 15.8035 11.9989 15.1273 11.5767 14.3202C11.3207 13.831 11.5093 13.2267 11.9979 12.9704Z"
+              fill="#212121"
+            />
+            <path
+              fillRule="evenodd"
+              clipRule="evenodd"
+              d="M11.1064 8C11.569 5.71776 13.5842 4 16 4C18.4158 4 20.431 5.71776 20.8936 8H22.3874C23.7916 8 25.0075 8.9766 25.3121 10.3492L27.8791 21.9153C28.5721 25.0379 26.199 28 23.0045 28H8.99555C5.80095 28 3.42793 25.0379 4.12094 21.9153L6.68786 10.3492C6.99249 8.9766 8.20835 8 9.61263 8H11.1064ZM13.1744 8C13.5857 6.83481 14.6955 6 16 6C17.3045 6 18.4143 6.83481 18.8256 8H13.1744ZM9.61263 10C9.14454 10 8.73925 10.3255 8.63771 10.7831L6.07078 22.3492C5.65498 24.2227 7.07879 26 8.99555 26H23.0045C24.9212 26 26.345 24.2228 25.9292 22.3492L23.3623 10.7831C23.2607 10.3255 22.8555 10 22.3874 10H9.61263Z"
+              fill="#212121"
+            />
+          </svg>
         </>
       )}
     </CartForm>
   );
 }
-
 const PRODUCT_VARIANT_FRAGMENT = `#graphql
   fragment ProductVariant on ProductVariant {
     availableForSale
@@ -481,6 +594,38 @@ const VARIANTS_QUERY = `#graphql
   ) @inContext(country: $country, language: $language) {
     product(handle: $handle) {
       ...ProductVariants
+    }
+  }
+` as const;
+
+const RELATED_PRODUCT_QUERY = `#graphql
+  query productRecommendations(
+    $country: CountryCode
+    $language: LanguageCode
+    $productID: ID!
+  ) @inContext(country: $country, language: $language) {
+    productRecommendations(productId: $productID, intent: RELATED) {
+      id,
+      title
+      priceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      maxVariantPrice {
+        amount
+        currencyCode
+      }
+    }
+      images(first:1){
+        nodes{
+          id
+        url
+        altText
+        width
+        height
+        }
+      }
     }
   }
 ` as const;

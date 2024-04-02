@@ -20,6 +20,7 @@ export type LayoutProps = {
   footer: Promise<FooterQuery>;
   header: HeaderQuery;
   isLoggedIn: boolean;
+  fetchData: any;
 };
 
 export function Layout({
@@ -28,6 +29,7 @@ export function Layout({
   footer,
   header,
   isLoggedIn,
+  fetchData,
 }: LayoutProps) {
   return (
     <>
@@ -38,7 +40,13 @@ export function Layout({
       <main>{children}</main>
       <Suspense>
         <Await resolve={footer}>
-          {(footer) => <Footer menu={footer?.menu} shop={header?.shop} />}
+          {(footer) => (
+            <Footer
+              menu={footer?.menu}
+              shop={header?.shop}
+              cmsData={fetchData}
+            />
+          )}
         </Await>
       </Suspense>
     </>
