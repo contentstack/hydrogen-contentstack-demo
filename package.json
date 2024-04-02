@@ -19,6 +19,7 @@
     "@shopify/cli": "^3.52.0",
     "@shopify/cli-hydrogen": "^7.0.1",
     "@shopify/hydrogen": "^2023.10.0",
+    "@shopify/hydrogen-react": "^2024.1.1",
     "@shopify/remix-oxygen": "^2.0.0",
     "axios": "^1.6.5",
     "clsx": "^2.1.0",

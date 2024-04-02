@@ -23,6 +23,7 @@ import resetStyles from './styles/reset.css';
 import appStyles from './styles/app.css';
 import {Layout} from '~/components/Layout';
 import {cssBundleHref} from '@remix-run/css-bundle';
+import {getEntry} from './components/contentstack-sdk';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -97,6 +98,20 @@ export async function loader({context}: LoaderFunctionArgs) {
     },
   });
 
+  const envConfig = context?.env;
+  const fetchData = async () => {
+    try {
+      const result = await getEntry({
+        contentTypeUid: 'footer',
+        envConfig,
+      });
+      return result;
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error('ERROR', error);
+    }
+  };
+
   return defer(
     {
       cart: cartPromise,
@@ -104,6 +119,7 @@ export async function loader({context}: LoaderFunctionArgs) {
       header: await headerPromise,
       isLoggedIn,
       publicStoreDomain,
+      fetchedData: await fetchData(),
     },
     {headers},
   );
@@ -112,7 +128,6 @@ export async function loader({context}: LoaderFunctionArgs) {
 export default function App() {
   const nonce = useNonce();
   const data = useLoaderData<typeof loader>();
-
   return (
     <html lang="en">
       <head>
@@ -122,7 +137,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout {...data}>
+        <Layout fetchData={data?.fetchedData} {...data}>
           <Outlet />
         </Layout>
         <ScrollRestoration nonce={nonce} />
