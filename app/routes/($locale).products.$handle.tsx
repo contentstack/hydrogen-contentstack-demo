@@ -150,13 +150,12 @@ export default function Product() {
   const {selectedVariant} = product;
   const collectionName = product?.collections?.edges?.[0]?.node?.title;
   const productName = product?.title;
-  console.info('collectionName', collectionName, 'productName', productName);
 
   const limitedProducts =
     relatedProductQueryResults?.productRecommendations?.slice(0, 5);
   return (
     <>
-      <div className="breadcrumbs">
+      <div className="breadcrumbs container">
         <ul>
           <li>
             <a href="/">Home</a>
@@ -200,7 +199,7 @@ export default function Product() {
             <div className="feature-products-grid">
               {limitedProducts?.length
                 ? limitedProducts?.map((product: any) => {
-                    let priceOff;
+                    let priceOff: any;
                     // Check if the product is available for sale and all necessary price data is provided
                     if (
                       product.availableForSale &&
@@ -215,7 +214,6 @@ export default function Product() {
                       );
 
                       priceOff = compareAtPrice - price;
-
                     }
 
                     return (
@@ -265,7 +263,6 @@ export default function Product() {
                               ) : (
                                 ''
                               )}
-
                               {priceOff > 0 ? (
                                 <p className="comparePrice">
                                   (${priceOff.toFixed(2)} OFF)
@@ -487,8 +484,10 @@ function ProductPrice({
 }: {
   selectedVariant: ProductFragment['selectedVariant'];
 }) {
-  const originalPrice = parseFloat(selectedVariant?.compareAtPrice?.amount);
-  const discountedPrice = parseFloat(selectedVariant.price?.amount);
+  const originalPrice = parseFloat(
+    selectedVariant?.compareAtPrice?.amount || '',
+  );
+  const discountedPrice = parseFloat(selectedVariant?.price?.amount || '');
   let priceOff;
 
   if (originalPrice && discountedPrice && discountedPrice < originalPrice) {
