@@ -3,7 +3,7 @@
 This demo is compatible with `@shopify/hydrogen >= 2024.01` built on Remix.
 
 > For a more complex reference example, please see our [demo-ecommerce repo](https://github.com/contentstack/shopify-contentstack-app) which features a monorepo with an embedded Contentstack.
-<img src="https://cdn.shopify.com/oxygen-v2/29150/15868/32734/284360/build/_assets/banner-NQ5VZZZA.svg" width="1000" />
+<img src="https://cdn.shopify.com/oxygen-v2/29150/15868/32733/347547/build/_assets/banner-ZAZUZJHV.svg" width="1000" />
 [Demo][hydrogen-contentstack-demo] | [Contentstack Connect for Shopify][[contentstack-connect]]
 
 # About
@@ -25,13 +25,12 @@ This TypeScript demo adopts many of Hydrogen's [framework conventions and third-
 This demo comes preconfigured Contentstack, which adds a Contentstack client to the Remix context. This enables you to fetch content from Contentstack in Remix loaders and actions.
 ```tsx
 // <root>/app/routes/($locale).products.$handle.tsx
-import {getEntryByUid} from '~/components/contentstack-sdk';
+import {getEntry} from '~/components/contentstack-sdk';
 
 const fetchData = async () => {
     try {
-      const result = await getEntryByUid({
-        contentTypeUid: 'shopify_home',
-        entryUid: 'your entry uid',
+      const result = await getEntry({
+        contentTypeUid: `${your_contenttypeUID}`,
         envConfig,
       });
       return result;
