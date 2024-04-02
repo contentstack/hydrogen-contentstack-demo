@@ -67,6 +67,7 @@ aside header {
   height: var(--header-height);
   justify-content: space-between;
   padding: 0 20px;
+  margin-top: 16px;
 }
 
 aside header h3 {
@@ -297,6 +298,10 @@ aside li {
   margin-top: 0.25rem;
 }
 
+.mg-bt {
+  margin-bottom: 14px;
+}
+
 .cart-subtotal {
   align-items: center;
   display: flex;
@@ -430,7 +435,6 @@ aside li {
 * --------------------------------------------------
 */
 .collection-description {
-  margin-bottom: 1rem;
   max-width: 95%;
   @media (min-width: 45em) {
     max-width: 600px;
@@ -444,9 +448,12 @@ aside li {
   margin-bottom: 2rem;
 }
 
-.product-item img {
-  height: auto;
-  width: 100%;
+.product-item {
+  margin: 14px;
+   img {
+    height: 320px;
+    width: 100%;
+   }
 }
 
 /*
@@ -501,8 +508,8 @@ aside li {
   grid-gap: 0.5rem;
   align-items: center;
   .price {
-    font-size: 24px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 500;
     line-height: 36px;
   }
 }
