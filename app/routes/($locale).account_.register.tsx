@@ -107,11 +107,10 @@ export default function Register() {
   const data = useActionData<ActionResponse>();
   const error = data?.error || null;
   return (
-    <div className="login">
-      <h1>Register.</h1>
+    <div className="login container register ">
+      <h1>Create an Account</h1>
       <Form method="POST">
-        <fieldset>
-          <label htmlFor="email">Email address</label>
+        <fieldset className="fieldset">
           <input
             id="email"
             name="email"
@@ -120,10 +119,10 @@ export default function Register() {
             required
             placeholder="Email address"
             aria-label="Email address"
+            className="footer-email login-email"
             // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
           />
-          <label htmlFor="password">Password</label>
           <input
             id="password"
             name="password"
@@ -132,9 +131,9 @@ export default function Register() {
             placeholder="Password"
             aria-label="Password"
             minLength={8}
+            className="footer-email login-email"
             required
           />
-          <label htmlFor="passwordConfirm">Re-enter password</label>
           <input
             id="passwordConfirm"
             name="passwordConfirm"
@@ -143,6 +142,7 @@ export default function Register() {
             placeholder="Re-enter password"
             aria-label="Re-enter password"
             minLength={8}
+            className="footer-email login-email"
             required
           />
         </fieldset>
@@ -155,11 +155,15 @@ export default function Register() {
         ) : (
           <br />
         )}
-        <button type="submit">Register</button>
+        <button className="banner-repo-cta update recover-cta" type="submit">
+          Create Account
+        </button>
       </Form>
-      <br />
-      <p>
-        <Link to="/account/login">Login →</Link>
+      <p className="sign-in">
+        <span>
+          Already have an account?
+          <Link to="/account/login"> Sign In →</Link>
+        </span>
       </p>
     </div>
   );
