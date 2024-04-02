@@ -82,52 +82,66 @@ function RecommendedProducts({
   cmsData: any;
 }) {
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="featured_wrapper container">
-          <div className="featuredContent">
-            <h2 className="product_css">{cmsData.product_title}</h2>
+    <>
+      <div className="breadcrumbs" style={{minWidth:'1600px'}}>
+        <ul>
+          <li>
+            <a href='/'>Home</a>
+          </li>
+          <li>
+            <a href='/collections/all'>Featured Products</a>
+          </li>
+        </ul>
+      </div>
+      <div>
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="featured_wrapper container">
+            <div className="featuredContent">
+              <h2 className="product_css">{cmsData.product_title}</h2>
+            </div>
+            <div className="feature-products-grid">
+              {products?.map((product: any) => {
+                return (
+                  <Fragment key={product.id}>
+                    <Link
+                      className="feature-product"
+                      to={`/products/${product.handle}`}
+                    >
+                      {product.images.nodes[0] ? (
+                        <Image
+                          data={product.images.nodes[0]}
+                          aspectRatio="1/1"
+                          sizes="(min-width: 45em) 20vw, 50vw"
+                        />
+                      ) : (
+                        // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                        <img
+                          src={NoImg}
+                          alt="No Image"
+                          style={{height: '85% !important'}}
+                        />
+                      )}
+                      <p className="product_cta">{product.title}</p>
+                      <small className="product_small_cta">
+                        {product.title}
+                      </small>
+                      <small>
+                        <Money
+                          className="product_price"
+                          data={product.priceRange.minVariantPrice}
+                        />
+                      </small>
+                    </Link>
+                  </Fragment>
+                );
+              })}
+            </div>
           </div>
-          <div className="feature-products-grid">
-            {products?.map((product: any) => {
-              return (
-                <Fragment key={product.id}>
-                  <Link
-                    className="feature-product"
-                    to={`/products/${product.handle}`}
-                  >
-                    {product.images.nodes[0] ? (
-                      <Image
-                        data={product.images.nodes[0]}
-                        aspectRatio="1/1"
-                        sizes="(min-width: 45em) 20vw, 50vw"
-                      />
-                    ) : (
-                      // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                      <img
-                        src={NoImg}
-                        alt="No Image"
-                        style={{height: '85% !important'}}
-                      />
-                    )}
-                    <p className="product_cta">{product.title}</p>
-                    <small className="product_small_cta">{product.title}</small>
-                    <small>
-                      <Money
-                        className="product_price"
-                        data={product.priceRange.minVariantPrice}
-                      />
-                    </small>
-                  </Link>
-                </Fragment>
-              );
-            })}
-          </div>
-        </div>
-      </Suspense>
+        </Suspense>
 
-      <br />
-    </div>
+        <br />
+      </div>
+    </>
   );
 }
 

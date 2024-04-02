@@ -60,9 +60,6 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 
 export default function Homepage() {
   const data = useLoaderData<typeof loader>();
-  // const categoriesWithBestSellers = filterCategoriesWithBestSellers(
-  //   data?.topcategories?.collections,
-  // );
 
   return (
     <div className="home flex pg_bt">
@@ -167,52 +164,23 @@ function RecommendedProducts({
             ''
           )}
           <div className="flex">
-            {cmsData?.banner?.button.repo.cta_title.title ? (
-              <a
-                href={cmsData?.banner?.button?.repo?.cta_title?.href}
-                rel="noreferrer"
-                target={
-                  cmsData.banner?.button.repo.open_in_new_tab
-                    ? '_blank'
-                    : '_self'
-                }
-                className="banner_repo_cta"
-              >
-                {cmsData.banner?.button.repo.cta_title.title}
-              </a>
-            ) : (
-              ''
-            )}
-            {cmsData.banner?.button.products.cta_title.title ? (
-              <a
-                href={cmsData.banner?.button.products.cta_title.href}
-                rel="noreferrer"
-                target={
-                  cmsData.banner?.button.products.open_in_new_tab
-                    ? '_blank'
-                    : '_self'
-                }
-                className="banner_repo_cta"
-              >
-                {cmsData.banner?.button.products.cta_title.title}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
+            {cmsData?.banner?.button?.repo?.map((button: any) => {
+              return button.cta_title.title ? (
+                <a
+                  href={button?.cta_title?.href}
+                  rel="noreferrer"
+                  target={button.open_in_new_tab ? '_blank' : '_self'}
+                  className="banner_repo_cta"
+                  style={{
+                    margin: '10px',
+                  }}
                 >
-                  <path
-                    fillRule="evenodd"
-                    clipRule="evenodd"
-                    d="M14.5074 6.69672L19.2803 11.4697C19.5732 11.7626 19.5732 12.2375 19.2803 12.5304L14.5074 17.3033C14.2145 17.5962 13.7396 17.5962 13.4467 17.3033C13.1538 17.0104 13.1538 16.5356 13.4467 16.2427L16.9393 12.75H5.25C4.83579 12.75 4.5 12.4142 4.5 12C4.5 11.5858 4.83579 11.25 5.25 11.25H16.9393L13.4467 7.75738C13.1538 7.46449 13.1538 6.98961 13.4467 6.69672C13.7396 6.40383 14.2145 6.40383 14.5074 6.69672Z"
-                    fill="white"
-                  />
-                </svg>
-              </a>
-            ) : (
-              ''
-            )}
+                  {button.cta_title.title}
+                </a>
+              ) : (
+                ''
+              );
+            })}
           </div>
         </div>
       </div>
