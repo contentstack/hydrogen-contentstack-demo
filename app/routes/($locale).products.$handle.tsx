@@ -153,7 +153,6 @@ export default function Product() {
 
   const limitedProducts =
     relatedProductQueryResults?.productRecommendations?.slice(0, 5);
-
   return (
     <>
       <div className="breadcrumbs container">
@@ -200,6 +199,23 @@ export default function Product() {
             <div className="feature-products-grid">
               {limitedProducts?.length
                 ? limitedProducts?.map((product: any) => {
+                    let priceOff: any;
+                    // Check if the product is available for sale and all necessary price data is provided
+                    if (
+                      product.availableForSale &&
+                      product.priceRange &&
+                      product.compareAtPriceRange
+                    ) {
+                      const price = parseFloat(
+                        product.priceRange.minVariantPrice.amount,
+                      );
+                      const compareAtPrice = parseFloat(
+                        product.compareAtPriceRange.minVariantPrice.amount,
+                      );
+
+                      priceOff = compareAtPrice - price;
+                    }
+
                     return (
                       <Fragment key={product?.id}>
                         <Link
@@ -221,12 +237,41 @@ export default function Product() {
                             />
                           )}
                           <p className="product-cta">{product?.title}</p>
-                          <>
-                            <Money
-                              className="product-price"
-                              data={product?.priceRange?.minVariantPrice}
-                            />
-                          </>
+                          <small className="product-small-cta">
+                            {product?.title}
+                          </small>
+                          {
+                            <div className="product-price-on-sale">
+                              {product?.priceRange ? (
+                                <Money
+                                  className="price"
+                                  data={product?.priceRange?.minVariantPrice}
+                                />
+                              ) : null}
+                              {product?.priceRange?.minVariantPrice?.amount <
+                              product?.compareAtPriceRange?.minVariantPrice
+                                ?.amount ? (
+                                <s>
+                                  <Money
+                                    className="comparePrice"
+                                    data={
+                                      product?.compareAtPriceRange
+                                        ?.minVariantPrice
+                                    }
+                                  />
+                                </s>
+                              ) : (
+                                ''
+                              )}
+                              {priceOff > 0 ? (
+                                <p className="comparePrice">
+                                  (${priceOff.toFixed(2)} OFF)
+                                </p>
+                              ) : (
+                                ''
+                              )}
+                            </div>
+                          }
                         </Link>
                       </Fragment>
                     );
@@ -439,8 +484,10 @@ function ProductPrice({
 }: {
   selectedVariant: ProductFragment['selectedVariant'];
 }) {
-  const originalPrice = parseFloat(selectedVariant?.compareAtPrice?.amount);
-  const discountedPrice = parseFloat(selectedVariant.price?.amount);
+  const originalPrice = parseFloat(
+    selectedVariant?.compareAtPrice?.amount || '',
+  );
+  const discountedPrice = parseFloat(selectedVariant?.price?.amount || '');
   let priceOff;
 
   if (originalPrice && discountedPrice && discountedPrice < originalPrice) {
@@ -846,16 +893,28 @@ const RELATED_PRODUCT_QUERY = `#graphql
       productRecommendations(productId: $productID, intent: RELATED) {
         id,
         title
+        availableForSale
         priceRange {
-        minVariantPrice {
-          amount
-          currencyCode
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
         }
-        maxVariantPrice {
-          amount
-          currencyCode
+        compareAtPriceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
+          
         }
-      }
         images(first:1){
           nodes{
             id
