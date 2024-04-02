@@ -1,8 +1,12 @@
-import {useLoaderData, Link} from '@remix-run/react';
+import {useLoaderData, Link, MetaFunction} from '@remix-run/react';
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Pagination, getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
 import '../styles/pages.css';
+
+export const meta: MetaFunction = () => {
+  return [{title: 'Hydrogen | Collections'}];
+};
 
 export async function loader({context, request}: LoaderFunctionArgs) {
   const paginationVariables = getPaginationVariables(request, {
@@ -19,25 +23,18 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export default function Collections() {
   const {collections} = useLoaderData<typeof loader>();
   return (
-    <div className="collections container pg_bt">
+    <div className="collections container pg-bt">
       <h1>Collections</h1>
       <Pagination connection={collections}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
-            <PreviousLink className="load_more">
-              {isLoading ? (
-                'Loading...'
-              ) : (
-                <span className="load_more">↑ Load previous</span>
-              )}
-            </PreviousLink>
             <CollectionsGrid collections={nodes} />
-            <NextLink className="load_more">
+            <NextLink className="load-more">
               {isLoading ? (
                 'Loading...'
               ) : (
                 <div className="center">
-                  <span className="view_allproducts load_more">
+                  <span className="view-all-products load-more">
                     Load more ↓
                   </span>
                 </div>
@@ -53,9 +50,9 @@ export default function Collections() {
 function CollectionsGrid({collections}: {collections: CollectionFragment[]}) {
   return (
     <div className="collections-grid">
-      {collections.map((collection, index) => (
+      {collections?.map((collection, index) => (
         <CollectionItem
-          key={collection.id}
+          key={collection?.id}
           collection={collection}
           index={index}
         />
@@ -74,19 +71,19 @@ function CollectionItem({
   return (
     <Link
       className="collection-item"
-      key={collection.id}
-      to={`/collections/${collection.handle}`}
+      key={collection?.id}
+      to={`/collections/${collection?.handle}`}
       prefetch="intent"
     >
       {collection?.image && (
         <Image
-          alt={collection.image.altText || collection.title}
+          alt={collection?.image?.altText ?? collection?.title}
           aspectRatio="1/1"
-          data={collection.image}
+          data={collection?.image}
           loading={index < 3 ? 'eager' : undefined}
         />
       )}
-      <p className="product_cta">{collection.title}</p>
+      <p className="collection-cta ">{collection?.title}</p>
     </Link>
   );
 }

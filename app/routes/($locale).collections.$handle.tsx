@@ -8,6 +8,7 @@ import {
 } from '@shopify/hydrogen';
 import type {ProductItemFragment} from 'storefrontapi.generated';
 import {useVariantUrl} from '~/utils';
+import '../styles/pages.css';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.collection.title ?? ''} Collection`}];
@@ -54,9 +55,9 @@ export default function Collection() {
         </ul>
       </div>
       <div className="collection container">
-        <h1>{collection.title}</h1>
-        <p className="collection-description">{collection.description}</p>
-        <Pagination connection={collection.products}>
+        <h1>{collection?.title}</h1>
+        <p className="collection-description">{collection?.description}</p>
+        <Pagination connection={collection?.products}>
           {({nodes, isLoading, PreviousLink, NextLink}) => (
             <>
               <PreviousLink>
@@ -64,8 +65,16 @@ export default function Collection() {
               </PreviousLink>
               <ProductsGrid products={nodes} />
               <br />
-              <NextLink>
-                {isLoading ? 'Loading...' : <span>Load more ↓</span>}
+              <NextLink className="load-more">
+                {isLoading ? (
+                  'Loading...'
+                ) : (
+                  <div className="center">
+                    <span className="view-all-products load-more">
+                      Load more ↓
+                    </span>
+                  </div>
+                )}
               </NextLink>
             </>
           )}
@@ -81,7 +90,7 @@ function ProductsGrid({products}: {products: ProductItemFragment[]}) {
       {products.map((product, index) => {
         return (
           <ProductItem
-            key={product.id}
+            key={product?.id}
             product={product}
             loading={index < 8 ? 'eager' : undefined}
           />
@@ -98,28 +107,57 @@ function ProductItem({
   product: ProductItemFragment;
   loading?: 'eager' | 'lazy';
 }) {
-  const variant = product.variants.nodes[0];
-  const variantUrl = useVariantUrl(product.handle, variant.selectedOptions);
+  const variant = product?.variants?.nodes[0];
+  const variantUrl = useVariantUrl(product?.handle, variant?.selectedOptions);
+  const originalPrice = parseFloat(
+    product?.compareAtPriceRange?.minVariantPrice?.amount,
+  );
+  const discountedPrice = parseFloat(
+    product?.priceRange?.minVariantPrice?.amount,
+  );
+  let priceOff;
+
+  if (originalPrice && discountedPrice && discountedPrice < originalPrice) {
+    priceOff = originalPrice - discountedPrice;
+  }
   return (
     <Link
       className="product-item"
-      key={product.id}
+      key={product?.id}
       prefetch="intent"
       to={variantUrl}
       state={{previousTabUrl: '/variantUrl'}}
     >
-      {product.featuredImage && (
+      {product?.featuredImage && (
         <Image
-          alt={product.featuredImage.altText || product.title}
+          alt={product?.featuredImage?.altText ?? product?.title}
           aspectRatio="1/1"
-          data={product.featuredImage}
+          data={product?.featuredImage}
           loading={loading}
           sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
-      <h4>{product.title}</h4>
+      <h4>{product?.title}</h4>
       <small>
-        <Money data={product.priceRange.minVariantPrice} />
+        <div className="product-price-on-sale">
+          {product?.priceRange ? (
+            <Money
+              className="price"
+              data={product?.priceRange?.minVariantPrice}
+            />
+          ) : null}
+          <s>
+            <Money
+              className="comparePrice"
+              data={product?.compareAtPriceRange?.minVariantPrice}
+            />
+          </s>
+          {priceOff ? (
+            <p className="comparePrice">(${priceOff.toFixed(2)} OFF)</p>
+          ) : (
+            ''
+          )}
+        </div>
       </small>
     </Link>
   );
@@ -149,6 +187,13 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
         ...MoneyProductItem
       }
     }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      
+    }
     variants(first: 1) {
       nodes {
         selectedOptions {
@@ -160,7 +205,6 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
   }
 ` as const;
 
-// NOTE: https://shopify.dev/docs/api/storefront/2022-04/objects/collection
 const COLLECTION_QUERY = `#graphql
   ${PRODUCT_ITEM_FRAGMENT}
   query Collection(

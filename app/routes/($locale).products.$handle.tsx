@@ -29,7 +29,7 @@ import type {
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/utils';
-import {getEntryByUid} from '~/components/contentstack-sdk';
+import {getEntry} from '~/components/contentstack-sdk';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
@@ -50,12 +50,11 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
       !option.name.startsWith('fbclid'),
   );
 
-  const envConfig = context.env;
+  const envConfig = context?.env;
   const fetchData = async () => {
     try {
-      const result = await getEntryByUid({
-        contentTypeUid: 'pages_shopify',
-        entryUid: 'blt7e52043f7e4841b3',
+      const result = await getEntry({
+        contentTypeUid: 'product_detail_page',
         envConfig,
       });
       return result;
@@ -85,11 +84,11 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     },
   );
 
-  const firstVariant = product.variants.nodes[0];
+  const firstVariant = product.variants?.nodes[0];
   const firstVariantIsDefault = Boolean(
-    firstVariant.selectedOptions.find(
+    firstVariant?.selectedOptions?.find(
       (option: SelectedOption) =>
-        option.name === 'Title' && option.value === 'Default Title',
+        option?.name === 'Title' && option?.value === 'Default Title',
     ),
   );
 
@@ -127,15 +126,15 @@ function redirectToFirstVariant({
   product: ProductFragment;
   request: Request;
 }) {
-  const url = new URL(request.url);
-  const firstVariant = product.variants.nodes[0];
+  const url = new URL(request?.url);
+  const firstVariant = product?.variants?.nodes[0];
 
   return redirect(
     getVariantUrl({
-      pathname: url.pathname,
-      handle: product.handle,
-      selectedOptions: firstVariant.selectedOptions,
-      searchParams: new URLSearchParams(url.search),
+      pathname: url?.pathname,
+      handle: product?.handle,
+      selectedOptions: firstVariant?.selectedOptions,
+      searchParams: new URLSearchParams(url?.search),
     }),
     {
       status: 302,
@@ -193,55 +192,54 @@ export default function Product() {
           variants={variants}
         />
       </div>
-      <div>
+      <div className="related-wrapper">
         <Suspense fallback={<div>Loading...</div>}>
-          <div className="featured_wrapper container">
-            <div className="featuredContent">
-              <h2 className="product_css">{fetchedData.heading}</h2>
+          <div className="featured-wrapper container">
+            <div className="featured-content">
+              <h2 className="product-css">{fetchedData?.heading}</h2>
             </div>
             <div className="feature-products-grid">
               {limitedProducts?.length
-                ? limitedProducts?.map((product: any) => {
-                    return (
-                      <Fragment key={product.id}>
-                        <Link
-                          className="feature-product"
-                          to={`/products/${product.handle}`}
-                        >
-                          {product.images.nodes[0] ? (
-                            <Image
-                              data={product.images.nodes[0]}
-                              aspectRatio="1/1"
-                              sizes="(min-width: 45em) 20vw, 50vw"
-                            />
-                          ) : (
-                            // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                            <img
-                              src={NoImg}
-                              alt="No Image"
-                              style={{height: '85% !important'}}
-                            />
-                          )}
-                          <p className="product_cta">{product.title}</p>
-                          <small className="product_small_cta">
-                            {product.title}
-                          </small>
-                          <>
-                            <Money
-                              className="product_price"
-                              data={product.priceRange.minVariantPrice}
-                            />
-                          </>
-                        </Link>
-                      </Fragment>
-                    );
-                  })
-                : ''}
+                ? limitedProducts?.map(
+                (product: any) => {
+                  return (
+                    <Fragment key={product?.id}>
+                      <Link
+                        className="feature-product"
+                        to={`/products/${product?.handle}`}
+                      >
+                        {product?.images?.nodes[0] ? (
+                          <Image
+                            data={product?.images?.nodes[0]}
+                            aspectRatio="1/1"
+                            sizes="(min-width: 45em) 20vw, 50vw"
+                          />
+                        ) : (
+                          // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                          <img
+                            src={NoImg}
+                            alt="No Image"
+                            style={{height: '85% !important'}}
+                          />
+                        )}
+                        <p className="product-cta">{product?.title}</p>
+                        <small className="product-small-cta">
+                          {product?.title}
+                        </small>
+                        <>
+                          <Money
+                            className="product-price"
+                            data={product?.priceRange?.minVariantPrice}
+                          />
+                        </>
+                      </Link>
+                    </Fragment>
+                  );
+                },
+              ):""}
             </div>
           </div>
         </Suspense>
-
-        <br />
       </div>
     </>
   );
@@ -254,10 +252,10 @@ function ProductImage({image}: {image: ProductVariantFragment['image']}) {
   return (
     <div className="product-image">
       <Image
-        alt={image.altText || 'Product Image'}
+        alt={image?.altText ?? 'Product Image'}
         aspectRatio="1/1"
         data={image}
-        key={image.id}
+        key={image?.id}
         sizes="(min-width: 45em) 50vw, 100vw"
       />
     </div>
@@ -305,7 +303,7 @@ function ProductMain({
             <ProductForm
               product={product}
               selectedVariant={selectedVariant}
-              variants={[]}
+              // variants={data?.product?.variants.nodes || []}
             />
           }
         >
@@ -323,36 +321,48 @@ function ProductMain({
           </Await>
         </Suspense>
 
-        <br />
+      <br />
+      {stars && (
         <div
-          className="star_rating"
+          className="star-rating"
           dangerouslySetInnerHTML={{
             __html: stars,
           }}
         />
-        <br />
-        <p>
-          <strong>Reviews</strong>
-        </p>
-        <br />
-        {/* <ReviewCollapseView reviewContent={valueMap.get('product_review')} /> */}
-        <div
-          dangerouslySetInnerHTML={{
-            __html: valueMap.get('shipping_return_policy'),
-          }}
-        />
-        <br />
-        <p>
-          <strong>Shipping and Return</strong>
-        </p>
-        <br />
-        <div
-          dangerouslySetInnerHTML={{
-            __html: valueMap.get('shipping_return_policy'),
-          }}
-        />
-        <br />
-        <div className="seprrator">
+      )}
+
+      <br />
+      {valueMap.get('product_review') && (
+        <>
+          <p>
+            <strong>Reviews</strong>
+          </p>
+          <br />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: valueMap.get('product_review'),
+            }}
+          />
+        </>
+      )}
+
+      <br />
+      {valueMap.get('shipping_return_policy') && (
+        <>
+          <p>
+            <strong>Shipping and Return</strong>
+          </p>
+          <br />
+          <div
+            dangerouslySetInnerHTML={{
+              __html: valueMap.get('shipping_return_policy'),
+            }}
+          />
+        </>
+      )}
+
+      <br />
+      <div className="seprrator">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="600"
@@ -424,7 +434,7 @@ function ProductMain({
             </span>
           </div>
         </div>
-      </div>
+    </div>
     </>
   );
 }
@@ -460,7 +470,7 @@ function ProductPrice({
                 />
               </s>
               {priceOff ? (
-                <p className="percentageOffPrice">({priceOff} OFF)</p>
+                <p className="percentageOffPrice">(${priceOff} OFF)</p>
               ) : (
                 ''
               )}
@@ -520,13 +530,13 @@ function ProductForm({
         variants={variants}
       >
         {({option}) => {
-          return <ProductOptions key={option.name} option={option} />;
+          return <ProductOptions key={option?.name} option={option} />;
         }}
         {/* <ProductOptions option={product.options as any} />; */}
       </VariantSelector>
       <br />
       <AddToCartButton
-        disabled={!selectedVariant || !selectedVariant.availableForSale}
+        disabled={!selectedVariant || !selectedVariant?.availableForSale}
         onClick={() => {
           window.location.href = window.location.href + '#cart-aside';
         }}
@@ -534,7 +544,7 @@ function ProductForm({
           selectedVariant
             ? [
                 {
-                  merchandiseId: selectedVariant.id,
+                  merchandiseId: selectedVariant?.id,
                   quantity: 1,
                 },
               ]
@@ -679,13 +689,13 @@ function AddToCartButton({
                 </button>
               </div>
               <Link
-                className="banner_repo_cta banner_repo_cta_icon"
+                className="banner-repo-cta banner-repo-cta-icon"
                 type="submit"
                 onClick={onClick}
                 disabled={disabled || fetcher.state !== 'idle'}
                 style={{
                   width: '219px',
-                  padding: '10px',
+                  padding: '0px',
                 }}
               >
                 {children}

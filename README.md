@@ -25,13 +25,12 @@ This TypeScript demo adopts many of Hydrogen's [framework conventions and third-
 This demo comes preconfigured Contentstack, which adds a Contentstack client to the Remix context. This enables you to fetch content from Contentstack in Remix loaders and actions.
 ```tsx
 // <root>/app/routes/($locale).products.$handle.tsx
-import {getEntryByUid} from '~/components/contentstack-sdk';
+import {getEntry} from '~/components/contentstack-sdk';
 
 const fetchData = async () => {
     try {
-      const result = await getEntryByUid({
-        contentTypeUid: 'shopify_home',
-        entryUid: 'your entry uid',
+      const result = await getEntry({
+        contentTypeUid: `${your_contenttypeUID}`,
         envConfig,
       });
       return result;

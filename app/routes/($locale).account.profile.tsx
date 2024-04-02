@@ -13,6 +13,7 @@ import {
   useOutletContext,
   type MetaFunction,
 } from '@remix-run/react';
+import '../styles/pages.css';
 
 export type ActionResponse = {
   error: string | null;
@@ -114,13 +115,11 @@ export default function AccountProfile() {
   const customer = action?.customer ?? account?.customer;
 
   return (
-    <div className="account-profile">
-      <h2>My profile</h2>
+    <div className="account-profile order-status ">
+      <h2>Your profile</h2>
       <br />
       <Form method="PUT">
-        <legend>Personal information</legend>
-        <fieldset>
-          <label htmlFor="firstName">First name</label>
+        <fieldset className="fieldset">
           <input
             id="firstName"
             name="firstName"
@@ -129,9 +128,9 @@ export default function AccountProfile() {
             placeholder="First name"
             aria-label="First name"
             defaultValue={customer.firstName ?? ''}
+            className="footer-email login-email"
             minLength={2}
           />
-          <label htmlFor="lastName">Last name</label>
           <input
             id="lastName"
             name="lastName"
@@ -140,9 +139,9 @@ export default function AccountProfile() {
             placeholder="Last name"
             aria-label="Last name"
             defaultValue={customer.lastName ?? ''}
+            className="footer-email login-email"
             minLength={2}
           />
-          <label htmlFor="phone">Mobile</label>
           <input
             id="phone"
             name="phone"
@@ -150,9 +149,9 @@ export default function AccountProfile() {
             autoComplete="tel"
             placeholder="Mobile"
             aria-label="Mobile"
+            className="footer-email login-email"
             defaultValue={customer.phone ?? ''}
           />
-          <label htmlFor="email">Email address</label>
           <input
             id="email"
             name="email"
@@ -161,6 +160,7 @@ export default function AccountProfile() {
             required
             placeholder="Email address"
             aria-label="Email address"
+            className="footer-email login-email"
             defaultValue={customer.email ?? ''}
           />
           <div className="account-profile-marketing">
@@ -179,8 +179,7 @@ export default function AccountProfile() {
         </fieldset>
         <br />
         <legend>Change password (optional)</legend>
-        <fieldset>
-          <label htmlFor="currentPassword">Current password</label>
+        <fieldset className="fieldset">
           <input
             id="currentPassword"
             name="currentPassword"
@@ -188,26 +187,27 @@ export default function AccountProfile() {
             autoComplete="current-password"
             placeholder="Current password"
             aria-label="Current password"
+            className="footer-email login-email"
             minLength={8}
           />
-
-          <label htmlFor="newPassword">New password</label>
           <input
             id="newPassword"
             name="newPassword"
             type="password"
             placeholder="New password"
             aria-label="New password"
+            className="footer-email login-email"
             minLength={8}
           />
 
-          <label htmlFor="newPasswordConfirm">New password (confirm)</label>
+          {/* <label htmlFor="newPasswordConfirm">New password (confirm)</label> */}
           <input
             id="newPasswordConfirm"
             name="newPasswordConfirm"
             type="password"
             placeholder="New password (confirm)"
             aria-label="New password confirm"
+            className="footer-email login-email"
             minLength={8}
           />
           <small>Passwords must be at least 8 characters.</small>
@@ -221,7 +221,11 @@ export default function AccountProfile() {
         ) : (
           <br />
         )}
-        <button type="submit" disabled={state !== 'idle'}>
+        <button
+          className="banner-repo-cta update"
+          type="submit"
+          disabled={state !== 'idle'}
+        >
           {state !== 'idle' ? 'Updating' : 'Update'}
         </button>
       </Form>
