@@ -154,30 +154,29 @@ export default function Product() {
 
   const limitedProducts =
     relatedProductQueryResults?.productRecommendations?.slice(0, 5);
-
   return (
     <>
       <div className="breadcrumbs">
         <ul>
           <li>
-            <a href='/'>Home</a>
+            <a href="/">Home</a>
           </li>
           {state?.previousTabUrl === '/variantUrl' ? (
             <li>
-              <a href='/collections'>Collections</a>
+              <a href="/collections">Collections</a>
             </li>
           ) : (
             <li>
-              <a href='/collections/all'>Products</a>
+              <a href="/collections/all">Products</a>
             </li>
           )}
 
-{state?.previousTabUrl === '/variantUrl' ? (
+          {state?.previousTabUrl === '/variantUrl' ? (
             <li>
-              <a >{collectionName}</a>
+              <a>{collectionName}</a>
             </li>
           ) : (
-           ""
+            ''
           )}
           <li>
             <a>{productName}</a>
@@ -200,43 +199,87 @@ export default function Product() {
             </div>
             <div className="feature-products-grid">
               {limitedProducts?.length
-                ? limitedProducts?.map(
-                (product: any) => {
-                  return (
-                    <Fragment key={product?.id}>
-                      <Link
-                        className="feature-product"
-                        to={`/products/${product?.handle}`}
-                      >
-                        {product?.images?.nodes[0] ? (
-                          <Image
-                            data={product?.images?.nodes[0]}
-                            aspectRatio="1/1"
-                            sizes="(min-width: 45em) 20vw, 50vw"
-                          />
-                        ) : (
-                          // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                          <img
-                            src={NoImg}
-                            alt="No Image"
-                            style={{height: '85% !important'}}
-                          />
-                        )}
-                        <p className="product-cta">{product?.title}</p>
-                        <small className="product-small-cta">
-                          {product?.title}
-                        </small>
-                        <>
-                          <Money
-                            className="product-price"
-                            data={product?.priceRange?.minVariantPrice}
-                          />
-                        </>
-                      </Link>
-                    </Fragment>
-                  );
-                },
-              ):""}
+                ? limitedProducts?.map((product: any) => {
+                    let priceOff;
+                    // Check if the product is available for sale and all necessary price data is provided
+                    if (
+                      product.availableForSale &&
+                      product.priceRange &&
+                      product.compareAtPriceRange
+                    ) {
+                      const price = parseFloat(
+                        product.priceRange.minVariantPrice.amount,
+                      );
+                      const compareAtPrice = parseFloat(
+                        product.compareAtPriceRange.minVariantPrice.amount,
+                      );
+
+                      priceOff = compareAtPrice - price;
+
+                    }
+
+                    return (
+                      <Fragment key={product?.id}>
+                        <Link
+                          className="feature-product"
+                          to={`/products/${product?.handle}`}
+                        >
+                          {product?.images?.nodes[0] ? (
+                            <Image
+                              data={product?.images?.nodes[0]}
+                              aspectRatio="1/1"
+                              sizes="(min-width: 45em) 20vw, 50vw"
+                            />
+                          ) : (
+                            // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                            <img
+                              src={NoImg}
+                              alt="No Image"
+                              style={{height: '85% !important'}}
+                            />
+                          )}
+                          <p className="product-cta">{product?.title}</p>
+                          <small className="product-small-cta">
+                            {product?.title}
+                          </small>
+                          {
+                            <div className="product-price-on-sale">
+                              {product?.priceRange ? (
+                                <Money
+                                  className="price"
+                                  data={product?.priceRange?.minVariantPrice}
+                                />
+                              ) : null}
+                              {product?.priceRange?.minVariantPrice?.amount <
+                              product?.compareAtPriceRange?.minVariantPrice
+                                ?.amount ? (
+                                <s>
+                                  <Money
+                                    className="comparePrice"
+                                    data={
+                                      product?.compareAtPriceRange
+                                        ?.minVariantPrice
+                                    }
+                                  />
+                                </s>
+                              ) : (
+                                ''
+                              )}
+
+                              {priceOff > 0 ? (
+                                <p className="comparePrice">
+                                  (${priceOff.toFixed(2)} OFF)
+                                </p>
+                              ) : (
+                                ''
+                              )}
+                            </div>
+                          }
+                        </Link>
+                      </Fragment>
+                    );
+                  })
+                : ''}
             </div>
           </div>
         </Suspense>
@@ -321,48 +364,48 @@ function ProductMain({
           </Await>
         </Suspense>
 
-      <br />
-      {stars && (
-        <div
-          className="star-rating"
-          dangerouslySetInnerHTML={{
-            __html: stars,
-          }}
-        />
-      )}
-
-      <br />
-      {valueMap.get('product_review') && (
-        <>
-          <p>
-            <strong>Reviews</strong>
-          </p>
-          <br />
+        <br />
+        {stars && (
           <div
+            className="star-rating"
             dangerouslySetInnerHTML={{
-              __html: valueMap.get('product_review'),
+              __html: stars,
             }}
           />
-        </>
-      )}
+        )}
 
-      <br />
-      {valueMap.get('shipping_return_policy') && (
-        <>
-          <p>
-            <strong>Shipping and Return</strong>
-          </p>
-          <br />
-          <div
-            dangerouslySetInnerHTML={{
-              __html: valueMap.get('shipping_return_policy'),
-            }}
-          />
-        </>
-      )}
+        <br />
+        {valueMap.get('product_review') && (
+          <>
+            <p>
+              <strong>Reviews</strong>
+            </p>
+            <br />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: valueMap.get('product_review'),
+              }}
+            />
+          </>
+        )}
 
-      <br />
-      <div className="seprrator">
+        <br />
+        {valueMap.get('shipping_return_policy') && (
+          <>
+            <p>
+              <strong>Shipping and Return</strong>
+            </p>
+            <br />
+            <div
+              dangerouslySetInnerHTML={{
+                __html: valueMap.get('shipping_return_policy'),
+              }}
+            />
+          </>
+        )}
+
+        <br />
+        <div className="seprrator">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="600"
@@ -434,7 +477,7 @@ function ProductMain({
             </span>
           </div>
         </div>
-    </div>
+      </div>
     </>
   );
 }
@@ -851,16 +894,28 @@ const RELATED_PRODUCT_QUERY = `#graphql
       productRecommendations(productId: $productID, intent: RELATED) {
         id,
         title
+        availableForSale
         priceRange {
-        minVariantPrice {
-          amount
-          currencyCode
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
         }
-        maxVariantPrice {
-          amount
-          currencyCode
+        compareAtPriceRange {
+          minVariantPrice {
+            amount
+            currencyCode
+          }
+          maxVariantPrice {
+            amount
+            currencyCode
+          }
+          
         }
-      }
         images(first:1){
           nodes{
             id

@@ -170,7 +170,7 @@ function RecommendedProducts({
                   target={button?.open_in_new_tab ? '_blank' : '_self'}
                   className="banner-repo-cta"
                   style={{
-                    margin:'10px'
+                    margin: '10px',
                   }}
                 >
                   {button?.cta_title?.title}
@@ -253,16 +253,24 @@ function RecommendedProducts({
                                       }
                                     />
                                   ) : null}
-                                  <s>
-                                    <Money
-                                      className="comparePrice"
-                                      data={
-                                        product?.compareAtPriceRange
-                                          ?.minVariantPrice
-                                      }
-                                    />
-                                  </s>
-                                  {priceOff ? (
+                                  {product?.priceRange?.minVariantPrice
+                                    ?.amount <
+                                  product?.compareAtPriceRange?.minVariantPrice
+                                    ?.amount ? (
+                                    <s>
+                                      <Money
+                                        className="comparePrice"
+                                        data={
+                                          product?.compareAtPriceRange
+                                            ?.minVariantPrice
+                                        }
+                                      />
+                                    </s>
+                                  ) : (
+                                    ''
+                                  )}
+
+                                  {priceOff > 0 ? (
                                     <p className="comparePrice">
                                       (${priceOff.toFixed(2)} OFF)
                                     </p>
