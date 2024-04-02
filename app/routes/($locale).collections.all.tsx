@@ -9,7 +9,7 @@ import {
   Pagination,
 } from '@shopify/hydrogen';
 import '../styles/pages.css';
-import {getEntryByUid} from '~/components/contentstack-sdk';
+import {getEntry} from '~/components/contentstack-sdk';
 import NoImg from '../../public/NoImg.svg';
 
 export const meta: MetaFunction = () => {
@@ -28,12 +28,11 @@ export async function loader({context, request}: LoaderFunctionArgs) {
     },
   );
 
-  const envConfig = context.env;
+  const envConfig = context?.env;
   const fetchData = async () => {
     try {
-      const result = await getEntryByUid({
+      const result = await getEntry({
         contentTypeUid: 'shopify_home',
-        entryUid: 'blt9743f5cf3740e66a',
         envConfig,
       });
       return result;
@@ -51,23 +50,20 @@ export async function loader({context, request}: LoaderFunctionArgs) {
 export default function Productpage() {
   const data = useLoaderData<typeof loader>();
   return (
-    <div className="home flex container pg_bt">
+    <div className="home flex pg-bt">
       <Pagination connection={data?.recommendedProducts?.products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
-            {/* <PreviousLink className="load_more">
-                {isLoading ? (
-                  'Loading...'
-                ) : (
-                  <span className="load_more">↑ Load previous</span>
-                )}
-              </PreviousLink> */}
-            <RecommendedProducts products={nodes} cmsData={data.fetchedData} />
-            <NextLink className="load_more">
+            <RecommendedProducts products={nodes} cmsData={data?.fetchedData} />
+            <NextLink className="load-more">
               {isLoading ? (
                 'Loading...'
               ) : (
-                <span className="load_more">Load more ↓</span>
+                <div className="center">
+                  <span className="view-all-products load-more">
+                    Load more ↓
+                  </span>
+                </div>
               )}
             </NextLink>
           </div>
@@ -85,51 +81,78 @@ function RecommendedProducts({
   cmsData: any;
 }) {
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <div className="featured_wrapper container">
-          <div className="featuredContent">
-            <h2 className="product_css">{cmsData.product_title}</h2>
-          </div>
-          <div className="feature-products-grid">
-            {products?.map((product: any) => {
-              return (
-                <Fragment key={product.id}>
-                  <Link
-                    className="feature-product"
-                    to={`/products/${product.handle}`}
-                  >
-                    {product.images.nodes[0] ? (
-                      <Image
-                        data={product.images.nodes[0]}
-                        aspectRatio="1/1"
-                        sizes="(min-width: 45em) 20vw, 50vw"
-                      />
-                    ) : (
-                      // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                      <img
-                        src={NoImg}
-                        alt="No Image"
-                        style={{height: '85% !important'}}
-                      />
-                    )}
-                    <p className="product_cta">{product.title}</p>
-                    <small>
-                      <Money
-                        className="product_price"
-                        data={product.priceRange.minVariantPrice}
-                      />
-                    </small>
-                  </Link>
-                </Fragment>
-              );
-            })}
-          </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="featured-wrapper container">
+        <div className="featured-content">
+          <h2 className="product-css">{cmsData?.product_title}</h2>
         </div>
-      </Suspense>
-
-      <br />
-    </div>
+        <div className="feature-products-grid">
+          {products?.map((product: any) => {
+            const originalPrice = parseFloat(
+              product?.compareAtPriceRange?.minVariantPrice?.amount,
+            );
+            const discountedPrice = parseFloat(
+              product?.priceRange?.minVariantPrice?.amount,
+            );
+            let priceOff;
+            if (
+              originalPrice &&
+              discountedPrice &&
+              discountedPrice < originalPrice
+            ) {
+              priceOff = originalPrice - discountedPrice;
+            }
+            return (
+              <Fragment key={product?.id}>
+                <Link
+                  className="feature-product"
+                  to={`/products/${product?.handle}`}
+                >
+                  {product?.images?.nodes[0] ? (
+                    <Image
+                      data={product?.images?.nodes[0]}
+                      aspectRatio="1/1"
+                      sizes="(min-width: 45em) 20vw, 50vw"
+                    />
+                  ) : (
+                    // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                    <img
+                      src={NoImg}
+                      alt="No Image"
+                      style={{height: '85% !important'}}
+                    />
+                  )}
+                  <p className="product-cta">{product?.title}</p>
+                  <small>
+                    <div className="product-price-on-sale">
+                      {product?.priceRange ? (
+                        <Money
+                          className="price"
+                          data={product?.priceRange?.minVariantPrice}
+                        />
+                      ) : null}
+                      <s>
+                        <Money
+                          className="comparePrice"
+                          data={product?.compareAtPriceRange?.minVariantPrice}
+                        />
+                      </s>
+                      {priceOff ? (
+                        <p className="comparePrice">
+                          (${priceOff.toFixed(2)} OFF)
+                        </p>
+                      ) : (
+                        ''
+                      )}
+                    </div>
+                  </small>
+                </Link>
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
+    </Suspense>
   );
 }
 
@@ -147,6 +170,13 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         amount
         currencyCode
       }
+    }
+    compareAtPriceRange {
+      minVariantPrice {
+        amount
+        currencyCode
+      }
+      
     }
     images(first: 1) {
       nodes {
@@ -168,7 +198,9 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     products(first: $first,
         last: $last,
         before: $startCursor,
-        after: $endCursor
+        after: $endCursor,
+        sortKey: UPDATED_AT
+        reverse: true
         ) {
         nodes {
             ...Product
