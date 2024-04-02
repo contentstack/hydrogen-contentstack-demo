@@ -39,24 +39,39 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
 export default function Collection() {
   const {collection} = useLoaderData<typeof loader>();
   return (
-    <div className="collection container">
-      <h1>{collection.title}</h1>
-      <p className="collection-description">{collection.description}</p>
-      <Pagination connection={collection.products}>
-        {({nodes, isLoading, PreviousLink, NextLink}) => (
-          <>
-            <PreviousLink>
-              {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
-            </PreviousLink>
-            <ProductsGrid products={nodes} />
-            <br />
-            <NextLink>
-              {isLoading ? 'Loading...' : <span>Load more ↓</span>}
-            </NextLink>
-          </>
-        )}
-      </Pagination>
-    </div>
+    <>
+      <div className="breadcrumbs" style={{minWidth: '1600px'}}>
+        <ul>
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/collections">Collections</a>
+          </li>
+          <li>
+            <a>{collection.title}</a>
+          </li>
+        </ul>
+      </div>
+      <div className="collection container">
+        <h1>{collection.title}</h1>
+        <p className="collection-description">{collection.description}</p>
+        <Pagination connection={collection.products}>
+          {({nodes, isLoading, PreviousLink, NextLink}) => (
+            <>
+              <PreviousLink>
+                {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
+              </PreviousLink>
+              <ProductsGrid products={nodes} />
+              <br />
+              <NextLink>
+                {isLoading ? 'Loading...' : <span>Load more ↓</span>}
+              </NextLink>
+            </>
+          )}
+        </Pagination>
+      </div>
+    </>
   );
 }
 
@@ -91,6 +106,7 @@ function ProductItem({
       key={product.id}
       prefetch="intent"
       to={variantUrl}
+      state={{previousTabUrl: '/variantUrl'}}
     >
       {product.featuredImage && (
         <Image

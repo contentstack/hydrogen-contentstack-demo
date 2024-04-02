@@ -491,6 +491,7 @@ aside li {
   font-size: 40px;
   font-weight: 400;
   line-height: 60px;
+  margin-bottom: 0px;
 }
 .product {
   .description {
