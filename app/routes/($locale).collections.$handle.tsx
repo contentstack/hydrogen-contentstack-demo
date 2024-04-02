@@ -40,32 +40,47 @@ export async function loader({request, params, context}: LoaderFunctionArgs) {
 export default function Collection() {
   const {collection} = useLoaderData<typeof loader>();
   return (
-    <div className="collection container">
-      <h1>{collection?.title}</h1>
-      <p className="collection-description">{collection?.description}</p>
-      <Pagination connection={collection?.products}>
-        {({nodes, isLoading, PreviousLink, NextLink}) => (
-          <>
-            <PreviousLink>
-              {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
-            </PreviousLink>
-            <ProductsGrid products={nodes} />
-            <br />
-            <NextLink className="load-more">
-              {isLoading ? (
-                'Loading...'
-              ) : (
-                <div className="center">
-                  <span className="view-all-products load-more">
-                    Load more ↓
-                  </span>
-                </div>
-              )}
-            </NextLink>
-          </>
-        )}
-      </Pagination>
-    </div>
+    <>
+      <div className="breadcrumbs" style={{minWidth: '1600px'}}>
+        <ul>
+          <li>
+            <a href="/">Home</a>
+          </li>
+          <li>
+            <a href="/collections">Collections</a>
+          </li>
+          <li>
+            <a>{collection.title}</a>
+          </li>
+        </ul>
+      </div>
+      <div className="collection container">
+        <h1>{collection?.title}</h1>
+        <p className="collection-description">{collection?.description}</p>
+        <Pagination connection={collection?.products}>
+          {({nodes, isLoading, PreviousLink, NextLink}) => (
+            <>
+              <PreviousLink>
+                {isLoading ? 'Loading...' : <span>↑ Load previous</span>}
+              </PreviousLink>
+              <ProductsGrid products={nodes} />
+              <br />
+              <NextLink className="load-more">
+                {isLoading ? (
+                  'Loading...'
+                ) : (
+                  <div className="center">
+                    <span className="view-all-products load-more">
+                      Load more ↓
+                    </span>
+                  </div>
+                )}
+              </NextLink>
+            </>
+          )}
+        </Pagination>
+      </div>
+    </>
   );
 }
 
@@ -111,6 +126,7 @@ function ProductItem({
       key={product?.id}
       prefetch="intent"
       to={variantUrl}
+      state={{previousTabUrl: '/variantUrl'}}
     >
       {product?.featuredImage && (
         <Image
@@ -130,12 +146,18 @@ function ProductItem({
               data={product?.priceRange?.minVariantPrice}
             />
           ) : null}
-          <s>
-            <Money
-              className="comparePrice"
-              data={product?.compareAtPriceRange?.minVariantPrice}
-            />
-          </s>
+          {product?.priceRange?.minVariantPrice?.amount <
+          product?.compareAtPriceRange?.minVariantPrice?.amount ? (
+            <s>
+              <Money
+                className="comparePrice"
+                data={product?.compareAtPriceRange?.minVariantPrice}
+              />
+            </s>
+          ) : (
+            ''
+          )}
+
           {priceOff ? (
             <p className="comparePrice">(${priceOff.toFixed(2)} OFF)</p>
           ) : (
@@ -189,7 +211,6 @@ const PRODUCT_ITEM_FRAGMENT = `#graphql
   }
 ` as const;
 
-// NOTE: https://shopify.dev/docs/api/storefront/2022-04/objects/collection
 const COLLECTION_QUERY = `#graphql
   ${PRODUCT_ITEM_FRAGMENT}
   query Collection(
