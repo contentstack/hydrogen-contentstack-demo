@@ -26,7 +26,7 @@ export function Aside({
           window.location.hash = '';
         }}
       />
-      <aside style={{top: '10%'}}>
+      <aside style={{top: '5%'}}>
         <header>
           <h3>{heading}</h3>
           <CloseAside />

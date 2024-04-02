@@ -1,6 +1,7 @@
 import {Form, NavLink, Outlet, useLoaderData} from '@remix-run/react';
 import {json, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import type {CustomerFragment} from 'storefrontapi.generated';
+import '../styles/pages.css';
 
 export function shouldRevalidate() {
   return true;
@@ -91,7 +92,6 @@ export default function Acccount() {
     </AccountLayout>
   );
 }
-
 function AccountLayout({
   customer,
   children,
@@ -101,16 +101,18 @@ function AccountLayout({
 }) {
   const heading = customer
     ? customer.firstName
-      ? `Welcome, ${customer.firstName}`
-      : `Welcome to your account.`
+      ? `Welcome, ${customer.firstName} ${customer.lastName} !!!`
+      : `Welcome to your account!!!`
     : 'Account Details';
 
   return (
-    <div className="account">
+    <div className="container order-page ">
       <h1>{heading}</h1>
-      <br />
-      <AccountMenu />
-      {children}
+      <div className="account flex">
+        <br />
+        <AccountMenu />
+        {children}
+      </div>
     </div>
   );
 }
@@ -124,25 +126,36 @@ function AccountMenu() {
     isPending: boolean;
   }) {
     return {
-      fontWeight: isActive ? 'bold' : undefined,
+      // fontWeight: isActive ? 'bold' : undefined,
       color: isPending ? 'grey' : 'black',
+      backgroundColor: isActive ? '#F2F2F2' : undefined,
     };
   }
 
   return (
-    <nav role="navigation">
-      <NavLink to="/account/orders" style={isActiveStyle}>
+    <nav role="navigation" className="orders">
+      <NavLink
+        to="/account/orders"
+        style={isActiveStyle}
+        className="view-all-products acc-cta"
+      >
         Orders &nbsp;
       </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/profile" style={isActiveStyle}>
-        &nbsp; Profile &nbsp;
+      <NavLink
+        to="/account/profile"
+        style={isActiveStyle}
+        className="view-all-products acc-cta"
+      >
+        Profile &nbsp;
       </NavLink>
-      &nbsp;|&nbsp;
-      <NavLink to="/account/addresses" style={isActiveStyle}>
-        &nbsp; Addresses &nbsp;
+      <NavLink
+        to="/account/addresses"
+        style={isActiveStyle}
+        className="view-all-products acc-cta"
+      >
+        {' '}
+        Addresses &nbsp;
       </NavLink>
-      &nbsp;|&nbsp;
       <Logout />
     </nav>
   );
@@ -151,7 +164,9 @@ function AccountMenu() {
 function Logout() {
   return (
     <Form className="account-logout" method="POST" action="/account/logout">
-      &nbsp;<button type="submit">Sign out</button>
+      <button className="view-all-products acc-cta logout" type="submit">
+        Logout →
+      </button>
     </Form>
   );
 }
