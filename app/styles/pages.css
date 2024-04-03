@@ -800,7 +800,7 @@ img {
   margin-left: 5px;
 }
 
-.banner_repo_cta_icon::before {
+.banner-repo-cta-icon::before {
   content: url('../../public/cart.svg');
   margin-right: 5px;
   margin-top: 2px;
