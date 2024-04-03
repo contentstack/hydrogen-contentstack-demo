@@ -250,10 +250,10 @@ export function CartEmpty({
       </p>
       <br />
       <Link
-        to="/collections"
+        to="/collections/all"
         onClick={() => {
           if (layout === 'aside') {
-            window.location.href = '/collections';
+            window.location.href = '/collections/all';
           }
         }}
       >
@@ -294,7 +294,9 @@ function CartDiscounts({
         <div>
           <input type="text" name="discountCode" placeholder="Discount code" />
           &nbsp;
-          <button type="submit">Apply</button>
+          <button className="view-all-products search-aside-cta " type="submit">
+            Apply
+          </button>
         </div>
       </UpdateDiscountForm>
     </div>
