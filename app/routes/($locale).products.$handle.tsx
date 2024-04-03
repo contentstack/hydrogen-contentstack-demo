@@ -190,97 +190,101 @@ export default function Product() {
           variants={variants}
         />
       </div>
-      <div className="related-wrapper">
-        <Suspense fallback={<div>Loading...</div>}>
-          <div className="featured-wrapper container">
-            <div className="featured-content">
-              <h2 className="product-css">{fetchedData?.heading}</h2>
-            </div>
-            <div className="feature-products-grid">
-              {limitedProducts?.length
-                ? limitedProducts?.map((product: any) => {
-                    let priceOff: any;
-                    // Check if the product is available for sale and all necessary price data is provided
-                    if (
-                      product.availableForSale &&
-                      product.priceRange &&
-                      product.compareAtPriceRange
-                    ) {
-                      const price = parseFloat(
-                        product.priceRange.minVariantPrice.amount,
-                      );
-                      const compareAtPrice = parseFloat(
-                        product.compareAtPriceRange.minVariantPrice.amount,
-                      );
+      {limitedProducts?.length ? (
+        <div className="related-wrapper">
+          <Suspense fallback={<div>Loading...</div>}>
+            <div className="featured-wrapper container">
+              <div className="featured-content">
+                <h2 className="product-css">{fetchedData?.heading}</h2>
+              </div>
+              <div className="feature-products-grid">
+                {limitedProducts?.length
+                  ? limitedProducts?.map((product: any) => {
+                      let priceOff: any;
+                      // Check if the product is available for sale and all necessary price data is provided
+                      if (
+                        product.availableForSale &&
+                        product.priceRange &&
+                        product.compareAtPriceRange
+                      ) {
+                        const price = parseFloat(
+                          product.priceRange.minVariantPrice.amount,
+                        );
+                        const compareAtPrice = parseFloat(
+                          product.compareAtPriceRange.minVariantPrice.amount,
+                        );
 
-                      priceOff = compareAtPrice - price;
-                    }
+                        priceOff = compareAtPrice - price;
+                      }
 
-                    return (
-                      <Fragment key={product?.id}>
-                        <Link
-                          className="feature-product"
-                          to={`/products/${product?.handle}`}
-                        >
-                          {product?.images?.nodes[0] ? (
-                            <Image
-                              data={product?.images?.nodes[0]}
-                              aspectRatio="1/1"
-                              sizes="(min-width: 45em) 20vw, 50vw"
-                            />
-                          ) : (
-                            // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                            <img
-                              src={NoImg}
-                              alt="No Image"
-                              style={{height: '85% !important'}}
-                            />
-                          )}
-                          <p className="product-cta">{product?.title}</p>
-                          <small className="product-small-cta">
-                            {product?.title}
-                          </small>
-                          {
-                            <div className="product-price-on-sale">
-                              {product?.priceRange ? (
-                                <Money
-                                  className="price"
-                                  data={product?.priceRange?.minVariantPrice}
-                                />
-                              ) : null}
-                              {product?.priceRange?.minVariantPrice?.amount <
-                              product?.compareAtPriceRange?.minVariantPrice
-                                ?.amount ? (
-                                <s>
+                      return (
+                        <Fragment key={product?.id}>
+                          <Link
+                            className="feature-product"
+                            to={`/products/${product?.handle}`}
+                          >
+                            {product?.images?.nodes[0] ? (
+                              <Image
+                                data={product?.images?.nodes[0]}
+                                aspectRatio="1/1"
+                                sizes="(min-width: 45em) 20vw, 50vw"
+                              />
+                            ) : (
+                              // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                              <img
+                                src={NoImg}
+                                alt="No Image"
+                                style={{height: '85% !important'}}
+                              />
+                            )}
+                            <p className="product-cta">{product?.title}</p>
+                            <small className="product-small-cta">
+                              {product?.title}
+                            </small>
+                            {
+                              <div className="product-price-on-sale">
+                                {product?.priceRange ? (
                                   <Money
-                                    className="comparePrice"
-                                    data={
-                                      product?.compareAtPriceRange
-                                        ?.minVariantPrice
-                                    }
+                                    className="price"
+                                    data={product?.priceRange?.minVariantPrice}
                                   />
-                                </s>
-                              ) : (
-                                ''
-                              )}
-                              {priceOff > 0 ? (
-                                <p className="comparePrice">
-                                  (${priceOff.toFixed(2)} OFF)
-                                </p>
-                              ) : (
-                                ''
-                              )}
-                            </div>
-                          }
-                        </Link>
-                      </Fragment>
-                    );
-                  })
-                : ''}
+                                ) : null}
+                                {product?.priceRange?.minVariantPrice?.amount <
+                                product?.compareAtPriceRange?.minVariantPrice
+                                  ?.amount ? (
+                                  <s>
+                                    <Money
+                                      className="comparePrice"
+                                      data={
+                                        product?.compareAtPriceRange
+                                          ?.minVariantPrice
+                                      }
+                                    />
+                                  </s>
+                                ) : (
+                                  ''
+                                )}
+                                {priceOff > 0 ? (
+                                  <p className="comparePrice">
+                                    (${priceOff.toFixed(2)} OFF)
+                                  </p>
+                                ) : (
+                                  ''
+                                )}
+                              </div>
+                            }
+                          </Link>
+                        </Fragment>
+                      );
+                    })
+                  : ''}
+              </div>
             </div>
-          </div>
-        </Suspense>
-      </div>
+          </Suspense>
+        </div>
+      ) : (
+        ''
+      )}
     </>
   );
 }
@@ -316,26 +320,18 @@ function ProductMain({
   metafield?.reference?.fields?.forEach((field: any) => {
     valueMap.set(field.key, field.value);
   });
-  function generateStars(rating: any) {
-    const roundedRating = Math.round(parseFloat(rating));
-    const fullStars = '★'.repeat(roundedRating);
-    const emptyStars = '☆'.repeat(5 - roundedRating);
-    return fullStars + emptyStars;
-  }
-
-  const rating = '4.4';
-  const stars = generateStars(rating);
-  const collectionName = product?.collections?.edges?.[0]?.node?.title;
 
   return (
     <>
       <div className="product-main">
         <h1>{title}</h1>
         <br />
-        <div
-          className="description"
-          dangerouslySetInnerHTML={{__html: descriptionHtml}}
-        />
+        {descriptionHtml && (
+          <div
+            className="description"
+            dangerouslySetInnerHTML={{__html: descriptionHtml}}
+          />
+        )}
         <ProductPrice selectedVariant={selectedVariant} />
         <br />
         <Suspense
@@ -362,16 +358,6 @@ function ProductMain({
         </Suspense>
 
         <br />
-        {stars && (
-          <div
-            className="star-rating"
-            dangerouslySetInnerHTML={{
-              __html: stars,
-            }}
-          />
-        )}
-
-        <br />
         {valueMap.get('product_review') && (
           <>
             <p>
@@ -383,10 +369,10 @@ function ProductMain({
                 __html: valueMap.get('product_review'),
               }}
             />
+            <br />
           </>
         )}
 
-        <br />
         {valueMap.get('shipping_return_policy') && (
           <>
             <p>
@@ -398,21 +384,9 @@ function ProductMain({
                 __html: valueMap.get('shipping_return_policy'),
               }}
             />
+            <br />
           </>
         )}
-
-        <br />
-        <div className="seprrator">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="600"
-            height="2"
-            viewBox="0 0 600 2"
-            fill="none"
-          >
-            <path d="M0 1H600" stroke="#E6E6E6" />
-          </svg>
-        </div>
         <div className="shipping-container">
           <div className="postalcode-container">
             <svg
@@ -686,6 +660,24 @@ function AddToCartButton({
                 type="hidden"
               />
               <div className="addtocartquantiy">
+                <button className="decrement-button" onClick={handleDecrement}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M21 12C21 11.5858 20.69 11.25 20.3077 11.25L3.69231 11.25C3.30996 11.25 3 11.5858 3 12C3 12.4142 3.30996 12.75 3.69231 12.75L20.3077 12.75C20.69 12.75 21 12.4142 21 12Z"
+                      fill="#212121"
+                    />
+                  </svg>
+                </button>
+                <span className="totalquantiy">{quantity - 1}</span>
+
                 <button
                   className="increment-button"
                   onClick={handleIncrement}
@@ -708,23 +700,6 @@ function AddToCartButton({
                       fillRule="evenodd"
                       clipRule="evenodd"
                       d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
-                      fill="#212121"
-                    />
-                  </svg>
-                </button>
-                <span className="totalquantiy">{quantity}</span>
-                <button className="decrement-button" onClick={handleDecrement}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M21 12C21 11.5858 20.69 11.25 20.3077 11.25L3.69231 11.25C3.30996 11.25 3 11.5858 3 12C3 12.4142 3.30996 12.75 3.69231 12.75L20.3077 12.75C20.69 12.75 21 12.4142 21 12Z"
                       fill="#212121"
                     />
                   </svg>
