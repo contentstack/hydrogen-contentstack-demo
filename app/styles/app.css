@@ -422,7 +422,8 @@ aside li {
 
 .collection-item img {
   height: auto;
-  margin-bottom: 30px;
+  margin-bottom: 22px;
+  object-fit: cover;
 }
 
 .collection-item {
@@ -444,7 +445,7 @@ aside li {
 .products-grid {
   display: grid;
   grid-gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-item-width), 1fr));
+  grid-template-columns: repeat(4, 1fr);
   margin-bottom: 2rem;
 }
 
@@ -452,7 +453,7 @@ aside li {
   margin: 14px;
    img {
     height: 320px;
-    width: 100%;
+    object-fit: cover;
    }
 }
 
@@ -470,19 +471,22 @@ aside li {
     grid-gap: 4rem;
   }
   .description {
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 22px;
     p{
-      font-size: 16px;
-      font-weight: 400;
-      line-height: 24px;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 22px;
     }
   }
 }
 
 .product h1 {
   margin-top: 0;
-  font-size: 40px;
-  font-weight: 400;
-  line-height: 60px;
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 50px;
   margin-bottom: 0px;
 }
 
@@ -508,15 +512,12 @@ aside li {
   grid-gap: 0.5rem;
   align-items: center;
   .price {
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 36px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 34px;
   }
 }
 
-/* .product-price-on-sale s {
-  opacity: 0.5;
-} */
 .comparePrice {
   font-size: 12px;
   font-weight: 400;

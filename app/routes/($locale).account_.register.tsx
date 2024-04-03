@@ -146,19 +146,18 @@ export default function Register() {
             required
           />
         </fieldset>
-        {error ? (
+        {error && (
           <p>
             <mark>
               <small>{error}</small>
             </mark>
           </p>
-        ) : (
-          <br />
         )}
         <button className="banner-repo-cta update recover-cta" type="submit">
           Create Account
         </button>
       </Form>
+      <br />
       <p className="sign-in">
         <span>
           Already have an account?

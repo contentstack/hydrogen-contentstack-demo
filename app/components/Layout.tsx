@@ -84,7 +84,12 @@ function SearchAside() {
                 type="search"
               />
               &nbsp;
-              <button type="submit">Search</button>
+              <button
+                className="view-all-products search-aside-cta "
+                type="submit"
+              >
+                Search
+              </button>
             </div>
           )}
         </PredictiveSearchForm>
