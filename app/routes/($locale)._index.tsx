@@ -604,7 +604,7 @@ function RecommendedProducts({
                 <div className="featured-wrapper container">
                   <div className="featured-content">
                     <div>
-                      <h2 className="bodyCss feature-heading">
+                      <h2 className="bodyCss feature-heading bs-mg-bt">
                         {cmsData?.best_seller?.title}
                       </h2>
                       <p>{cmsData?.best_seller?.description}</p>
