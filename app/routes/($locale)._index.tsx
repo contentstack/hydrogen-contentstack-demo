@@ -218,7 +218,6 @@ function RecommendedProducts({
                         product?.priceRange?.minVariantPrice?.amount,
                       );
                       let priceOff;
-
                       if (
                         originalPrice &&
                         discountedPrice &&
@@ -378,8 +377,9 @@ function RecommendedProducts({
                   </h2>
                   <div className="row ">
                     <div className="col-left-top-cat">
+                      {/* women fashion */}
                       <Link
-                        className={` flex`}
+                        className={` flex best-sell-img `}
                         key={topCategory?.collections?.edges[7].node?.id}
                         to={`/collections/${topCategory?.collections?.edges[7].node?.handle}`}
                         prefetch="intent"
@@ -388,11 +388,17 @@ function RecommendedProducts({
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="1/1"
                           data={topCategory?.collections?.edges[7].node?.image}
-                          className="top-cat-img flex"
+                          className="top-cat-img flex "
                         />
+                        <div className="pt-abs">
+                          <h3>
+                            {topCategory?.collections?.edges[7].node?.title}
+                          </h3>
+                        </div>
                       </Link>
+                      {/* men fashion */}
                       <Link
-                        className={`flex`}
+                        className={`flex  best-sell-img`}
                         key={topCategory?.collections?.edges[2].node?.id}
                         to={`/collections/${topCategory?.collections?.edges[2].node?.handle}`}
                         prefetch="intent"
@@ -403,12 +409,18 @@ function RecommendedProducts({
                           data={topCategory?.collections?.edges[2].node?.image}
                           className=" top-cat-img flex"
                         />
+                        <div className="pt-abs">
+                          <h3>
+                            {topCategory?.collections?.edges[2].node?.title}
+                          </h3>
+                        </div>
                       </Link>
                     </div>
                     <div className="col-left-top-cat">
                       <div className="row top-cat-row1-sec">
+                        {/* sun glasses */}
                         <Link
-                          className={` flex col-left-top-cat`}
+                          className={` flex col-left-top-cat best-sell-img`}
                           key={topCategory?.collections?.edges[6].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
                           prefetch="intent"
@@ -421,9 +433,15 @@ function RecommendedProducts({
                             }
                             className="mg-lt top-cat-img flex"
                           />
+                          <div className="pt-abs top-row">
+                            <h3>
+                              {topCategory?.collections?.edges[6].node?.title}
+                            </h3>
+                          </div>
                         </Link>
+                        {/* hats */}
                         <Link
-                          className={` flex col-left-top-cat`}
+                          className={` flex col-left-top-cat best-sell-img`}
                           key={topCategory?.collections?.edges[5].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
                           prefetch="intent"
@@ -436,13 +454,18 @@ function RecommendedProducts({
                             }
                             className="mg-lt top-cat-img flex"
                           />
+                          <div className="pt-abs top-row">
+                            <h3>
+                              {topCategory?.collections?.edges[5].node?.title}
+                            </h3>
+                          </div>
                         </Link>
                         {/* </div> */}
                       </div>
-                      <div className="row top-cat-row2-sec ">
-                        {/* <div className="col-left-top-cat"> */}
+                      <div className="row top-cat-row2-sec best-sell-img ">
+                        {/* handbags */}
                         <Link
-                          className={` flex col-left-top-cat`}
+                          className={`flex col-left-top-cat`}
                           key={topCategory?.collections?.edges[4].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[4].node?.handle}`}
                           prefetch="intent"
@@ -454,11 +477,17 @@ function RecommendedProducts({
                               topCategory?.collections?.edges[4].node?.image
                             }
                             // loading={index < 3 ? 'eager' : undefined}
-                            className="mg-lt top-cat-img flex"
+                            className=" mg-lt  top-cat-img flex"
                           />
+                          <div className="pt-abs bottom-row ">
+                            <h3>
+                              {topCategory?.collections?.edges[4].node?.title}
+                            </h3>
+                          </div>
                         </Link>
+                        {/* bagpacks */}
                         <Link
-                          className={` flex col-left-top-cat`}
+                          className={` flex col-left-top-cat  best-sell-img`}
                           key={topCategory?.collections?.edges[3].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[3].node?.handle}`}
                           prefetch="intent"
@@ -469,14 +498,19 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[3].node?.image
                             }
-                            // loading={index < 3 ? 'eager' : undefined}
-                            className=" mg-lt top-cat-img flex"
+                            className=" mg-lt  top-cat-img flex"
                           />
+                          <div className="pt-abs top-row">
+                            <h3>
+                              {topCategory?.collections?.edges[3].node?.title}
+                            </h3>
+                          </div>
                         </Link>
                         {/* </div> */}
                       </div>
+                      {/* footwear */}
                       <Link
-                        className={` flex `}
+                        className={` flex   best-sell-img mg-footwear`}
                         key={topCategory?.collections?.edges[1].node?.id}
                         to={`/collections/${topCategory?.collections?.edges[1].node?.handle}`}
                         prefetch="intent"
@@ -487,6 +521,11 @@ function RecommendedProducts({
                           data={topCategory?.collections?.edges[1].node?.image}
                           className="mg-lt top-cat-img flex"
                         />
+                        <div className="pt-abs footwear-row">
+                          <h3>
+                            {topCategory?.collections?.edges[1].node?.title}
+                          </h3>
+                        </div>
                       </Link>
                     </div>
                   </div>
@@ -695,7 +734,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   }
   query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
-    products(first: 3, sortKey: UPDATED_AT, reverse: true) {
+    products(first: 3, sortKey: CREATED_AT, reverse: true) {
       nodes {
         ...RecommendedProduct
       }

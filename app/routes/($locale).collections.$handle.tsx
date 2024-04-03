@@ -41,7 +41,7 @@ export default function Collection() {
   const {collection} = useLoaderData<typeof loader>();
   return (
     <>
-      <div className="breadcrumbs" style={{minWidth: '1600px'}}>
+      <div className="breadcrumbs container">
         <ul>
           <li>
             <a href="/">Home</a>
@@ -134,7 +134,7 @@ function ProductItem({
           aspectRatio="1/1"
           data={product?.featuredImage}
           loading={loading}
-          sizes="(min-width: 45em) 400px, 100vw"
+          // sizes="(min-width: 45em) 400px, 100vw"
         />
       )}
       <h4>{product?.title}</h4>
