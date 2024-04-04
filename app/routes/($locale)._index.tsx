@@ -431,7 +431,7 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[6].node?.image
                             }
-                            className="mg-lt top-cat-img flex"
+                            className="mg-lt top-cat-img flex img-width-tc"
                           />
                           <div className="pt-abs top-row">
                             <h3>
@@ -452,7 +452,7 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[5].node?.image
                             }
-                            className="mg-lt top-cat-img flex"
+                            className="mg-lt top-cat-img flex img-width-tc"
                           />
                           <div className="pt-abs top-row">
                             <h3>
@@ -477,7 +477,7 @@ function RecommendedProducts({
                               topCategory?.collections?.edges[4].node?.image
                             }
                             // loading={index < 3 ? 'eager' : undefined}
-                            className=" mg-lt  top-cat-img flex"
+                            className=" mg-lt  top-cat-img flex img-width-tc"
                           />
                           <div className="pt-abs bottom-row ">
                             <h3>
@@ -498,7 +498,7 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[3].node?.image
                             }
-                            className=" mg-lt  top-cat-img flex"
+                            className=" mg-lt  top-cat-img flex img-width-tc"
                           />
                           <div className="pt-abs top-row">
                             <h3>
