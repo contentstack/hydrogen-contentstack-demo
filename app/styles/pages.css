@@ -546,6 +546,10 @@ img {
   max-width: 50%;
 }
 
+.img-width-tc {
+  width: 89% !important;
+}
+
 .top-cat-img {
   height: auto !important;
   margin-bottom: 32px;
@@ -601,6 +605,7 @@ img {
 .mg-footwear {
   margin-top: 13px;
   img {
+    width: 95% !important;
     margin-bottom: 15px !important;
     @media (min-width: 1440px) {
       height: 320px !important;
@@ -610,7 +615,7 @@ img {
 
 .footwear-row {
   margin-left: 32px;
-  width: 95%;
+  width: 95% !important;
   @media (min-width: 1440px) {
     width: 100%;
   }
