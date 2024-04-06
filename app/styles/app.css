@@ -21,6 +21,9 @@ img {
   @media (max-width: 980px) {
     width: 20px !important;
   }
+  @media (max-width: 769px) {
+    width: 15px !important;
+  }
 }
 
 .search-cion {
@@ -33,10 +36,18 @@ img {
 .col-left {
   flex: 0 0 40%;
   max-width: 40%;
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 .col-right {
   flex: 0 0 60%;
   max-width: 60%;
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 /*
 * --------------------------------------------------
@@ -57,6 +68,10 @@ aside {
     left: 50%;
     right: 50%;
     min-width: 800px;
+  }
+  @media (max-width: 769px) {
+    min-width: 50%;
+    max-width: 50%;
   }
 }
 
@@ -152,6 +167,9 @@ aside li {
 /* reveal aside */
 .overlay:target aside {
   transform: translateX(calc(var(--aside-width) * -1));
+  @media (max-width: 769px) {
+    transform: none;
+  }
 }
 
 /*
@@ -161,6 +179,11 @@ aside li {
 */
 .menu-wrap {
   display: flex;
+ a img {
+    @media (max-width: 769px) {
+      width: 100px;
+    }
+  }
 }
 .header {
   align-items: center;
@@ -172,6 +195,9 @@ aside li {
   top: 0;
   z-index: 999;
   border-bottom: 0.1rem solid rgba(18, 18, 18, 0.08);
+  @media (max-width: 769px) {
+    padding: 2px !important;
+  }
 }
 .header-container {
   width: 1600px;
@@ -189,14 +215,11 @@ aside li {
 .header-menu-mobile {
   display: flex;
   flex-direction: column;
-  grid-gap: 1rem;
 }
 
 .header-menu-desktop {
-  display: none;
-  @media (min-width: 769px) {
     display: flex;
-  }
+    align-items: center;
 }
 
 .header-menu-item {
@@ -205,7 +228,7 @@ aside li {
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 150%; /* 24px */
+  line-height: 150%;
   letter-spacing: 0.16px;
   @media (max-width: 1500px) {
     padding: 0 30px;
@@ -213,6 +236,13 @@ aside li {
   @media (max-width: 1200px) {
     padding: 0 20px;
   }
+
+  @media (max-width: 769px) {
+    padding: 5px !important;
+    font-size: 8px;
+  }
+  
+
 }
 
 .header-ctas {
@@ -336,6 +366,12 @@ aside li {
   background: var(--color-light);
   position: sticky;
   top: 0;
+  input {
+    @media (max-width: 769px) {
+      padding: 0;
+      font-size: 14px;
+    }
+  }
 }
 
 .predictive-search-result {
@@ -447,6 +483,9 @@ aside li {
   grid-gap: 1.5rem;
   grid-template-columns: repeat(4, 1fr);
   margin-bottom: 2rem;
+  @media (max-width: 769px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .product-item {
@@ -454,7 +493,14 @@ aside li {
    img {
     height: 320px;
     object-fit: cover;
+    @media (max-width: 769px) {
+      height: 200px;
+      object-fit: contain;
+    }
    }
+   @media (max-width: 769px) {
+    margin: 0;
+  }
 }
 
 /*
