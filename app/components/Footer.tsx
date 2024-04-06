@@ -22,7 +22,7 @@ export function Footer(fetchdata: any) {
             </p>
             <div>
               <input
-                className="footer-email"
+                className="footer-email input-field"
                 type="email"
                 placeholder={footer?.subscription?.mail_placeholder_text}
               />
