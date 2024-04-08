@@ -172,13 +172,13 @@ export default function Product() {
 
           {state?.previousTabUrl === '/variantUrl' ? (
             <li>
-              <a>{collectionName}</a>
+              <span>{collectionName}</span>
             </li>
           ) : (
             ''
           )}
           <li>
-            <a>{productName}</a>
+            <span>{productName}</span>
           </li>
         </ul>
       </div>
@@ -242,7 +242,7 @@ export default function Product() {
                               {product?.title}
                             </small>
                             {
-                              <div className="product-price-on-sale">
+                              <div className="product-price-on-sale price-mobile">
                                 {product?.priceRange ? (
                                   <Money
                                     className="price"
