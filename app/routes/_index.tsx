@@ -376,7 +376,7 @@ function RecommendedProducts({
                     {cmsData?.top_category_title}
                   </h2>
                   <div className="row ">
-                    <div className="col-left-top-cat">
+                    <div className="col-left-top-cat col-left-top-cat-mobile">
                       {/* women fashion */}
                       <Link
                         className={` flex best-sell-img `}
@@ -416,7 +416,7 @@ function RecommendedProducts({
                         </div>
                       </Link>
                     </div>
-                    <div className="col-left-top-cat">
+                    <div className="col-left-top-cat col-left-top-cat-mobile">
                       <div className="row top-cat-row1-sec">
                         {/* sun glasses */}
                         <Link
@@ -535,6 +535,9 @@ function RecommendedProducts({
                   <div className="container">
                     <div className="row explore-sec-row">
                       <div className="col-left explore_section_left">
+                        <h2 className="collection-heading-mobile">
+                          {cmsData?.collection_heading}
+                        </h2>
                         <CollectionItem
                           collection={collections[0]}
                           index={0}
