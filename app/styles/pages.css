@@ -102,6 +102,9 @@ img {
   color: #212121;
   z-index: 2;
   margin: 0;
+  @media (max-width: 769px) {
+    font-size: 24px;
+  }
 }
 .page-banner-heading {
   color: var(--Colors-Text_Highlight, #eb5646);
@@ -146,6 +149,11 @@ img {
   appearance: none;
   min-height: 56px;
   background-color: #212121;
+  @media (max-width: 769px) {
+    font-size: 10px;
+    padding: 5px;
+    line-height: 20px;
+  }
 
   &:hover {
     border: 2px solid #212121;
@@ -210,6 +218,11 @@ img {
   text-transform: uppercase;
   color: #212121;
   transition: box-shadow var(--duration-short) ease;
+  @media (max-width: 769px) {
+    font-size: 10px;
+    padding: 12px 12px;
+    line-height: 20px;
+  }
 }
 .footer-email {
   max-width: 360px;
@@ -218,6 +231,12 @@ img {
   border-radius: 0%;
   padding: 16px 32px;
   color: #545454;
+}
+ .input-field {
+  @media (max-width: 769px) {
+    max-width: auto;
+    width: auto;
+  }
 }
 .footer-wrapper {
   background-color: #212121;
@@ -230,6 +249,10 @@ img {
   text-transform: capitalize;
   margin-bottom: 0;
   margin-right: 20%;
+  @media (max-width: 769px) {
+    font-size: 24px;
+    margin-right: 0 !important;
+  }
 }
 .footer-info {
   padding-bottom: 32px;
@@ -247,6 +270,10 @@ img {
     flex: 0 0 50%;
     max-width: 50%;
   }
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 .footer-col-right {
   flex: 0 0 36%;
@@ -254,6 +281,10 @@ img {
   @media (max-width: 1200px) {
     flex: 0 0 50%;
     max-width: 50%;
+  }
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
   }
 }
 .footer-products-wrap {
@@ -332,6 +363,9 @@ img {
   line-height: 150%; /* 48px */
   letter-spacing: 0.32px;
   text-transform: uppercase;
+  @media (max-width: 769px) {
+    font-size: 20px;
+  }
 }
 .collection-heading {
   padding-left: 32px;
@@ -343,6 +377,9 @@ img {
   letter-spacing: 0.48px;
   @media (max-width: 1200px) {
     font-size: 36px;
+  }
+  @media (max-width: 769px) {
+   display: none;
   }
 }
 .mg-b32 {
@@ -409,6 +446,10 @@ img {
     height: 300px;
     object-fit: cover;
   }
+  @media (max-width: 769px) {
+    height: 200px;
+    object-fit: cover;
+  }
   }
 }
 /* about page */
@@ -419,6 +460,8 @@ img {
   display: flex;
   align-items: end;
   margin-bottom: 24px;
+  background-position: center;
+  background-size: cover;
 }
 .about-heading {
   font-size: 54px;
@@ -431,6 +474,11 @@ img {
   font-weight: 300;
   line-height: 150%;
   font-family: inter;
+  p {
+    @media (max-width: 769px) {
+      font-size: 14px !important;
+     }
+  }
 }
 
 /* offers Page */
@@ -441,6 +489,8 @@ img {
     width: 100%;
     height: 100%;
     border-radius: 0 !important;
+    border-bottom-left-radius: 12px !important;
+    border-top-left-radius: 12px !important;
     object-fit: cover;
   }
 }
@@ -453,6 +503,9 @@ img {
   flex: 0 0 51%;
   max-width: 51%;
   height: auto;
+  border-radius: 0 !important;
+  border-bottom-right-radius: 12px !important;
+  border-top-right-radius: 12px !important;
 }
 .offers-title {
   padding-top: 38px;
@@ -491,18 +544,20 @@ img {
 .newArrival-col-large {
   flex: 0 0 68%;
   max-width: 68%;
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
   .row {
     flex-wrap: nowrap;
     /* @media (max-width: 1440px) { */
-      gap: 50px;
+      gap: 18px;
+      margin-left: 26px;
     /* } */
     img {
       max-width: 420px;
       min-height: 420px;
       object-fit: cover;
-    }
-    .first_img {
-      padding: 0 32px;
     }
   }
 }
@@ -518,6 +573,10 @@ img {
 .newArrival-col-small {
   flex: 0 0 32%;
   max-width: 32%;
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
   img {
     min-height: 516px;
     min-width: 100%;
@@ -544,6 +603,14 @@ img {
 .col-left-top-cat {
   flex: 0 0 50%;
   max-width: 50%;
+  
+}
+
+.col-left-top-cat-mobile {
+  @media (max-width: 769px) {
+    flex: 0 0 100% !important;
+    max-width: 100% !important;
+  }
 }
 
 .img-width-tc {
@@ -563,6 +630,10 @@ img {
     flex: 0 0 55%;
     max-width: 55%;
   }
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 .col-right-best-seller {
   flex: 0 0 37%;
@@ -570,6 +641,24 @@ img {
   @media (max-width: 1018px) {
     flex: 0 0 34%;
     max-width: 34%;
+  }
+  @media (max-width: 769px) {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+.collection-heading-mobile {
+  display: none;
+  @media (max-width: 769px) {
+    display: block;
+    padding-left: 32px;
+    text-transform: uppercase;
+    color: #212121;
+    font-size: 40px;
+    font-weight: 600;
+    line-height: 72px;
+    letter-spacing: 0.48px;
   }
 }
 
@@ -600,6 +689,9 @@ img {
 .top-row {
   margin-left: 32px;
   width: 89%;
+  @media (max-width: 769px) {
+   width: 84%;
+  }
 }
 
 .mg-footwear {
@@ -619,11 +711,18 @@ img {
   @media (min-width: 1440px) {
     width: 100%;
   }
+  @media (max-width: 769px) {
+    width: 92% !important;
+   }
 }
 
 .bottom-row {
   margin-left: 32px;
-  width: 44.75%;
+  width: 44.5%;
+  @media (max-width: 769px) {
+    width: 41.8%;
+   }
+  
 }
 
 .best-sell-cta1 {
@@ -631,12 +730,18 @@ img {
   text-decoration: none !important;
   padding: 12px 24px;
   border: none !important;
+  @media (max-width: 769px) {
+    padding: 5px;
+  }
 }
 .best-sell-cta-heading {
   color: white;
   font-weight: 600;
   font-size: 36px;
   line-height: 72px;
+  @media (max-width: 769px) {
+    font-size: 12px;
+  }
 }
 
 .best-sell-cta {
@@ -648,6 +753,9 @@ img {
 .search-aside-cta {
   padding: 10px 22px !important;
   margin-left: 10px;
+  @media (max-width: 769px) {
+    padding: 5px 10px !important;
+  }
 }
 
 .login {
@@ -673,11 +781,17 @@ img {
   .forgot-password {
     position: relative;
     right: 80%;
+    @media (max-width: 769px) {
+      position: inherit;
+    }
   }
 
   .register {
     position: absolute;
     right: 34%;
+    @media (max-width: 769px) {
+      position: inherit;
+    }
     
     a {
       color: #B6B6B6;
@@ -697,6 +811,10 @@ img {
   border: 1px solid #E6E6E6;
   padding-left: 20px !important;
   font-size: 18px;
+  @media (max-width: 769px) {
+    width: auto;
+    padding: 5px;
+  }
 }
 
 .recover{ 
@@ -712,8 +830,6 @@ img {
 
 .breadcrumbs {
   margin-bottom: 10px;
-  /* max-width: 1400px;
-  min-width: 1487px; */
   margin-right: auto;
   margin-left: auto;
   margin-top: 30px;
@@ -981,4 +1097,7 @@ img {
   min-width: 466px !important;
   width: 100%;
   border-radius: 61px;
+  @media (max-width: 769px) {
+    min-width: auto !important;
+  }
 }
