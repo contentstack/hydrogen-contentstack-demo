@@ -160,7 +160,7 @@ function RecommendedProducts({
           ) : (
             ''
           )}
-          <div className="flex">
+          <div className="flex banner-button">
             {cmsData?.banner?.button?.repo.map((button: any, index: any) => {
               return button?.cta_title?.title ? (
                 <a
@@ -292,7 +292,7 @@ function RecommendedProducts({
                         <h2 className="bodyCss feature-heading uppercase">
                           {cmsData?.new_arrival_title}
                         </h2>
-                        <div className="best-sell-img">
+                        <div className="pt-rl">
                           <Image
                             // alt={collection?.image?.altText || collection?.title}
                             aspectRatio="1/1"
@@ -316,7 +316,7 @@ function RecommendedProducts({
                       </div>
                       <div className="newArrival-col-large">
                         <div className="row">
-                          <div className="best-sell-img">
+                          <div className="pt-rl">
                             <Image
                               aspectRatio="1/1"
                               data={
@@ -337,7 +337,7 @@ function RecommendedProducts({
                               {cmsData?.best_seller?.shop_cta?.cta_title?.title}
                             </Link>
                           </div>
-                          <div className="best-sell-img">
+                          <div className="pt-rl">
                             <Image
                               // alt={collection?.image?.altText || collection?.title}
                               aspectRatio="1/1"
@@ -379,7 +379,7 @@ function RecommendedProducts({
                     <div className="col-left-top-cat col-left-top-cat-mobile">
                       {/* women fashion */}
                       <Link
-                        className={` flex best-sell-img `}
+                        className={` flex pt-rl mg-b32`}
                         key={topCategory?.collections?.edges[7].node?.id}
                         to={`/collections/${topCategory?.collections?.edges[7].node?.handle}`}
                         prefetch="intent"
@@ -398,7 +398,7 @@ function RecommendedProducts({
                       </Link>
                       {/* men fashion */}
                       <Link
-                        className={`flex  best-sell-img`}
+                        className={`flex   pt-rl mg-b32`}
                         key={topCategory?.collections?.edges[2].node?.id}
                         to={`/collections/${topCategory?.collections?.edges[2].node?.handle}`}
                         prefetch="intent"
@@ -407,7 +407,7 @@ function RecommendedProducts({
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="2/1"
                           data={topCategory?.collections?.edges[2].node?.image}
-                          className=" top-cat-img flex"
+                          className=" top-cat-img flex mg-bottom-row "
                         />
                         <div className="pt-abs">
                           <h3>
@@ -417,10 +417,10 @@ function RecommendedProducts({
                       </Link>
                     </div>
                     <div className="col-left-top-cat col-left-top-cat-mobile">
-                      <div className="row top-cat-row1-sec">
+                      <div className="row mg-b32">
                         {/* sun glasses */}
                         <Link
-                          className={` flex col-left-top-cat best-sell-img`}
+                          className={` flex col-left-top-cat  pt-rl`}
                           key={topCategory?.collections?.edges[6].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
                           prefetch="intent"
@@ -431,7 +431,7 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[6].node?.image
                             }
-                            className="mg-lt top-cat-img flex img-width-tc"
+                            className="mg-lt-17  top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
@@ -441,7 +441,7 @@ function RecommendedProducts({
                         </Link>
                         {/* hats */}
                         <Link
-                          className={` flex col-left-top-cat best-sell-img`}
+                          className={` flex col-left-top-cat pt-rl`}
                           key={topCategory?.collections?.edges[5].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
                           prefetch="intent"
@@ -452,7 +452,7 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[5].node?.image
                             }
-                            className="mg-lt top-cat-img flex img-width-tc"
+                            className="mg-lt-17 top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
@@ -462,10 +462,10 @@ function RecommendedProducts({
                         </Link>
                         {/* </div> */}
                       </div>
-                      <div className="row top-cat-row2-sec best-sell-img ">
+                      <div className="row mg-b32">
                         {/* handbags */}
                         <Link
-                          className={`flex col-left-top-cat`}
+                          className={`flex col-left-top-cat  pt-rl`}
                           key={topCategory?.collections?.edges[4].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[4].node?.handle}`}
                           prefetch="intent"
@@ -477,9 +477,9 @@ function RecommendedProducts({
                               topCategory?.collections?.edges[4].node?.image
                             }
                             // loading={index < 3 ? 'eager' : undefined}
-                            className=" mg-lt  top-cat-img flex img-width-tc"
+                            className=" mg-lt-17   top-cat-img flex"
                           />
-                          <div className="pt-abs bottom-row ">
+                          <div className="pt-abs top-row">
                             <h3>
                               {topCategory?.collections?.edges[4].node?.title}
                             </h3>
@@ -487,7 +487,7 @@ function RecommendedProducts({
                         </Link>
                         {/* bagpacks */}
                         <Link
-                          className={` flex col-left-top-cat  best-sell-img`}
+                          className={`flex col-left-top-cat  pt-rl`}
                           key={topCategory?.collections?.edges[3].node?.id}
                           to={`/collections/${topCategory?.collections?.edges[3].node?.handle}`}
                           prefetch="intent"
@@ -498,7 +498,7 @@ function RecommendedProducts({
                             data={
                               topCategory?.collections?.edges[3].node?.image
                             }
-                            className=" mg-lt  top-cat-img flex img-width-tc"
+                            className="mg-lt-17 top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
@@ -510,7 +510,7 @@ function RecommendedProducts({
                       </div>
                       {/* footwear */}
                       <Link
-                        className={` flex   best-sell-img mg-footwear`}
+                        className={`mg-lt-17 flex pt-rl `}
                         key={topCategory?.collections?.edges[1].node?.id}
                         to={`/collections/${topCategory?.collections?.edges[1].node?.handle}`}
                         prefetch="intent"
@@ -519,9 +519,9 @@ function RecommendedProducts({
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="2/1"
                           data={topCategory?.collections?.edges[1].node?.image}
-                          className="mg-lt top-cat-img flex"
+                          className="top-cat-img flex mg-bottom-row "
                         />
-                        <div className="pt-abs footwear-row">
+                        <div className="pt-abs">
                           <h3>
                             {topCategory?.collections?.edges[1].node?.title}
                           </h3>
@@ -639,7 +639,7 @@ function RecommendedProducts({
                             bestSeller?.collection?.products?.nodes[0]?.images
                               ?.nodes[0]
                           }
-                          className="top-cat-img flex "
+                          className="best-sell-img flex"
                         />
                         <BestSellerCta
                           node={bestSeller?.collection?.products?.nodes[0]}
@@ -655,7 +655,7 @@ function RecommendedProducts({
                               ?.nodes[0]
                           }
                           // loading={index < 3 ? 'eager' : undefined}
-                          className="peral-foot flex "
+                          className="peral-foot flex"
                         />
                         <BestSellerCta
                           node={bestSeller?.collection?.products?.nodes[1]}
@@ -672,7 +672,7 @@ function RecommendedProducts({
                             bestSeller?.collection?.products?.nodes[2]?.images
                               ?.nodes[0]
                           }
-                          className="mg-lt top-cat-img flex "
+                          className="mg-lt best-sell-img flex best-sell-img-mobile"
                         />
                         <BestSellerCta
                           node={bestSeller?.collection?.products?.nodes[2]}
@@ -687,7 +687,7 @@ function RecommendedProducts({
                             bestSeller?.collection?.products?.nodes[3]?.images
                               ?.nodes[0]
                           }
-                          className="mg-lt top-cat-img flex "
+                          className="mg-lt best-sell-img flex best-sell-img-mobile"
                         />
                         <BestSellerCta
                           node={bestSeller?.collection?.products?.nodes[3]}
