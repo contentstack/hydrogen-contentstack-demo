@@ -50,7 +50,7 @@ export default function Collection() {
             <a href="/collections">Collections</a>
           </li>
           <li>
-            <a>{collection.title}</a>
+            <span>{collection.title}</span>
           </li>
         </ul>
       </div>
@@ -139,7 +139,7 @@ function ProductItem({
       )}
       <h4>{product?.title}</h4>
       <small>
-        <div className="product-price-on-sale">
+        <div className="product-price-on-sale price-mobile">
           {product?.priceRange ? (
             <Money
               className="price"
