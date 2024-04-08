@@ -88,7 +88,7 @@ function RecommendedProducts({
             <a href="/">Home</a>
           </li>
           <li>
-            <a href="/collections/all">Featured Products</a>
+            <span>Featured Products</span>
           </li>
         </ul>
       </div>
@@ -137,7 +137,7 @@ function RecommendedProducts({
                     )}
                     <p className="product-cta">{product?.title}</p>
                     <small>
-                      <div className="product-price-on-sale">
+                      <div className="product-price-on-sale price-mobile">
                         {product?.priceRange ? (
                           <Money
                             className="price"
