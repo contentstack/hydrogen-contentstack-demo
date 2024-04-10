@@ -868,6 +868,7 @@ const RELATED_PRODUCT_QUERY = `#graphql
       productRecommendations(productId: $productID, intent: RELATED) {
         id,
         title
+        handle
         availableForSale
         priceRange {
           minVariantPrice {
