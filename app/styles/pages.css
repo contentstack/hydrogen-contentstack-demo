@@ -641,6 +641,7 @@ img {
 .top-cat-img {
   height: auto !important;
   object-fit: cover;
+  overflow: auto;
 }
 
 .best-sell-img {
