@@ -144,12 +144,16 @@ function RecommendedProducts({
     <div>
       <div className="home-page-banner">
         <div className="container">
-          <h5 className="page-banner-heading">
-            {cmsData?.banner?.banner_heading}
-          </h5>
-          <h1 className="page-banner-content bodyCss">
-            {cmsData?.banner?.banner_title}
-          </h1>
+          {cmsData?.banner?.banner_heading && (
+            <h5 className="page-banner-heading">
+              {cmsData?.banner?.banner_heading}
+            </h5>
+          )}
+          {cmsData?.banner?.banner_title && (
+            <h1 className="page-banner-content bodyCss">
+              {cmsData?.banner?.banner_title}
+            </h1>
+          )}
           {cmsData?.banner?.banner_description ? (
             <div
               className="banner-description"
@@ -160,7 +164,7 @@ function RecommendedProducts({
           ) : (
             ''
           )}
-          <div className="flex">
+          <div className="flex banner-button">
             {cmsData?.banner?.button?.repo.map((button: any, index: any) => {
               return button?.cta_title?.title ? (
                 <a
@@ -323,7 +327,7 @@ function RecommendedProducts({
                                 newarrivalproducts?.collection?.products
                                   ?.nodes[1]?.images?.nodes[0]
                               }
-                              className=" first_img"
+                              className=" first_img safari-only"
                             />
                             <Link
                               to={`/products/${newarrivalproducts?.collection?.products?.nodes[1].handle}`}
@@ -345,7 +349,7 @@ function RecommendedProducts({
                                 newarrivalproducts?.collection?.products
                                   ?.nodes[0]?.images?.nodes[0]
                               }
-                              className=""
+                              className="safari-only"
                             />
                             <Link
                               to={`/products/${newarrivalproducts?.collection?.products?.nodes[0].handle}`}

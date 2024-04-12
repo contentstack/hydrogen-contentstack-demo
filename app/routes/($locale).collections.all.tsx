@@ -84,10 +84,10 @@ function RecommendedProducts({
     <>
       <div className="breadcrumbs container">
         <ul>
-          <li>
+          <li className="safari-only">
             <a href="/">Home</a>
           </li>
-          <li>
+          <li className="safari-only">
             <span>Featured Products</span>
           </li>
         </ul>
