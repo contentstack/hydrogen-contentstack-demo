@@ -583,6 +583,15 @@ img {
       max-width: 420px;
       min-height: 420px;
       object-fit: cover;
+      @media screen and (min-width: 1200px) and (max-width: 1919px) {
+        @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
+          &.safari-only {
+             min-width: 386px;
+             height: auto;
+           }
+         }
+      }
+
     }
   }
 }
@@ -860,20 +869,35 @@ img {
 .breadcrumbs li:not(:last-child):after {
   content: url('../../public/breadcrumb.svg');
   margin: 0 5px;
+  vertical-align: -moz-middle-with-baseline !important;
   vertical-align: middle;
-  line-height: 1em;
 }
+.breadcrumbs li:not(:last-child) {
+  @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
+    &.safari-only:after {
+      vertical-align: -webkit-baseline-middle !important;
+     }
+   }
+  }
+
+
 
 .breadcrumbs li:not(:last-child) a:after {
   margin: 0 5px;
+  vertical-align: -moz-middle-with-baseline !important;
   vertical-align: middle;
-  line-height: 1em;
 }
+.breadcrumbs li:not(:last-child){
+  @supports (hanging-punctuation: first) and (font: -apple-system-body) and (-webkit-appearance: none) {
+    &.safari-only a:after {
+      vertical-align: -webkit-baseline-middle !important;
+     }
+   }
+  }
 
 .breadcrumbs li a {
   text-decoration: none;
   color: #333;
-  font-family: Inter;
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
