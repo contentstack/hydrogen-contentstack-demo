@@ -273,7 +273,7 @@ function RecommendedProducts({
                                     ''
                                   )}
 
-                                  {priceOff > 0 ? (
+                                  {priceOff && priceOff > 0 ? (
                                     <p className="comparePrice">
                                       (${priceOff.toFixed(2)} OFF)
                                     </p>
