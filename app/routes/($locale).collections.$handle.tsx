@@ -43,13 +43,13 @@ export default function Collection() {
     <>
       <div className="breadcrumbs container">
         <ul>
-          <li>
+          <li className="safari-only">
             <a href="/">Home</a>
           </li>
-          <li>
+          <li className="safari-only">
             <a href="/collections">Collections</a>
           </li>
-          <li>
+          <li className="safari-only">
             <span>{collection.title}</span>
           </li>
         </ul>

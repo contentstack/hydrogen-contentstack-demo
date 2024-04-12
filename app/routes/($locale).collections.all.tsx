@@ -84,10 +84,10 @@ function RecommendedProducts({
     <>
       <div className="breadcrumbs container">
         <ul>
-          <li>
+          <li className="safari-only">
             <a href="/">Home</a>
           </li>
-          <li>
+          <li className="safari-only">
             <span>Featured Products</span>
           </li>
         </ul>
@@ -158,7 +158,7 @@ function RecommendedProducts({
                         ) : (
                           ''
                         )}
-                        {priceOff  >0? (
+                        {priceOff && priceOff > 0 ? (
                           <p className="comparePrice">
                             (${priceOff.toFixed(2)} OFF)
                           </p>

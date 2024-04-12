@@ -157,27 +157,27 @@ export default function Product() {
     <>
       <div className="breadcrumbs container">
         <ul>
-          <li>
+          <li className="safari-only">
             <a href="/">Home</a>
           </li>
           {state?.previousTabUrl === '/variantUrl' ? (
-            <li>
+            <li className="safari-only">
               <a href="/collections">Collections</a>
             </li>
           ) : (
-            <li>
+            <li className="safari-only">
               <a href="/collections/all">Products</a>
             </li>
           )}
 
           {state?.previousTabUrl === '/variantUrl' ? (
-            <li>
+            <li className="safari-only">
               <span>{collectionName}</span>
             </li>
           ) : (
             ''
           )}
-          <li>
+          <li className="safari-only">
             <span>{productName}</span>
           </li>
         </ul>
