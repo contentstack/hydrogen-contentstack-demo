@@ -80,7 +80,7 @@ img {
   flex-direction: column;
   align-items: flex-start;
   height: 800px;
-  background-image: url(../../public/banner.svg);
+  background-image: url(../../public/banner.png);
   position: relative;
   background-repeat: no-repeat;
   background-size: cover;
@@ -479,7 +479,7 @@ img {
 /* about page */
 .about-page-banner {
   height: 400px;
-  background-image: url(public/full-shot-woman-online-fashion-shopping.svg);
+  background-image: url(public/about_us.png);
   position: relative;
   display: flex;
   align-items: end;
