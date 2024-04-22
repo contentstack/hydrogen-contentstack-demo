@@ -6,6 +6,7 @@ import {
   useFetchers,
   type FormProps,
 } from '@remix-run/react';
+import parse from 'html-react-parser';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import React, {useRef, useEffect} from 'react';
 
@@ -400,11 +401,7 @@ function SearchResultItem({goToSearchResult, item}: SearchResultItemProps) {
         )}
         <div>
           {item.styledTitle ? (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: item.styledTitle,
-              }}
-            />
+            <div>{parse(item?.styledTitle)}</div>
           ) : (
             <span>{item.title}</span>
           )}
