@@ -1,4 +1,5 @@
 import {NavLink, type MetaFunction, Link} from '@remix-run/react';
+import parse from 'html-react-parser';
 import '../styles/pages.css';
 import contentstack_logo from '../../public/cms_white_logo.svg';
 
@@ -157,11 +158,7 @@ export function Footer(fetchdata: any) {
           </div>
         </div>
         <div className="footer-copyright-sec">
-          <p
-            dangerouslySetInnerHTML={{
-              __html: footer?.copyright,
-            }}
-          />
+          <p>{parse(footer?.copyright)}</p>
         </div>
       </div>
     </footer>

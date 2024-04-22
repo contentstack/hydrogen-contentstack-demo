@@ -1,4 +1,5 @@
 import {Fragment, Suspense, useState} from 'react';
+import parse from 'html-react-parser';
 import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 
 import {
@@ -326,12 +327,7 @@ function ProductMain({
       <div className="product-main">
         <h1>{title}</h1>
         <br />
-        {descriptionHtml && (
-          <div
-            className="description"
-            dangerouslySetInnerHTML={{__html: descriptionHtml}}
-          />
-        )}
+        {descriptionHtml && <div>{parse(descriptionHtml)}</div>}
         <ProductPrice selectedVariant={selectedVariant} />
         <br />
         <Suspense
@@ -364,11 +360,7 @@ function ProductMain({
               <strong>Reviews</strong>
             </p>
             <br />
-            <div
-              dangerouslySetInnerHTML={{
-                __html: valueMap.get('product_review'),
-              }}
-            />
+            <div>{parse(valueMap.get('product_review'))}</div>
             <br />
           </>
         )}
@@ -379,11 +371,7 @@ function ProductMain({
               <strong>Shipping and Return</strong>
             </p>
             <br />
-            <div
-              dangerouslySetInnerHTML={{
-                __html: valueMap.get('shipping_return_policy'),
-              }}
-            />
+            <div>{parse(valueMap.get('shipping_return_policy'))}</div>
             <br />
           </>
         )}
