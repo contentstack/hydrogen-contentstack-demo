@@ -1,5 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import parse from 'html-react-parser';
 import {Await, useLoaderData, Link, type MetaFunction} from '@remix-run/react';
 import {Fragment, Suspense} from 'react';
 import {
@@ -155,12 +156,9 @@ function RecommendedProducts({
             </h1>
           )}
           {cmsData?.banner?.banner_description ? (
-            <div
-              className="banner-description"
-              dangerouslySetInnerHTML={{
-                __html: cmsData?.banner?.banner_description,
-              }}
-            />
+            <div className="banner-description">
+              {parse(cmsData?.banner?.banner_description)}
+            </div>
           ) : (
             ''
           )}
@@ -364,12 +362,9 @@ function RecommendedProducts({
                             </Link>
                           </div>
                         </div>
-                        <h2
-                          className="new-arrival-heading"
-                          dangerouslySetInnerHTML={{
-                            __html: cmsData?.new_arrival_description,
-                          }}
-                        />
+                        <h2 className="new-arrival-heading">
+                          {parse(cmsData?.new_arrival_description)}
+                        </h2>
                       </div>
                     </div>
                   </div>
