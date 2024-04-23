@@ -1,4 +1,5 @@
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
+import parse from 'html-react-parser';
 import {useLoaderData, type MetaFunction} from '@remix-run/react';
 import {Image} from '@shopify/hydrogen';
 
@@ -46,10 +47,7 @@ export default function Article() {
       </h1>
 
       {image && <Image data={image} sizes="90vw" loading="eager" />}
-      <div
-        dangerouslySetInnerHTML={{__html: contentHtml}}
-        className="article"
-      />
+      <div className="article">{parse(contentHtml)}</div>
     </div>
   );
 }

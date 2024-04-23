@@ -8,6 +8,7 @@ import {
 } from '@remix-run/react';
 import {Image, Money, Pagination} from '@shopify/hydrogen';
 import React, {useRef, useEffect} from 'react';
+import parse from 'html-react-parser';
 
 import type {
   PredictiveProductFragment,
@@ -400,11 +401,7 @@ function SearchResultItem({goToSearchResult, item}: SearchResultItemProps) {
         )}
         <div>
           {item.styledTitle ? (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: item.styledTitle,
-              }}
-            />
+            <div>{parse(item.styledTitle)}</div>
           ) : (
             <span>{item.title}</span>
           )}
