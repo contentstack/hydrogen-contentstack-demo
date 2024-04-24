@@ -6,4 +6,4 @@
 .env
 .shopify
 /node_modules
-/README 2.md
+.DS_Store
