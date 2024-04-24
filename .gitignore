@@ -6,3 +6,4 @@
 .env
 .shopify
 /node_modules
+.DS_Store
