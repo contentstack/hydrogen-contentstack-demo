@@ -47,7 +47,7 @@ export default function Article() {
       </h1>
 
       {image && <Image data={image} sizes="90vw" loading="eager" />}
-      <div className="article">{parse(contentHtml)}</div>
+      <div className="article">{parse(contentHtml || '')}</div>
     </div>
   );
 }
