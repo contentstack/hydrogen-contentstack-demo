@@ -54,7 +54,7 @@ export default function Policy() {
       </div>
       <br />
       <h1>{policy.title}</h1>
-      <div>{parse(policy.body)}</div>
+      <div>{parse(policy.body || '')}</div>
     </div>
   );
 }

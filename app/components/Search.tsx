@@ -401,7 +401,7 @@ function SearchResultItem({goToSearchResult, item}: SearchResultItemProps) {
         )}
         <div>
           {item.styledTitle ? (
-            <div>{parse(item?.styledTitle)}</div>
+            <div>{parse(item?.styledTitle || '')}</div>
           ) : (
             <span>{item.title}</span>
           )}
