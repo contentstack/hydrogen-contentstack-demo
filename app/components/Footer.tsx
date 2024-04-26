@@ -158,7 +158,7 @@ export function Footer(fetchdata: any) {
           </div>
         </div>
         <div className="footer-copyright-sec">
-          <p>{parse(footer?.copyright)}</p>
+          <p>{parse(footer?.copyright || '')}</p>
         </div>
       </div>
     </footer>
