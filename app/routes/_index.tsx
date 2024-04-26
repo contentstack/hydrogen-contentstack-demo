@@ -157,7 +157,7 @@ function RecommendedProducts({
           )}
           {cmsData?.banner?.banner_description ? (
             <div className="banner-description">
-              {parse(cmsData?.banner?.banner_description)}
+              {parse(cmsData?.banner?.banner_description || '')}
             </div>
           ) : (
             ''
@@ -363,7 +363,7 @@ function RecommendedProducts({
                           </div>
                         </div>
                         <h2 className="new-arrival-heading">
-                          {parse(cmsData?.new_arrival_description)}
+                          {parse(cmsData?.new_arrival_description || '')}
                         </h2>
                       </div>
                     </div>
