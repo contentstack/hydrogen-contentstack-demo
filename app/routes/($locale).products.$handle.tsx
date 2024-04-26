@@ -327,7 +327,7 @@ function ProductMain({
       <div className="product-main">
         <h1>{title}</h1>
         <br />
-        {descriptionHtml && <div>{parse(descriptionHtml)}</div>}
+        {descriptionHtml && <div>{parse(descriptionHtml || '')}</div>}
         <ProductPrice selectedVariant={selectedVariant} />
         <br />
         <Suspense
@@ -360,7 +360,7 @@ function ProductMain({
               <strong>Reviews</strong>
             </p>
             <br />
-            <div>{parse(valueMap.get('product_review'))}</div>
+            <div>{parse(valueMap.get('product_review') || '')}</div>
             <br />
           </>
         )}
@@ -371,7 +371,7 @@ function ProductMain({
               <strong>Shipping and Return</strong>
             </p>
             <br />
-            <div>{parse(valueMap.get('shipping_return_policy'))}</div>
+            <div>{parse(valueMap.get('shipping_return_policy') || '')}</div>
             <br />
           </>
         )}
