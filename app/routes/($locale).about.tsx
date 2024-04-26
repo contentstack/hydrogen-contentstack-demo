@@ -47,7 +47,7 @@ function RecommendedProducts({
         <h1 className=" bodyCss about-heading">{cmsData?.heading}</h1>
       </div>
       <div className="container">
-        <p className="about-description">{parse(cmsData?.description)}</p>
+        <p className="about-description">{parse(cmsData?.description || '')}</p>
       </div>
     </div>
   );
