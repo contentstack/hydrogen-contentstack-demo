@@ -20,9 +20,12 @@ This starter showcases a few patterns you can adopt when creating your own custo
 
 This TypeScript demo adopts many of Hydrogen's [framework conventions and third-party libraries][hydrogen-framework]. If you've used Hydrogen then you should hopefully feel at home here.
 
+For all the inventory data, shopify's storefront API are only used. For other marketing data like banner, footer links, etc.,  Contentstack-sdk is used.
+
 # Fetching Contentstack data
 
 This demo comes preconfigured Contentstack, which adds a Contentstack client to the Remix context. This enables you to fetch content from Contentstack in Remix loaders and actions.
+
 ```tsx
 // <root>/app/routes/($locale).products.$handle.tsx
 import {getEntry} from '~/components/contentstack-sdk';
