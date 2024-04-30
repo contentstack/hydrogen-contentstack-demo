@@ -20,9 +20,14 @@ This starter showcases a few patterns you can adopt when creating your own custo
 
 This TypeScript demo adopts many of Hydrogen's [framework conventions and third-party libraries][hydrogen-framework]. If you've used Hydrogen then you should hopefully feel at home here.
 
+Shopify's Storefront API is exclusively utilized for accessing all inventory data. However, for other marketing data such as banners, footer links, etc., the Contentstack SDK is used.
+
+To retrieve inventory data and content from the Shopify store, users should create content pages by navigating to Online Store -> Pages -> Add page. They should create the page's content type and add entries accordingly.
+
 # Fetching Contentstack data
 
 This demo comes preconfigured Contentstack, which adds a Contentstack client to the Remix context. This enables you to fetch content from Contentstack in Remix loaders and actions.
+
 ```tsx
 // <root>/app/routes/($locale).products.$handle.tsx
 import {getEntry} from '~/components/contentstack-sdk';
