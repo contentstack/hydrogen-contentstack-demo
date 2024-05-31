@@ -117,13 +117,13 @@ img {
 .banner-description {
   max-width: 774px;
   color: var(--Colors-Secondary-Text-1, #545454);
-  font-size: 22px;
   font-style: normal;
   font-weight: 300;
-  line-height: 150%;
   margin-top: 8px;
   margin-bottom: 32px;
   margin-right: 50%;
+  font-size: 1rem;
+  line-height: 1.4;
 }
 .banner-repo-cta {
   z-index: 2;
@@ -330,6 +330,12 @@ img {
   svg {
     padding-left: 18px;
   }
+}
+.footer_social_logos_img {
+  border-radius: 0% !important;
+  padding-left: 24px;
+  width: 19px;
+  height: 19px;
 }
 
 .load-more {
@@ -539,7 +545,7 @@ img {
 .offers-sub-title {
   padding-left: 32px;
   color: white;
-  font-size: 36px;
+  font-size: 40px;
   font-weight: 600;
   letter-spacing: 0.48px;
   line-height: 64px;
@@ -621,7 +627,6 @@ img {
 .new-arrival-heading {
   text-align: center;
   padding-top: 42px;
-  p {
     font-size: 46px;
     font-style: normal;
     font-weight: 600;
@@ -630,8 +635,7 @@ img {
     .dark-text {
       background-color: #212121;
       color: #fff;
-    }
-  }
+ }
 }
 
 .col-left-top-cat {
