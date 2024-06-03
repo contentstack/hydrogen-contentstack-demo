@@ -117,12 +117,13 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   );
 
   const firstVariant = product.variants?.nodes[0];
-  const firstVariantIsDefault = Boolean(
-    firstVariant?.selectedOptions?.find(
-      (option: SelectedOption) =>
-        option?.name === 'Title' && option?.value === 'Default Title',
-    ),
-  );
+  let firstVariantIsDefault = false;
+
+  firstVariant?.selectedOptions?.forEach((option: SelectedOption) => {
+    if (option?.name === 'Title' && option?.value === 'Default Title') {
+      firstVariantIsDefault = true;
+    }
+  });
 
   if (firstVariantIsDefault) {
     product.selectedVariant = firstVariant;

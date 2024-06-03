@@ -19,8 +19,20 @@ const MenuSection = ({
   headingClass: string;
 }) => {
   const fields = field?.reference?.fields || [];
-  const titleField = fields.find((f: any) => f.key === titleKey);
-  const subMenuField = fields.find((f: any) => f.key === 'sub_menu');
+  let titleField: any;
+  let subMenuField: any;
+  fields.forEach((f: any) => {
+    switch (f.key) {
+      case titleKey:
+        titleField = f;
+        break;
+      case 'sub_menu':
+        subMenuField = f;
+        break;
+      default:
+        break;
+    }
+  });
 
   return (
     <div key={field.key}>
@@ -28,13 +40,21 @@ const MenuSection = ({
       {subMenuField &&
         Array.isArray(subMenuField.references?.nodes) &&
         subMenuField.references.nodes.map((sub_menu: any) => {
-          const urlField = sub_menu.fields.find((f: any) => f.key === 'url');
-          const titleField = sub_menu.fields.find(
-            (f: any) => f.key === 'title',
-          );
-          const newTabField = sub_menu.fields.find(
-            (f: any) => f.key === 'open_in_new_tab',
-          );
+          let urlField: any;
+          let titleField: any;
+          let newTabField: any;
+          sub_menu.fields.forEach((f: any) => {
+            switch (f?.key) {
+              case 'url':
+                urlField = f;
+                break;
+              case 'title':
+                titleField = f;
+                break;
+              case 'open_in_new_tab':
+                newTabField = f;
+            }
+          });
 
           return (
             <div key={sub_menu.id}>
@@ -77,39 +97,49 @@ export function Footer(fetchdata: any) {
                   let subscribeMessage = null;
                   let subscribeDescription = null;
                   let mailPlaceholderText = null;
-
-                  // Iterate over subscribeFields to find the elements
                   subscribeFields.forEach((subscribe: any) => {
-                    if (subscribe?.key === 'subscribe_message') {
-                      subscribeMessage = (
-                        <h2 key="subscribe_message" className="footer-heading">
-                          {subscribe?.value}
-                        </h2>
-                      );
-                    } else if (subscribe?.key === 'subscribe_description') {
-                      subscribeDescription = (
-                        <p key="subscribe_description" className="footer-info">
-                          {subscribe?.value}
-                        </p>
-                      );
-                    } else if (subscribe?.key === 'mail_placeholder_text') {
-                      mailPlaceholderText = (
-                        <div>
-                          <input
-                            className="footer-email input-field"
-                            type="email"
-                            placeholder={subscribe?.value}
-                          />
-                          <a
-                            href="/account/login"
-                            rel="noreferrer"
-                            className="offers-cta"
-                            target={'_self'}
+                    switch (subscribe?.key) {
+                      case 'subscribe_message':
+                        subscribeMessage = (
+                          <h2
+                            key="subscribe_message"
+                            className="footer-heading"
                           >
-                            SUBSCRIBE
-                          </a>
-                        </div>
-                      );
+                            {subscribe?.value}
+                          </h2>
+                        );
+                        break;
+                      case 'subscribe_description':
+                        subscribeDescription = (
+                          <p
+                            key="subscribe_description"
+                            className="footer-info"
+                          >
+                            {subscribe?.value}
+                          </p>
+                        );
+                        break;
+                      case 'mail_placeholder_text':
+                        mailPlaceholderText = (
+                          <div>
+                            <input
+                              className="footer-email input-field"
+                              type="email"
+                              placeholder={subscribe?.value}
+                            />
+                            <a
+                              href="/account/login"
+                              rel="noreferrer"
+                              className="offers-cta"
+                              target={'_self'}
+                            >
+                              SUBSCRIBE
+                            </a>
+                          </div>
+                        );
+                        break;
+                      default:
+                        break;
                     }
                   });
 
@@ -161,25 +191,37 @@ export function Footer(fetchdata: any) {
               footerData.map((field: any) => {
                 if (field?.key === 'social_icon') {
                   return field?.references?.nodes.map((node: any) => {
-                    const iconField = node.fields.find(
-                      (f: any) => f.key === 'icon',
-                    );
-                    const menuField = node.fields.find(
-                      (f: any) => f.key === 'menu',
-                    );
+                    let url = '';
+                    let title = '';
+                    let openInNewTab = false;
+                    let iconSrc = '';
 
-                    const url = menuField?.reference?.fields.find(
-                      (f: any) => f.key === 'url',
-                    )?.value;
-                    const title = menuField?.reference?.fields.find(
-                      (f: any) => f.key === 'title',
-                    )?.value;
-                    const openInNewTab =
-                      menuField?.reference?.fields.find(
-                        (f: any) => f.key === 'open_in_new_tab',
-                      )?.value === 'true';
-
-                    const iconSrc = iconField?.reference?.image.url;
+                    node.fields.forEach((f: any) => {
+                      switch (f.key) {
+                        case 'icon':
+                          iconSrc = f.reference?.image.url;
+                          break;
+                        case 'menu':
+                          f.reference?.fields.forEach((menuField: any) => {
+                            switch (menuField.key) {
+                              case 'url':
+                                url = menuField.value;
+                                break;
+                              case 'title':
+                                title = menuField.value;
+                                break;
+                              case 'open_in_new_tab':
+                                openInNewTab = menuField.value === 'true';
+                                break;
+                              default:
+                                break;
+                            }
+                          });
+                          break;
+                        default:
+                          break;
+                      }
+                    });
 
                     return (
                       <a
@@ -199,7 +241,7 @@ export function Footer(fetchdata: any) {
                     );
                   });
                 }
-                return null;
+                return null; // Return null if the key is not 'social_icon'
               })}
           </div>
         </div>

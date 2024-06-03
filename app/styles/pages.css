@@ -397,6 +397,9 @@ img {
   object-fit: cover;
   object-position: top center;
 }
+.filter-grayscale {
+  filter: brightness(70%);
+}
 .small-img {
   img {
     border-radius: 16px;
@@ -522,6 +525,7 @@ img {
     border-bottom-left-radius: 12px !important;
     border-top-left-radius: 12px !important;
     object-fit: cover;
+    filter: brightness(70%);
   }
 }
 .offers-row {
@@ -566,6 +570,7 @@ img {
   display: inline-flex;
   font-size: 14px;
   text-transform: uppercase;
+  cursor: pointer;
 }
 .new-arrival-wrap {
   background-color: #fdf9ee;
