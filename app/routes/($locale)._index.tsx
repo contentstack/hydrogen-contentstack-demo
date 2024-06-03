@@ -94,7 +94,7 @@ function CollectionItem({
           aspectRatio="1/1"
           data={collection?.image}
           loading={index < 3 ? 'eager' : undefined}
-          className="collection-image"
+          className="collection-image filter-grayscale"
         />
       )}
       <div className="collection-info">
@@ -139,12 +139,15 @@ function RecommendedProducts({
   readonly topCategory: any;
   readonly metaObject: any;
 }) {
-  let cta: any;
   let href: any;
   const fields = metaObject?.metaobjects?.nodes?.[0]?.fields;
-  const ctaTitle = fields?.find(
-    (field: any) => field.key === 'shop_now_title',
-  )?.value;
+  let ctaTitle: any;
+
+  fields.forEach((field: any) => {
+    if (field.key === 'shop_now_title') {
+      ctaTitle = field.value;
+    }
+  });
   return (
     <div>
       <div className="home-page-banner">
@@ -762,12 +765,21 @@ function RecommendedProducts({
                                     if (bannerField?.key === 'cta') {
                                       const ctaFields =
                                         bannerField?.reference?.fields;
-                                      const url = ctaFields.find(
-                                        (cta: any) => cta.key === 'url',
-                                      )?.value;
-                                      const title = ctaFields.find(
-                                        (cta: any) => cta.key === 'title',
-                                      )?.value;
+                                      let url: any;
+                                      let title: any;
+
+                                      ctaFields.forEach((cta: any) => {
+                                        switch (cta.key) {
+                                          case 'url':
+                                            url = cta.value;
+                                            break;
+                                          case 'title':
+                                            title = cta.value;
+                                            break;
+                                          default:
+                                            break;
+                                        }
+                                      });
 
                                       if (url && title) {
                                         return (
