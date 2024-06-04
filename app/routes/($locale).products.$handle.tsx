@@ -30,11 +30,43 @@ import type {
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/utils';
-import {getEntry} from '~/components/contentstack-sdk';
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
   return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
 };
+
+async function fetchAllMetaobjects(fetchQuery: any, first: number) {
+  let allMetaobjects: any[] = [];
+  let hasNextPage = true;
+  let endCursor: string | null = null;
+
+  while (hasNextPage) {
+    // Fetch the next page of metaobjects
+    const response: any = await fetchQuery({first, after: endCursor});
+
+    if (response && response.metaobjects) {
+      const metaobjects = response.metaobjects;
+
+      if (metaobjects.edges) {
+        allMetaobjects = [...allMetaobjects, ...metaobjects.edges];
+      }
+
+      hasNextPage = metaobjects.pageInfo?.hasNextPage ?? false;
+      endCursor = metaobjects.pageInfo?.endCursor ?? null;
+    } else {
+      hasNextPage = false;
+    }
+  }
+
+  return allMetaobjects;
+}
+function filterMetaobjectsByProductId(metaobjects: any, productId: any) {
+  return metaobjects.filter(({node}: any) =>
+    node.fields.some(
+      (field: any) => field.key === 'product' && field.value === productId,
+    ),
+  );
+}
 
 export async function loader({params, request, context}: LoaderFunctionArgs) {
   const {handle} = params;
@@ -51,19 +83,12 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
       !option.name.startsWith('fbclid'),
   );
 
-  const envConfig = context?.env;
-  const fetchData = async () => {
-    try {
-      const result = await getEntry({
-        contentTypeUid: 'product_detail_page',
-        envConfig,
-      });
-      return result;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('ERROR', error);
-    }
-  };
+  // Fetch metaobjects
+  const metaobjects = await fetchAllMetaobjects(async (variables: any) => {
+    return storefront.query(META_OBJECT_QUERY, {variables});
+  }, 100);
+
+  const headingQuery = await storefront?.query(HEADING_QUERY);
 
   if (!handle) {
     throw new Error('Expected product handle to be defined');
@@ -77,6 +102,12 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     throw new Response(null, {status: 404});
   }
   const productID = product?.id;
+
+  // // Filter metaobjects by the product ID
+  const filteredMetaobjects = filterMetaobjectsByProductId(
+    metaobjects,
+    productID,
+  );
   // Fetch related products using the product ID
   const relatedProductQueryResults = await storefront.query(
     RELATED_PRODUCT_QUERY,
@@ -86,12 +117,13 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   );
 
   const firstVariant = product.variants?.nodes[0];
-  const firstVariantIsDefault = Boolean(
-    firstVariant?.selectedOptions?.find(
-      (option: SelectedOption) =>
-        option?.name === 'Title' && option?.value === 'Default Title',
-    ),
-  );
+  let firstVariantIsDefault = false;
+
+  firstVariant?.selectedOptions?.forEach((option: SelectedOption) => {
+    if (option?.name === 'Title' && option?.value === 'Default Title') {
+      firstVariantIsDefault = true;
+    }
+  });
 
   if (firstVariantIsDefault) {
     product.selectedVariant = firstVariant;
@@ -115,8 +147,9 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   return defer({
     product,
     variants,
-    fetchedData: await fetchData(),
     relatedProductQueryResults,
+    metaobjects: filteredMetaobjects,
+    headingQuery,
   });
 }
 
@@ -143,17 +176,41 @@ function redirectToFirstVariant({
   );
 }
 
+interface LoaderData {
+  product: any;
+  variants: any;
+  relatedProductQueryResults: any;
+  metaobjects: any;
+  headingQuery: any;
+  // Add other properties if needed
+}
+
 export default function Product() {
   const location = useLocation();
   const {state} = location;
-  const {product, variants, relatedProductQueryResults, fetchedData} =
-    useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<LoaderData>();
+  const {
+    product,
+    variants,
+    relatedProductQueryResults,
+    metaobjects,
+    headingQuery,
+  } = loaderData;
+  useLoaderData<typeof loader>();
   const {selectedVariant} = product;
   const collectionName = product?.collections?.edges?.[0]?.node?.title;
   const productName = product?.title;
-
   const limitedProducts =
     relatedProductQueryResults?.productRecommendations?.slice(0, 5);
+
+  const matchedField: any[] = [];
+  if (metaobjects?.[0]?.node?.fields) {
+    metaobjects?.[0]?.node?.fields.forEach((node: any) => {
+      matchedField.push(node);
+    });
+  }
+  const fields = headingQuery?.metaobjects?.nodes?.[0]?.fields;
+
   return (
     <>
       <div className="breadcrumbs container">
@@ -189,6 +246,7 @@ export default function Product() {
           selectedVariant={selectedVariant}
           product={product}
           variants={variants}
+          matchedField={matchedField}
         />
       </div>
       {limitedProducts?.length ? (
@@ -196,7 +254,16 @@ export default function Product() {
           <Suspense fallback={<div>Loading...</div>}>
             <div className="featured-wrapper container">
               <div className="featured-content">
-                <h2 className="product-css">{fetchedData?.heading}</h2>
+                {Array.isArray(fields) &&
+                  fields.map((field: any) => {
+                    return (
+                      <>
+                        {field?.key === 'related_products_heading' && (
+                          <h2 className="product-css">{field?.value}</h2>
+                        )}
+                      </>
+                    );
+                  })}
               </div>
               <div className="feature-products-grid">
                 {limitedProducts?.length
@@ -311,10 +378,12 @@ function ProductMain({
   selectedVariant,
   product,
   variants,
+  matchedField,
 }: {
-  product: ProductFragment;
+  product: any;
   selectedVariant: ProductFragment['selectedVariant'];
   variants: Promise<ProductVariantsQuery>;
+  matchedField: any;
 }) {
   const {title, descriptionHtml, metafield} = product;
   const valueMap = new Map();
@@ -403,7 +472,24 @@ function ProductMain({
 
           <div className="details-container">
             <span className="Free-Delivery">Free Delivery</span>
-            <span className="Postal-code">Enter your postal code</span>
+
+            {matchedField.length > 0 ? (
+              Array.isArray(matchedField) &&
+              matchedField.map((field: any) => {
+                if (field.key === 'free_delivery') {
+                  return (
+                    <span key={field.key} className="Postal-code">
+                      {field.value === 'true'
+                        ? 'Contentstack sponsered'
+                        : 'Enter your postal code'}
+                    </span>
+                  );
+                }
+                return null;
+              })
+            ) : (
+              <span className="Postal-code">Enter your postal code</span>
+            )}
           </div>
 
           <div className="postalcode-container">
@@ -431,9 +517,22 @@ function ProductMain({
 
           <div className="details-container">
             <span className="Free-Delivery">Return Policy</span>
-            <span className="Postal-code">
-              Free 30 Days Delivery Returns. Details
-            </span>
+            {matchedField.length > 0 ? (
+              Array.isArray(matchedField) &&
+              matchedField.map((field: any) => {
+                return (
+                  <>
+                    {field?.key === 'return_policy' && (
+                      <span className="Postal-code">{field.value}</span>
+                    )}
+                  </>
+                );
+              })
+            ) : (
+              <span className="Postal-code">
+                Free 30 Days Delivery Returns. Details
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -891,3 +990,53 @@ const RELATED_PRODUCT_QUERY = `#graphql
       }
     }
   ` as const;
+
+const META_OBJECT_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $after: String)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: $first, after: $after, type: "product_detail_page") {
+      edges {
+        node {
+          id
+          fields {
+            key
+            value
+            reference {
+              ... on Product {
+                id
+                title
+              }
+            }
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+}` as const;
+
+const HEADING_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: 100, type: "product_page_contents") {
+    nodes {
+      fields {
+        key
+        type
+        value
+        reference {
+          ... on Metaobject {
+            id
+            fields {
+              key
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}` as const;

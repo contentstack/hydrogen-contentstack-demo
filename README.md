@@ -20,16 +20,13 @@ This starter showcases a few patterns you can adopt when creating your own custo
 
 This TypeScript demo adopts many of Hydrogen's [framework conventions and third-party libraries][hydrogen-framework]. If you've used Hydrogen then you should hopefully feel at home here.
 
-Shopify's Storefront API is exclusively utilized for accessing all inventory data. However, for other marketing data such as banners, footer links, etc., the Contentstack SDK is used.
-
-To retrieve inventory data and content from the Shopify store, users should create content pages by navigating to Online Store -> Pages -> Add page. They should create the page's content type and add entries accordingly.
-
 # Fetching Contentstack data
 
-This demo comes preconfigured Contentstack, which adds a Contentstack client to the Remix context. This enables you to fetch content from Contentstack in Remix loaders and actions.
+Using Contentstack App in Shopify, you can connect your Contentstack stack to your Shopify store. This app will sync all your Contentstack cms data to Shopify metaobjects.
+In this demo all the inventory data is fetched from Shopify's Storefront API(from metaobjects). 
+If you want to fetch marketing data like pages, footer or other assets from Contentstack directly, you can use the `getEntry` method from our official [`contentstack-sdk`][contentstack-sdk] library. We have already implemented in app/component/contentstack-sdk.js file where you can use the `getEntry` method for achieving this. 
 
 ```tsx
-// <root>/app/routes/($locale).products.$handle.tsx
 import {getEntry} from '~/components/contentstack-sdk';
 
 const fetchData = async () => {
@@ -44,8 +41,6 @@ const fetchData = async () => {
     }
   };
 ```
-This uses our official [`contentstack-sdk`][contentstack-sdk] library, so it supports all the methods you would expect to interact with Contentstack API's
-You can also use the [`defer` and `Await` utilities](https://remix.run/docs/en/1.15.0/guides/streaming#using-defer) from Remix to prioritize critical data:
 
 # Viewpoint
 
