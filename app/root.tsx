@@ -23,7 +23,6 @@ import resetStyles from './styles/reset.css';
 import appStyles from './styles/app.css';
 import {Layout} from '~/components/Layout';
 import {cssBundleHref} from '@remix-run/css-bundle';
-import {getEntry} from './components/contentstack-sdk';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
@@ -89,6 +88,7 @@ export async function loader({context}: LoaderFunctionArgs) {
       footerMenuHandle: 'footer', // Adjust to your footer menu handle
     },
   });
+  const footerMetaObject = await storefront?.query(FOOTER_META_OBJECT_QUERY);
 
   // await the header query (above the fold)
   const headerPromise = storefront.query(HEADER_QUERY, {
@@ -98,20 +98,6 @@ export async function loader({context}: LoaderFunctionArgs) {
     },
   });
 
-  const envConfig = context?.env;
-  const fetchData = async () => {
-    try {
-      const result = await getEntry({
-        contentTypeUid: 'footer',
-        envConfig,
-      });
-      return result;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('ERROR', error);
-    }
-  };
-
   return defer(
     {
       cart: cartPromise,
@@ -119,7 +105,7 @@ export async function loader({context}: LoaderFunctionArgs) {
       header: await headerPromise,
       isLoggedIn,
       publicStoreDomain,
-      fetchedData: await fetchData(),
+      footerMetaObject,
     },
     {headers},
   );
@@ -137,7 +123,7 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout fetchData={data?.fetchedData} {...data}>
+        <Layout footerMetaObject={data?.footerMetaObject} {...data}>
           <Outlet />
         </Layout>
         <ScrollRestoration nonce={nonce} />
@@ -295,3 +281,119 @@ const FOOTER_QUERY = `#graphql
   }
   ${MENU_FRAGMENT}
 ` as const;
+
+const FOOTER_META_OBJECT_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: 100, type: "footer") {
+    nodes {
+      fields {
+        key
+        type
+        value
+        reference {
+          ... on Metaobject {
+            id
+            fields {
+              key
+              value
+              references(first: 10) {
+                nodes {
+                  ... on Metaobject {
+                    id
+                    fields {
+                      key
+                      type
+                      value
+                      reference {
+                        ... on Metaobject {
+                          id
+                          fields {
+                            key
+                            value
+                          }
+                        }
+                        ... on MediaImage {
+                          id
+                          image {
+                            url
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+          ... on MediaImage {
+            id
+            image {
+              url
+            }
+          }
+        }
+        references(first: 10) {
+          nodes {
+            ... on Metaobject {
+              id
+              fields {
+                key
+                type
+                value
+                reference {
+                  ... on Metaobject {
+                    id
+                    fields {
+                      key
+                      value
+                      references(first: 10) {
+                        nodes {
+                          ... on Metaobject {
+                            id
+                            fields {
+                              key
+                              type
+                              value
+                              reference {
+                                ... on Metaobject {
+                                  id
+                                  fields {
+                                    key
+                                    value
+                                  }
+                                }
+                                ... on MediaImage {
+                                  id
+                                  image {
+                                    url
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                  ... on MediaImage {
+                    id
+                    image {
+                      url
+                    }
+                  }
+                }
+              }
+            }
+            ... on MediaImage {
+              id
+              image {
+                url
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}` as const;
