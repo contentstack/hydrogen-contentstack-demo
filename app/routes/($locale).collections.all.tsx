@@ -9,7 +9,6 @@ import {
   Pagination,
 } from '@shopify/hydrogen';
 import '../styles/pages.css';
-import {getEntry} from '~/components/contentstack-sdk';
 import NoImg from '../../public/NoImg.svg';
 
 export const meta: MetaFunction = () => {
@@ -27,23 +26,11 @@ export async function loader({context, request}: LoaderFunctionArgs) {
       variables: paginationVariables,
     },
   );
+  const headingQuery = await storefront?.query(HEADING_QUERY);
 
-  const envConfig = context?.env;
-  const fetchData = async () => {
-    try {
-      const result = await getEntry({
-        contentTypeUid: 'shopify_home',
-        envConfig,
-      });
-      return result;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('ERROR', error);
-    }
-  };
   return defer({
     recommendedProducts,
-    fetchedData: await fetchData(),
+    headingQuery,
   });
 }
 
@@ -54,7 +41,10 @@ export default function Productpage() {
       <Pagination connection={data?.recommendedProducts?.products}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
-            <RecommendedProducts products={nodes} cmsData={data?.fetchedData} />
+            <RecommendedProducts
+              products={nodes}
+              metaObject={data?.headingQuery}
+            />
             <NextLink className="load-more">
               {isLoading ? (
                 'Loading...'
@@ -75,11 +65,12 @@ export default function Productpage() {
 
 function RecommendedProducts({
   products,
-  cmsData,
+  metaObject,
 }: {
   products: any;
-  cmsData: any;
+  metaObject: any;
 }) {
+  const fields = metaObject?.metaobjects?.nodes?.[0]?.fields;
   return (
     <>
       <div className="breadcrumbs container">
@@ -97,7 +88,16 @@ function RecommendedProducts({
       <Suspense fallback={<div>Loading...</div>}>
         <div className="featured-wrapper container">
           <div className="featured-content">
-            <h2 className="product-css">{cmsData?.product_title}</h2>
+            {Array.isArray(fields) &&
+              fields.map((field: any) => {
+                return (
+                  <>
+                    {field?.key === 'product_page_heading' && (
+                      <h2 className="product-css">{field?.value}</h2>
+                    )}
+                  </>
+                );
+              })}
           </div>
           <div className="feature-products-grid">
             {products?.map((product: any) => {
@@ -236,3 +236,26 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
     }
   }
 ` as const;
+
+const HEADING_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: 100, type: "product_page_contents") {
+    nodes {
+      fields {
+        key
+        type
+        value
+        reference {
+          ... on Metaobject {
+            id
+            fields {
+              key
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}` as const;
