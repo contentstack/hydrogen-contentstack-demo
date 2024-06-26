@@ -83,14 +83,8 @@ function SearchAside() {
                 placeholder="Search"
                 ref={inputRef}
                 type="search"
+                style={{width: '100%'}}
               />
-              &nbsp;
-              <button
-                className="view-all-products search-aside-cta "
-                type="submit"
-              >
-                Search
-              </button>
             </div>
           )}
         </PredictiveSearchForm>

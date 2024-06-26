@@ -154,10 +154,15 @@ img {
   }
 
   &:hover {
-    border: 2px solid #212121;
-    transition: box-shadow var(--duration-short) ease;
+    &:first-child {
+      outline: 2px solid #212121;
+    }
+    &:last-child {
+      outline: 2px solid #212121;
+    }
   }
 }
+
 .feature-heading {
   font-size: 36px;
   font-style: normal;
