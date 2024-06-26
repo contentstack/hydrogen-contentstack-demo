@@ -97,8 +97,6 @@ export function SearchForm({searchTerm}: {searchTerm: string}) {
         ref={inputRef}
         type="search"
       />
-      &nbsp;
-      <button type="submit">Search</button>
     </Form>
   );
 }

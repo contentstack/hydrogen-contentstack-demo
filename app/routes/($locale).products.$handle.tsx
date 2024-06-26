@@ -765,11 +765,7 @@ function AddToCartButton({
                 </button>
                 <span className="totalquantiy">{quantity - 1}</span>
 
-                <button
-                  className="increment-button"
-                  onClick={handleIncrement}
-                  disabled={disabled || fetcher.state !== 'idle'}
-                >
+                <button className="increment-button" onClick={handleIncrement}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
