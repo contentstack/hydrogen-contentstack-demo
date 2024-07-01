@@ -966,6 +966,7 @@ img {
 }
 .add-to-cart-container form {
   display: flex !important;
+  align-items: baseline;
 }
 
 .addtocartquantiy {
@@ -998,7 +999,8 @@ img {
 
 .totalquantiy {
   vertical-align: super;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-left: 22px;
 }
 .increment-button:hover {

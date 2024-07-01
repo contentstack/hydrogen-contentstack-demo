@@ -1,4 +1,4 @@
-import {Fragment, Suspense, useState} from 'react';
+import {Fragment, Suspense, useState, useEffect} from 'react';
 import parse from 'html-react-parser';
 import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 
@@ -14,6 +14,7 @@ import type {
   ProductFragment,
   ProductVariantsQuery,
   ProductVariantFragment,
+  CartApiQueryFragment,
 } from 'storefrontapi.generated';
 import NoImg from '../../public/NoImg.svg';
 
@@ -26,13 +27,14 @@ import {
   CartForm,
 } from '@shopify/hydrogen';
 import type {
-  CartLineInput,
+  CartLineUpdateInput,
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/utils';
+type CartLine = CartApiQueryFragment['lines']['nodes'][0];
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
+  return [{title: `Hydrogen | ${data?.product?.title ?? ''}`}];
 };
 
 async function fetchAllMetaobjects(fetchQuery: any, first: number) {
@@ -70,7 +72,7 @@ function filterMetaobjectsByProductId(metaobjects: any, productId: any) {
 
 export async function loader({params, request, context}: LoaderFunctionArgs) {
   const {handle} = params;
-  const {storefront} = context;
+  const {storefront, cart} = context;
   const selectedOptions = getSelectedProductOptions(request).filter(
     (option) =>
       // Filter out Shopify predictive search query params
@@ -82,6 +84,7 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
       // Filter out third party tracking params
       !option.name.startsWith('fbclid'),
   );
+  const cartPromise = await cart.get();
 
   // Fetch metaobjects
   const metaobjects = await fetchAllMetaobjects(async (variables: any) => {
@@ -135,11 +138,6 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     }
   }
 
-  // In order to show which variants are available in the UI, we need to query
-  // all of them. But there might be a *lot*, so instead separate the variants
-  // into it's own separate query that is deferred. So there's a brief moment
-  // where variant options might show as available when they're not, but after
-  // this deffered query resolves, the UI will update.
   const variants = storefront.query(VARIANTS_QUERY, {
     variables: {handle},
   });
@@ -150,6 +148,7 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     relatedProductQueryResults,
     metaobjects: filteredMetaobjects,
     headingQuery,
+    cart: cartPromise,
   });
 }
 
@@ -182,6 +181,7 @@ interface LoaderData {
   relatedProductQueryResults: any;
   metaobjects: any;
   headingQuery: any;
+  cart: any;
   // Add other properties if needed
 }
 
@@ -195,8 +195,33 @@ export default function Product() {
     relatedProductQueryResults,
     metaobjects,
     headingQuery,
+    cart,
   } = loaderData;
   useLoaderData<typeof loader>();
+
+  const [cartData, setCartData] = useState<{
+    id: string;
+    quantity: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!cart || !product) {
+      return;
+    }
+
+    let cartQuantity: {id: string; quantity: number} | null = null;
+
+    cart?.lines?.nodes?.forEach((cartItem: any) => {
+      if (cartItem?.merchandise?.product?.id === product?.id) {
+        cartQuantity = {
+          id: cartItem?.id,
+          quantity: cartItem?.quantity,
+        };
+      }
+    });
+    setCartData(cartQuantity);
+  }, [cart, product]);
+
   const {selectedVariant} = product;
   const collectionName = product?.collections?.edges?.[0]?.node?.title;
   const productName = product?.title;
@@ -247,6 +272,7 @@ export default function Product() {
           product={product}
           variants={variants}
           matchedField={matchedField}
+          cart={cartData}
         />
       </div>
       {limitedProducts?.length ? (
@@ -290,6 +316,10 @@ export default function Product() {
                           <Link
                             className="feature-product"
                             to={`/products/${product?.handle}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.location.href = `/products/${product?.handle}`;
+                            }}
                           >
                             {product?.images?.nodes[0] ? (
                               <Image
@@ -379,11 +409,13 @@ function ProductMain({
   product,
   variants,
   matchedField,
+  cart,
 }: {
   product: any;
   selectedVariant: ProductFragment['selectedVariant'];
-  variants: Promise<ProductVariantsQuery>;
+  variants?: Promise<ProductVariantsQuery>;
   matchedField: any;
+  cart: any;
 }) {
   const {title, descriptionHtml, metafield} = product;
   const valueMap = new Map();
@@ -405,6 +437,7 @@ function ProductMain({
               product={product}
               selectedVariant={selectedVariant}
               // variants={data?.product?.variants.nodes || []}
+              cart={cart}
             />
           }
         >
@@ -416,7 +449,8 @@ function ProductMain({
               <ProductForm
                 product={product}
                 selectedVariant={selectedVariant}
-                variants={data.product?.variants.nodes || []}
+                variants={data?.product?.variants.nodes || []}
+                cart={cart}
               />
             )}
           </Await>
@@ -620,11 +654,24 @@ function ProductForm({
   product,
   selectedVariant,
   variants,
+  cart,
 }: {
   product: ProductFragment;
   selectedVariant: ProductFragment['selectedVariant'];
-  variants: Array<ProductVariantFragment>;
+  variants?: Array<ProductVariantFragment>;
+  cart: any;
 }) {
+  const handleClick = () => {
+    let currentUrl = window.location.href;
+
+    if (currentUrl.endsWith('#') || currentUrl.endsWith('##')) {
+      currentUrl = currentUrl.slice(0, -1);
+    }
+    const newUrl = currentUrl.includes('#cart-aside')
+      ? currentUrl
+      : currentUrl + '#cart-aside';
+    window.location.href = newUrl;
+  };
   return (
     <div className="product-form">
       <VariantSelector
@@ -640,9 +687,7 @@ function ProductForm({
       <br />
       <AddToCartButton
         disabled={!selectedVariant || !selectedVariant?.availableForSale}
-        onClick={() => {
-          window.location.href = window.location.href + '#cart-aside';
-        }}
+        onClick={handleClick}
         lines={
           selectedVariant
             ? [
@@ -653,6 +698,7 @@ function ProductForm({
               ]
             : []
         }
+        cart={cart}
       >
         {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
       </AddToCartButton>
@@ -715,56 +761,76 @@ function AddToCartButton({
   disabled,
   lines,
   onClick,
+  cart,
 }: {
   analytics?: unknown;
   children: React.ReactNode;
   disabled?: boolean;
-  lines: CartLineInput[];
+  lines: CartLine[];
   onClick?: () => void;
+  cart: any;
 }) {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(cart?.quantity || 0);
+  const [updatedLines, setUpdatedLines] = useState<CartLineUpdateInput[]>([]);
+
   const handleIncrement = () => {
     setQuantity(quantity + 1);
+    const updatedLine: CartLineUpdateInput = {
+      id: cart.id,
+      quantity: quantity + 1,
+    };
+    setUpdatedLines([updatedLine]);
   };
+
   const handleDecrement = () => {
-    if (quantity > 1) {
+    if (quantity > 0) {
+      const updatedLine: CartLineUpdateInput = {
+        id: cart.id,
+        quantity: quantity - 1,
+      };
+      setUpdatedLines([updatedLine]);
       setQuantity(quantity - 1);
     }
   };
   return (
     <>
-      <div className="add-to-cart-container">
-        <CartForm
-          route="/cart"
-          inputs={{lines}}
-          action={CartForm.ACTIONS.LinesAdd}
-        >
-          {(fetcher: FetcherWithComponents<any>) => (
-            <>
-              <input
-                name="analytics"
-                value={JSON.stringify(analytics)}
-                type="hidden"
-              />
-              <div className="addtocartquantiy">
-                <button className="decrement-button" onClick={handleDecrement}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M21 12C21 11.5858 20.69 11.25 20.3077 11.25L3.69231 11.25C3.30996 11.25 3 11.5858 3 12C3 12.4142 3.30996 12.75 3.69231 12.75L20.3077 12.75C20.69 12.75 21 12.4142 21 12Z"
-                      fill="#212121"
-                    />
-                  </svg>
-                </button>
-                <span className="totalquantiy">{quantity - 1}</span>
-
+      <div className="add-to-cart-container flex">
+        <>
+          <input
+            name="analytics"
+            value={JSON.stringify(analytics)}
+            type="hidden"
+          />
+          <div className="addtocartquantiy flex">
+            <CartForm
+              route="/cart"
+              inputs={{lines: updatedLines}}
+              action={CartForm.ACTIONS.LinesUpdate}
+            >
+              <button className="decrement-button" onClick={handleDecrement}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M21 12C21 11.5858 20.69 11.25 20.3077 11.25L3.69231 11.25C3.30996 11.25 3 11.5858 3 12C3 12.4142 3.30996 12.75 3.69231 12.75L20.3077 12.75C20.69 12.75 21 12.4142 21 12Z"
+                    fill="#212121"
+                  />
+                </svg>
+              </button>
+            </CartForm>
+            <span className="totalquantiy">{quantity}</span>
+            {cart === null ? (
+              <CartForm
+                route="/cart"
+                inputs={{lines}}
+                action={CartForm.ACTIONS.LinesAdd}
+              >
                 <button className="increment-button" onClick={handleIncrement}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -787,22 +853,50 @@ function AddToCartButton({
                     />
                   </svg>
                 </button>
-              </div>
-              <Link
-                className="banner-repo-cta banner-repo-cta-icon"
-                type="submit"
-                onClick={onClick}
-                disabled={disabled || fetcher.state !== 'idle'}
-                style={{
-                  width: '219px',
-                  padding: '0px',
-                }}
+              </CartForm>
+            ) : (
+              <CartForm
+                route="/cart"
+                inputs={{lines: updatedLines}}
+                action={CartForm.ACTIONS.LinesUpdate}
               >
-                {children}
-              </Link>
-            </>
-          )}
-        </CartForm>
+                <button className="increment-button" onClick={handleIncrement}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M12 3C12.3824 3 12.6923 3.30996 12.6923 3.69231V20.3077C12.6923 20.69 12.3824 21 12 21C11.6176 21 11.3077 20.69 11.3077 20.3077V3.69231C11.3077 3.30996 11.6176 3 12 3Z"
+                      fill="#212121"
+                    />
+                    <path
+                      fillRule="evenodd"
+                      clipRule="evenodd"
+                      d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
+                      fill="#212121"
+                    />
+                  </svg>
+                </button>
+              </CartForm>
+            )}
+          </div>
+          <Link
+            className="banner-repo-cta banner-repo-cta-icon"
+            type="submit"
+            onClick={onClick}
+            style={{
+              width: '219px',
+              padding: '0px',
+            }}
+          >
+            {children}
+          </Link>
+        </>
       </div>
       <div className="seprrator">
         <svg
