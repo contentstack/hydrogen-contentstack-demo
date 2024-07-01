@@ -120,6 +120,10 @@ function RecommendedProducts({
                   <Link
                     className="feature-product"
                     to={`/products/${product?.handle}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = `/products/${product?.handle}`;
+                    }}
                   >
                     {product?.images?.nodes[0] ? (
                       <Image
