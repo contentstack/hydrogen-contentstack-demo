@@ -321,7 +321,7 @@ export default function Product() {
                               window.location.href = `/products/${product?.handle}`;
                             }}
                           >
-                            {product?.images?.nodes[0] ? (
+                            {product?.images?.nodes?.[0] ? (
                               <Image
                                 data={product?.images?.nodes[0]}
                                 aspectRatio="1/1"
@@ -449,7 +449,7 @@ function ProductMain({
               <ProductForm
                 product={product}
                 selectedVariant={selectedVariant}
-                variants={data?.product?.variants.nodes || []}
+                variants={data?.product?.variants?.nodes || []}
                 cart={cart}
               />
             )}
@@ -760,7 +760,7 @@ function AddToCartButton({
     setQuantity(quantity + 1);
     setShowMessage(true);
     const updatedLine: CartLineUpdateInput = {
-      id: cart.id,
+      id: cart?.id,
       quantity: quantity + 1,
     };
     setUpdatedLines([updatedLine]);
@@ -769,7 +769,7 @@ function AddToCartButton({
   const handleDecrement = () => {
     if (quantity > 0) {
       const updatedLine: CartLineUpdateInput = {
-        id: cart.id,
+        id: cart?.id,
         quantity: quantity - 1,
       };
       setUpdatedLines([updatedLine]);
