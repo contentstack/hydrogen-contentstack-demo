@@ -984,6 +984,13 @@ img {
   margin-right: 20px;
 }
 
+.cart-update-message {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  color: var(--Colors-Success, #42cc71);
+}
+
 .increment-button {
   border: none;
   background: transparent;
