@@ -661,17 +661,6 @@ function ProductForm({
   variants?: Array<ProductVariantFragment>;
   cart: any;
 }) {
-  const handleClick = () => {
-    let currentUrl = window.location.href;
-
-    if (currentUrl.endsWith('#') || currentUrl.endsWith('##')) {
-      currentUrl = currentUrl.slice(0, -1);
-    }
-    const newUrl = currentUrl.includes('#cart-aside')
-      ? currentUrl
-      : currentUrl + '#cart-aside';
-    window.location.href = newUrl;
-  };
   return (
     <div className="product-form">
       <VariantSelector
@@ -687,7 +676,6 @@ function ProductForm({
       <br />
       <AddToCartButton
         disabled={!selectedVariant || !selectedVariant?.availableForSale}
-        onClick={handleClick}
         lines={
           selectedVariant
             ? [
@@ -699,9 +687,7 @@ function ProductForm({
             : []
         }
         cart={cart}
-      >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-      </AddToCartButton>
+      />
     </div>
   );
 }
@@ -757,24 +743,22 @@ function ProductOptions({option}: {option: VariantOption}) {
 }
 function AddToCartButton({
   analytics,
-  children,
   disabled,
   lines,
-  onClick,
   cart,
 }: {
   analytics?: unknown;
-  children: React.ReactNode;
   disabled?: boolean;
   lines: CartLine[];
-  onClick?: () => void;
   cart: any;
 }) {
   const [quantity, setQuantity] = useState(cart?.quantity || 0);
   const [updatedLines, setUpdatedLines] = useState<CartLineUpdateInput[]>([]);
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleIncrement = () => {
     setQuantity(quantity + 1);
+    setShowMessage(true);
     const updatedLine: CartLineUpdateInput = {
       id: cart.id,
       quantity: quantity + 1,
@@ -790,8 +774,18 @@ function AddToCartButton({
       };
       setUpdatedLines([updatedLine]);
       setQuantity(quantity - 1);
+      setShowMessage(true);
     }
   };
+  useEffect(() => {
+    if (showMessage) {
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+      }, 4000); // 4 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage]);
   return (
     <>
       <div className="add-to-cart-container flex">
@@ -825,77 +819,44 @@ function AddToCartButton({
               </button>
             </CartForm>
             <span className="totalquantiy">{quantity}</span>
-            {cart === null ? (
-              <CartForm
-                route="/cart"
-                inputs={{lines}}
-                action={CartForm.ACTIONS.LinesAdd}
-              >
-                <button className="increment-button" onClick={handleIncrement}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M12 3C12.3824 3 12.6923 3.30996 12.6923 3.69231V20.3077C12.6923 20.69 12.3824 21 12 21C11.6176 21 11.3077 20.69 11.3077 20.3077V3.69231C11.3077 3.30996 11.6176 3 12 3Z"
-                      fill="#212121"
-                    />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
-                      fill="#212121"
-                    />
-                  </svg>
-                </button>
-              </CartForm>
-            ) : (
-              <CartForm
-                route="/cart"
-                inputs={{lines: updatedLines}}
-                action={CartForm.ACTIONS.LinesUpdate}
-              >
-                <button className="increment-button" onClick={handleIncrement}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M12 3C12.3824 3 12.6923 3.30996 12.6923 3.69231V20.3077C12.6923 20.69 12.3824 21 12 21C11.6176 21 11.3077 20.69 11.3077 20.3077V3.69231C11.3077 3.30996 11.6176 3 12 3Z"
-                      fill="#212121"
-                    />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
-                      fill="#212121"
-                    />
-                  </svg>
-                </button>
-              </CartForm>
-            )}
+            <CartForm
+              route="/cart"
+              inputs={{lines: cart === null ? lines : updatedLines}}
+              action={
+                cart === null
+                  ? CartForm.ACTIONS.LinesAdd
+                  : CartForm.ACTIONS.LinesUpdate
+              }
+            >
+              <button className="increment-button" onClick={handleIncrement}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12 3C12.3824 3 12.6923 3.30996 12.6923 3.69231V20.3077C12.6923 20.69 12.3824 21 12 21C11.6176 21 11.3077 20.69 11.3077 20.3077V3.69231C11.3077 3.30996 11.6176 3 12 3Z"
+                    fill="#212121"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
+                    fill="#212121"
+                  />
+                </svg>
+              </button>
+            </CartForm>
           </div>
-          <Link
-            className="banner-repo-cta banner-repo-cta-icon"
-            type="submit"
-            onClick={onClick}
-            style={{
-              width: '219px',
-              padding: '0px',
-            }}
-          >
-            {children}
-          </Link>
+          {showMessage && (
+            <div className="cart-update-message">
+              Cart updated successfully!!!
+            </div>
+          )}
         </>
       </div>
       <div className="seprrator">
