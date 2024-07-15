@@ -71,9 +71,9 @@ function filterMetaobjectsByProductId(metaobjects: any, productId: any) {
 }
 
 export async function loader({params, request, context}: LoaderFunctionArgs) {
-  const publicStoreDomain = context.env.PUBLIC_STORE_DOMAIN;
-  const match = publicStoreDomain.match(/^([^.]+)\./);
-  const subdomain = match ? match[1] : null;
+  const publicStoreDomain = context?.env?.PUBLIC_STORE_DOMAIN;
+  const match = publicStoreDomain?.match(/^([^.]+)\./);
+  const subdomain = match ? match?.[1] : null;
   const key = subdomain;
 
   const {handle} = params;
