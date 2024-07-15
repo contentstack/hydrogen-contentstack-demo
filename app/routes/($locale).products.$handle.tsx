@@ -71,6 +71,11 @@ function filterMetaobjectsByProductId(metaobjects: any, productId: any) {
 }
 
 export async function loader({params, request, context}: LoaderFunctionArgs) {
+  const publicStoreDomain = context?.env?.PUBLIC_STORE_DOMAIN;
+  const match = publicStoreDomain?.match(/^([^.]+)\./);
+  const subdomain = match ? match?.[1] : null;
+  const key = subdomain;
+
   const {handle} = params;
   const {storefront, cart} = context;
   const selectedOptions = getSelectedProductOptions(request).filter(
@@ -99,7 +104,7 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
 
   // await the query for the critical product data
   const {product} = await storefront.query(PRODUCT_QUERY, {
-    variables: {handle, selectedOptions},
+    variables: {handle, key, selectedOptions},
   });
   if (!product?.id) {
     throw new Response(null, {status: 404});
@@ -198,7 +203,6 @@ export default function Product() {
     cart,
   } = loaderData;
   useLoaderData<typeof loader>();
-
   const [cartData, setCartData] = useState<{
     id: string;
     quantity: number;
@@ -943,7 +947,8 @@ const PRODUCT_QUERY = `#graphql
       $country: CountryCode
       $handle: String!
       $language: LanguageCode
-      $selectedOptions: [SelectedOptionInput!]!
+      $key: String!
+      $selectedOptions: [SelectedOptionInput!]! 
     ) @inContext(country: $country, language: $language) {
       product(handle: $handle) {
         ...Product
@@ -955,7 +960,7 @@ const PRODUCT_QUERY = `#graphql
             }
           }
         }
-        metafield(namespace: "custom", key: "information") {
+        metafield(namespace: "contentstack_products", key: $key) {
           key
           value
           reference {
