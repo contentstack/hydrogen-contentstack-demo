@@ -4,6 +4,7 @@ This demo is compatible with `@shopify/hydrogen >= 2024.01` built on Remix.
 
 > For a more complex reference example, please see our [demo-ecommerce repo](https://github.com/contentstack/shopify-contentstack-app) which features a monorepo with an embedded Contentstack.
 <img src="https://cdn.shopify.com/oxygen-v2/29150/15868/32733/347547/build/_assets/banner-ZAZUZJHV.svg" width="1000" />
+
 [Demo][hydrogen-contentstack-demo]
 
 # About
