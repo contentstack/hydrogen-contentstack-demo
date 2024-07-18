@@ -2,9 +2,9 @@
 
 This demo is compatible with `@shopify/hydrogen >= 2024.01` built on Remix.
 
-> For a more complex reference example, please see our [demo-ecommerce repo](https://github.com/contentstack/shopify-contentstack-app) which features a monorepo with an embedded Contentstack.
 <img src="https://cdn.shopify.com/oxygen-v2/29150/15868/32733/347547/build/_assets/banner-ZAZUZJHV.svg" width="1000" />
-[Demo][hydrogen-contentstack-demo] | [Contentstack Connect for Shopify][[contentstack-connect]]
+
+[Demo][hydrogen-contentstack-demo]
 
 # About
 
@@ -71,7 +71,7 @@ We've taken the following viewpoint on how we've approached this demo.
 </details>
 
 <details>
-<summary><strong>Product options are customized in Contenstack</strong></summary>
+<summary><strong>Product options are customized in Contentstack</strong></summary>
 
 - Data added to specific product options is done in Contentstack entries.
 - For the extra fields inside Contentstack gets updated in Shopify in MetaField.
@@ -113,7 +113,7 @@ For information on running production builds and deployment, see the [Hydrogen d
 This repository is published under the [MIT][license] license.
 
 [about]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev/about
-[hydrogen-contentstack-demo]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev/
+[hydrogen-contentstack-demo]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev
 [hydrogen-github]: https://github.com/contentstack/hydrogen-contentstack-demo
 [hydrogen-framework]: https://shopify.dev/docs/custom-storefronts/hydrogen
 [license]: https://github.com/sanity-io/sanity/blob/next/LICENSE
