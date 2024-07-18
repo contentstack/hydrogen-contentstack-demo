@@ -71,7 +71,7 @@ We've taken the following viewpoint on how we've approached this demo.
 </details>
 
 <details>
-<summary><strong>Product options are customized in Contenstack</strong></summary>
+<summary><strong>Product options are customized in Contentstack</strong></summary>
 
 - Data added to specific product options is done in Contentstack entries.
 - For the extra fields inside Contentstack gets updated in Shopify in MetaField.
