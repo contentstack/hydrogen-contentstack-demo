@@ -95,7 +95,7 @@ Contentstack for Shopify is a Shopify Plus-certified app.
 
 ## Getting Started
 
-1.  Create a `.env` file, based on the `.env.template` file.
+1.  Create a `.env` file, based on the `.env.template` file and add the values from the Storefront settings of Hydrogen App.
 
 2.  Install dependencies and start the development server
 
@@ -105,6 +105,10 @@ Contentstack for Shopify is a Shopify Plus-certified app.
     ```
 
 3.  Visit the development environment running at http://localhost:3000.
+
+4. Integrate content from Contentstack into Shopify metaobjects and iterate through the JSON to render the user interface.
+
+5. For menus in header, navigate to the Online Store --> Navigation --> Main menu and add the contentstack page entries as menu items.
 
 For information on running production builds and deployment, see the [Hydrogen documentation][hydrogen-framework].
 
