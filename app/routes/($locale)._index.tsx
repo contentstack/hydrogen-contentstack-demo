@@ -501,38 +501,42 @@ function RecommendedProducts({
                       {/* women fashion */}
                       <Link
                         className={` flex pt-rl mg-b32`}
-                        key={topCategory?.collections?.edges[7].node?.id}
-                        to={`/collections/${topCategory?.collections?.edges[7].node?.handle}`}
+                        key={topCategory?.collections?.edges?.[7]?.node?.id}
+                        to={`/collections/${topCategory?.collections?.edges?.[7]?.node?.handle}`}
                         prefetch="intent"
                       >
                         <Image
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="1/1"
-                          data={topCategory?.collections?.edges[7].node?.image}
+                          data={
+                            topCategory?.collections?.edges?.[7]?.node?.image
+                          }
                           className="top-cat-img flex "
                         />
                         <div className="pt-abs">
                           <h3>
-                            {topCategory?.collections?.edges[7].node?.title}
+                            {topCategory?.collections?.edges?.[7]?.node?.title}
                           </h3>
                         </div>
                       </Link>
                       {/* men fashion */}
                       <Link
                         className={`flex   pt-rl mg-b32`}
-                        key={topCategory?.collections?.edges[2].node?.id}
-                        to={`/collections/${topCategory?.collections?.edges[2].node?.handle}`}
+                        key={topCategory?.collections?.edges?.[2]?.node?.id}
+                        to={`/collections/${topCategory?.collections?.edges?.[2]?.node?.handle}`}
                         prefetch="intent"
                       >
                         <Image
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="2/1"
-                          data={topCategory?.collections?.edges[2].node?.image}
+                          data={
+                            topCategory?.collections?.edges?.[2]?.node?.image
+                          }
                           className=" top-cat-img flex mg-bottom-row "
                         />
                         <div className="pt-abs">
                           <h3>
-                            {topCategory?.collections?.edges[2].node?.title}
+                            {topCategory?.collections?.edges?.[2]?.node?.title}
                           </h3>
                         </div>
                       </Link>
@@ -542,42 +546,48 @@ function RecommendedProducts({
                         {/* sun glasses */}
                         <Link
                           className={` flex col-left-top-cat  pt-rl`}
-                          key={topCategory?.collections?.edges[6].node?.id}
-                          to={`/collections/${topCategory?.collections?.edges[6].node?.handle}`}
+                          key={topCategory?.collections?.edges?.[6]?.node?.id}
+                          to={`/collections/${topCategory?.collections?.edges?.[6]?.node?.handle}`}
                           prefetch="intent"
                         >
                           <Image
                             // alt={collection?.image?.altText || collection?.title}
                             aspectRatio="1/1"
                             data={
-                              topCategory?.collections?.edges[6].node?.image
+                              topCategory?.collections?.edges?.[6]?.node?.image
                             }
                             className="mg-lt-17  top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
-                              {topCategory?.collections?.edges[6].node?.title}
+                              {
+                                topCategory?.collections?.edges?.[6]?.node
+                                  ?.title
+                              }
                             </h3>
                           </div>
                         </Link>
                         {/* hats */}
                         <Link
                           className={` flex col-left-top-cat pt-rl`}
-                          key={topCategory?.collections?.edges[5].node?.id}
-                          to={`/collections/${topCategory?.collections?.edges[5].node?.handle}`}
+                          key={topCategory?.collections?.edges?.[5]?.node?.id}
+                          to={`/collections/${topCategory?.collections?.edges?.[5]?.node?.handle}`}
                           prefetch="intent"
                         >
                           <Image
                             // alt={collection?.image?.altText || collection?.title}
                             aspectRatio="1/1"
                             data={
-                              topCategory?.collections?.edges[5].node?.image
+                              topCategory?.collections?.edges?.[5]?.node?.image
                             }
                             className="mg-lt-17 top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
-                              {topCategory?.collections?.edges[5].node?.title}
+                              {
+                                topCategory?.collections?.edges?.[5]?.node
+                                  ?.title
+                              }
                             </h3>
                           </div>
                         </Link>
@@ -587,43 +597,49 @@ function RecommendedProducts({
                         {/* handbags */}
                         <Link
                           className={`flex col-left-top-cat  pt-rl`}
-                          key={topCategory?.collections?.edges[4].node?.id}
-                          to={`/collections/${topCategory?.collections?.edges[4].node?.handle}`}
+                          key={topCategory?.collections?.edges?.[4]?.node?.id}
+                          to={`/collections/${topCategory?.collections?.edges?.[4]?.node?.handle}`}
                           prefetch="intent"
                         >
                           <Image
                             // alt={collection?.image?.altText || collection?.title}
                             aspectRatio="1/1"
                             data={
-                              topCategory?.collections?.edges[4].node?.image
+                              topCategory?.collections?.edges?.[4]?.node?.image
                             }
                             // loading={index < 3 ? 'eager' : undefined}
                             className=" mg-lt-17   top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
-                              {topCategory?.collections?.edges[4].node?.title}
+                              {
+                                topCategory?.collections?.edges?.[4]?.node
+                                  ?.title
+                              }
                             </h3>
                           </div>
                         </Link>
                         {/* bagpacks */}
                         <Link
                           className={`flex col-left-top-cat  pt-rl`}
-                          key={topCategory?.collections?.edges[3].node?.id}
-                          to={`/collections/${topCategory?.collections?.edges[3].node?.handle}`}
+                          key={topCategory?.collections?.edges?.[3]?.node?.id}
+                          to={`/collections/${topCategory?.collections?.edges?.[3]?.node?.handle}`}
                           prefetch="intent"
                         >
                           <Image
                             // alt={collection?.image?.altText || collection?.title}
                             aspectRatio="1/1"
                             data={
-                              topCategory?.collections?.edges[3].node?.image
+                              topCategory?.collections?.edges?.[3]?.node?.image
                             }
                             className="mg-lt-17 top-cat-img flex"
                           />
                           <div className="pt-abs top-row">
                             <h3>
-                              {topCategory?.collections?.edges[3].node?.title}
+                              {
+                                topCategory?.collections?.edges?.[3]?.node
+                                  ?.title
+                              }
                             </h3>
                           </div>
                         </Link>
@@ -632,19 +648,21 @@ function RecommendedProducts({
                       {/* footwear */}
                       <Link
                         className={`mg-lt-17 flex pt-rl `}
-                        key={topCategory?.collections?.edges[1].node?.id}
-                        to={`/collections/${topCategory?.collections?.edges[1].node?.handle}`}
+                        key={topCategory?.collections?.edges?.[1]?.node?.id}
+                        to={`/collections/${topCategory?.collections?.edges?.[1]?.node?.handle}`}
                         prefetch="intent"
                       >
                         <Image
                           // alt={collection?.image?.altText || collection?.title}
                           aspectRatio="2/1"
-                          data={topCategory?.collections?.edges[1].node?.image}
+                          data={
+                            topCategory?.collections?.edges?.[1]?.node?.image
+                          }
                           className="top-cat-img flex mg-bottom-row "
                         />
                         <div className="pt-abs">
                           <h3>
-                            {topCategory?.collections?.edges[1].node?.title}
+                            {topCategory?.collections?.edges?.[1]?.node?.title}
                           </h3>
                         </div>
                       </Link>
