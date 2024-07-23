@@ -117,13 +117,13 @@ img {
 .banner-description {
   max-width: 774px;
   color: var(--Colors-Secondary-Text-1, #545454);
-  font-size: 22px;
   font-style: normal;
   font-weight: 300;
-  line-height: 150%;
   margin-top: 8px;
   margin-bottom: 32px;
   margin-right: 50%;
+  font-size: 1rem;
+  line-height: 1.4;
 }
 .banner-repo-cta {
   z-index: 2;
@@ -154,10 +154,15 @@ img {
   }
 
   &:hover {
-    border: 2px solid #212121;
-    transition: box-shadow var(--duration-short) ease;
+    &:first-child {
+      outline: 2px solid #212121;
+    }
+    &:last-child {
+      outline: 2px solid #212121;
+    }
   }
 }
+
 .feature-heading {
   font-size: 36px;
   font-style: normal;
@@ -331,6 +336,12 @@ img {
     padding-left: 18px;
   }
 }
+.footer_social_logos_img {
+  border-radius: 0% !important;
+  padding-left: 24px;
+  width: 19px;
+  height: 19px;
+}
 
 .load-more {
   display: flex;
@@ -390,6 +401,9 @@ img {
   width: 100%;
   object-fit: cover;
   object-position: top center;
+}
+.filter-grayscale {
+  filter: brightness(70%);
 }
 .small-img {
   img {
@@ -516,6 +530,7 @@ img {
     border-bottom-left-radius: 12px !important;
     border-top-left-radius: 12px !important;
     object-fit: cover;
+    filter: brightness(70%);
   }
 }
 .offers-row {
@@ -539,7 +554,7 @@ img {
 .offers-sub-title {
   padding-left: 32px;
   color: white;
-  font-size: 36px;
+  font-size: 40px;
   font-weight: 600;
   letter-spacing: 0.48px;
   line-height: 64px;
@@ -560,6 +575,7 @@ img {
   display: inline-flex;
   font-size: 14px;
   text-transform: uppercase;
+  cursor: pointer;
 }
 .new-arrival-wrap {
   background-color: #fdf9ee;
@@ -621,7 +637,6 @@ img {
 .new-arrival-heading {
   text-align: center;
   padding-top: 42px;
-  p {
     font-size: 46px;
     font-style: normal;
     font-weight: 600;
@@ -630,8 +645,7 @@ img {
     .dark-text {
       background-color: #212121;
       color: #fff;
-    }
-  }
+ }
 }
 
 .col-left-top-cat {
@@ -952,6 +966,7 @@ img {
 }
 .add-to-cart-container form {
   display: flex !important;
+  align-items: baseline;
 }
 
 .addtocartquantiy {
@@ -969,6 +984,13 @@ img {
   margin-right: 20px;
 }
 
+.cart-update-message {
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  color: var(--Colors-Success, #42cc71);
+}
+
 .increment-button {
   border: none;
   background: transparent;
@@ -984,7 +1006,8 @@ img {
 
 .totalquantiy {
   vertical-align: super;
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-left: 22px;
 }
 .increment-button:hover {
