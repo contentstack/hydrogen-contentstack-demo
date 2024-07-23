@@ -185,6 +185,31 @@ aside li {
     }
   }
 }
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: auto;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  right: 0%;
+  font-size: 14px;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+
 .header {
   align-items: center;
   background: #fff;
@@ -285,9 +310,13 @@ aside li {
 */
 .cart-main {
   height: 100%;
-  max-height: calc(100vh - var(--cart-aside-summary-height));
+  max-height: calc(90vh - var(--cart-aside-summary-height));
   overflow-y: auto;
   width: auto;
+}
+
+.search-layout {
+  margin: 50px auto;
 }
 
 .cart-main.with-discount {
@@ -320,6 +349,11 @@ aside li {
 
 .cart-line-quantiy {
   display: flex;
+} 
+
+.cta-cursor {
+  cursor: pointer !important;
+  margin: 0 4px;
 }
 
 .cart-discount {
