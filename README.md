@@ -116,7 +116,7 @@ For information on running production builds and deployment, see the [Hydrogen d
 
 This repository is published under the [MIT][license] license.
 
-[about]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev/about
+[about]: https://hydrogen.contentstackdemos.com/
 [hydrogen-contentstack-demo]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev
 [hydrogen-github]: https://github.com/contentstack/hydrogen-contentstack-demo
 [hydrogen-framework]: https://shopify.dev/docs/custom-storefronts/hydrogen
