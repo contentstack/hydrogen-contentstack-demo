@@ -63,7 +63,7 @@ export const getEntry = async ({contentTypeUid, envConfig}: any) => {
       .find()
       .then(
         (result: any) => {
-          resolve(result[0][0]);
+          resolve(result?.[0]?.[0]);
         },
         (error: any) => {
           reject(error);
