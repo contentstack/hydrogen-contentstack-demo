@@ -24,10 +24,10 @@ This TypeScript demo adopts many of Hydrogen's [framework conventions and third-
 
 Using Contentstack App in Shopify, you can connect your Contentstack stack to your Shopify store. This app will sync all your Contentstack cms data to Shopify metaobjects.
 In this demo all the inventory data is fetched from Shopify's Storefront API(from metaobjects). 
-If you want to fetch marketing data like pages, footer or other assets from Contentstack directly, you can use the `getEntry` method from our official [`contentstack-sdk`][contentstack-sdk] library. We have already implemented in app/component/contentstack-sdk.js file where you can use the `getEntry` method for achieving this. 
+If you want to fetch marketing data like pages, footer or other assets using Contentstack SDK function, you can use the `getEntry` method from our official [`contentstack-sdk`][contentstack-sdk] library. We have already implemented in app/utils.ts file where you can use the `getEntry` method for achieving this. 
 
 ```tsx
-import {getEntry} from '~/components/contentstack-sdk';
+import {getEntry} from '~/utils.ts';
 
 const fetchData = async () => {
     try {
