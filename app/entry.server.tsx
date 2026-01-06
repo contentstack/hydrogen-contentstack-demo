@@ -12,9 +12,13 @@ export default async function handleRequest(
 ) {
   const {nonce, header, NonceProvider} = createContentSecurityPolicy();
 
+  //Sanitize URL to prevent open redirect
+  const url = new URL(request.url);
+  const safeUrl = `${url.pathname}${url.search}`;
+
   const body = await renderToReadableStream(
     <NonceProvider>
-      <RemixServer context={remixContext} url={request.url} />
+      <RemixServer context={remixContext} url={safeUrl} />
     </NonceProvider>,
     {
       nonce,
