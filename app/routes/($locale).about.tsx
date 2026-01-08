@@ -43,7 +43,6 @@ function RecommendedProducts({metaObject}: {metaObject: any}) {
           })}
           {fields.map((field: any) => {
             if (field.key === 'description') {
-              console.info('field.value', field.value);
               return (
                 <div key={field.key} className="container">
                   <p className="about-description">{parse(field.value)}</p>
