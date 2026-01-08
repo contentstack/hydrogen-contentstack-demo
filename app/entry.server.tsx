@@ -1,8 +1,10 @@
 import type {EntryContext} from '@shopify/remix-oxygen';
 import {RemixServer} from '@remix-run/react';
-import isbot from 'isbot';
-import {renderToReadableStream} from 'react-dom/server';
+import {isbot} from 'isbot';
+import ReactDOMServer from 'react-dom/server'; // default import for CJS
 import {createContentSecurityPolicy} from '@shopify/hydrogen';
+
+const {renderToReadableStream} = ReactDOMServer; // destructure from default
 
 export default async function handleRequest(
   request: Request,
@@ -12,19 +14,18 @@ export default async function handleRequest(
 ) {
   const {nonce, header, NonceProvider} = createContentSecurityPolicy();
 
-  //Sanitize URL to prevent open redirect
+  // Sanitize URL (path + query only)
   const url = new URL(request.url);
-  const safeUrl = `${url.pathname}${url.search}`;
+  const safeUrl = new URL(`${url.pathname}${url.search}`, url.origin);
 
   const body = await renderToReadableStream(
     <NonceProvider>
-      <RemixServer context={remixContext} url={safeUrl} />
+      <RemixServer context={remixContext} url={safeUrl.toString()} />
     </NonceProvider>,
     {
       nonce,
       signal: request.signal,
       onError(error) {
-        // eslint-disable-next-line no-console
         console.error(error);
         responseStatusCode = 500;
       },
