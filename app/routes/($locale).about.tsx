@@ -58,7 +58,7 @@ function RecommendedProducts({metaObject}: {metaObject: any}) {
 }
 
 const META_OBJECT_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObjectAbout($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "about_us") {
     nodes {
