@@ -280,7 +280,7 @@ const FOOTER_QUERY = `#graphql
 ` as const;
 
 const FOOTER_META_OBJECT_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query RootMetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "footer") {
     nodes {
