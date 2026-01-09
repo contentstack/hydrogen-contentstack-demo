@@ -1,4 +1,5 @@
-import {useLoaderData, Link, MetaFunction} from '@remix-run/react';
+import type {MetaFunction} from '@remix-run/react';
+import {useLoaderData, Link} from '@remix-run/react';
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Pagination, getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
@@ -9,22 +10,33 @@ export const meta: MetaFunction = () => {
 };
 
 export async function loader({context, request}: LoaderFunctionArgs) {
+  const {storefront} = context;
   const paginationVariables = getPaginationVariables(request, {
     pageBy: 8,
   });
+  const headingQuery = await storefront?.query(HEADING_QUERY);
 
   const {collections} = await context.storefront.query(COLLECTIONS_QUERY, {
     variables: paginationVariables,
   });
 
-  return json({collections});
+  return json({collections, headingQuery});
 }
 
 export default function Collections() {
-  const {collections} = useLoaderData<typeof loader>();
+  const {collections, headingQuery} = useLoaderData<typeof loader>();
+  const fields = headingQuery?.metaobjects?.nodes?.[0]?.fields;
   return (
     <div className="collections container pg-bt">
-      <h1>Collections</h1>
+      {Array.isArray(fields) &&
+        fields.map((field: any) => {
+          return (
+            <>
+              {field?.key === 'collection_page_heading' && <h1>Collections</h1>}
+            </>
+          );
+        })}
+
       <Pagination connection={collections}>
         {({nodes, isLoading, PreviousLink, NextLink}) => (
           <div>
@@ -128,3 +140,26 @@ const COLLECTIONS_QUERY = `#graphql
     }
   }
 ` as const;
+
+const HEADING_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: 100, type: "product_page_contents") {
+    nodes {
+      fields {
+        key
+        type
+        value
+        reference {
+          ... on Metaobject {
+            id
+            fields {
+              key
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}` as const;

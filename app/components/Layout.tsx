@@ -21,6 +21,7 @@ export type LayoutProps = {
   header: HeaderQuery;
   isLoggedIn: boolean;
   fetchData: any;
+  footerMetaObject: any;
 };
 
 export function Layout({
@@ -29,7 +30,7 @@ export function Layout({
   footer,
   header,
   isLoggedIn,
-  fetchData,
+  footerMetaObject,
 }: LayoutProps) {
   return (
     <>
@@ -44,7 +45,7 @@ export function Layout({
             <Footer
               menu={footer?.menu}
               shop={header?.shop}
-              cmsData={fetchData}
+              footerMetaObject={footerMetaObject}
             />
           )}
         </Await>
@@ -82,14 +83,8 @@ function SearchAside() {
                 placeholder="Search"
                 ref={inputRef}
                 type="search"
+                style={{width: '100%'}}
               />
-              &nbsp;
-              <button
-                className="view-all-products search-aside-cta "
-                type="submit"
-              >
-                Search
-              </button>
             </div>
           )}
         </PredictiveSearchForm>

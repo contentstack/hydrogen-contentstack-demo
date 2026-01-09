@@ -3,7 +3,7 @@ import {Suspense} from 'react';
 import type {HeaderQuery} from 'storefrontapi.generated';
 import type {LayoutProps} from './Layout';
 import {useRootLoaderData} from '~/root';
-import contentstack_logo from '../../public/contentstack_logo.svg';
+import contentstack_logo from '../../public/contentstack.svg';
 
 type HeaderProps = Pick<LayoutProps, 'header' | 'cart' | 'isLoggedIn'>;
 
@@ -104,7 +104,7 @@ function HeaderCtas({
           prefetch="intent"
           to="/account"
           style={activeLinkStyle}
-          className="pl-7"
+          className="pl-7 tooltip"
         >
           {isLoggedIn ? (
             // 'Account'
@@ -153,6 +153,9 @@ function HeaderCtas({
               />
             </svg>
           )}
+          <span className="tooltiptext">
+            {isLoggedIn ? 'Account' : 'SignIn'}
+          </span>
         </NavLink>
         {/* </div> */}
       </nav>
@@ -160,10 +163,9 @@ function HeaderCtas({
   );
 }
 
-
 function SearchToggle() {
   return (
-    <a href="#search-aside" className="pr-7">
+    <a href="#search-aside" className="pr-7 tooltip">
       <svg
         width="32"
         height="32"
@@ -179,13 +181,14 @@ function SearchToggle() {
           fill="#212121"
         />
       </svg>
+      <span className="tooltiptext">Search</span>
     </a>
   );
 }
 
 function CartBadge({count}: {count: number}) {
   return (
-    <a href="#cart-aside" className="pl-7">
+    <a href="#cart-aside" className="pl-7 tooltip">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="32"
@@ -205,6 +208,7 @@ function CartBadge({count}: {count: number}) {
           fill="#212121"
         />
       </svg>
+      <span className="tooltiptext">Cart</span>
     </a>
   );
 }

@@ -167,7 +167,9 @@ function CartLineRemoveButton({lineIds}: {lineIds: string[]}) {
       action={CartForm.ACTIONS.LinesRemove}
       inputs={{lineIds}}
     >
-      <button type="submit">Remove</button>
+      <button className="cta-cursor" type="submit">
+        Remove
+      </button>
     </CartForm>
   );
 }
@@ -187,16 +189,17 @@ function CartLineQuantity({line}: {line: CartLine}) {
           disabled={quantity <= 1}
           name="decrease-quantity"
           value={prevQuantity}
+          className="cta-cursor"
         >
           <span>&#8722; </span>
         </button>
       </CartLineUpdateButton>
-      &nbsp;
       <CartLineUpdateButton lines={[{id: lineId, quantity: nextQuantity}]}>
         <button
           aria-label="Increase quantity"
           name="increase-quantity"
           value={nextQuantity}
+          className="cta-cursor"
         >
           <span>&#43;</span>
         </button>
@@ -294,7 +297,10 @@ function CartDiscounts({
         <div>
           <input type="text" name="discountCode" placeholder="Discount code" />
           &nbsp;
-          <button className="view-all-products search-aside-cta " type="submit">
+          <button
+            className="view-all-products search-aside-cta cta-cursor"
+            type="submit"
+          >
             Apply
           </button>
         </div>
