@@ -147,7 +147,7 @@ function RecommendedProducts({
         <div className="container">
           {cmsData?.banner?.banner_heading && (
             <h5 className="page-banner-heading">
-              {cmsData?.banner?.banner_heading}
+              {cmsData?.banner?.banner_heading} --
             </h5>
           )}
           {cmsData?.banner?.banner_title && (
