@@ -18,8 +18,9 @@ import {
 } from '@remix-run/react';
 import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
 import favicon from '../public/favicon.svg';
-import resetStyles from './styles/reset.css';
-import appStyles from './styles/app.css';
+import './styles/reset.css';
+import './styles/app.css';
+
 import {Layout} from '~/components/Layout';
 
 /**
@@ -45,8 +46,8 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export function links() {
   return [
-    {rel: 'stylesheet', href: resetStyles},
-    {rel: 'stylesheet', href: appStyles},
+    { rel: 'stylesheet', href: '/app/styles/reset.css' },
+    { rel: 'stylesheet', href: '/app/styles/app.css' },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -55,9 +56,10 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    { rel: 'icon', type: 'image/svg+xml', href: favicon },
   ];
 }
+
 
 export const useRootLoaderData = () => {
   const [root] = useMatches();
