@@ -162,7 +162,7 @@ function RecommendedProducts({
                         <>
                           {bannerField?.key === 'heading' && (
                             <h5 className="page-banner-heading">
-                              {bannerField?.value}
+                              {bannerField?.value} :
                             </h5>
                           )}
                           {bannerField?.key === 'title' && (
