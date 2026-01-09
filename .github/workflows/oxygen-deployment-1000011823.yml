@@ -2,7 +2,20 @@
 #! oxygen_storefront_id: 1000011823
 
 name: Storefront 1000011823
-on: [push]
+
+on:
+  workflow_dispatch:
+    inputs:
+      BranchToDeploy:
+        description: 'Select branch to deploy'
+        required: true
+        default: 'development'
+        type: choice
+        options:
+        - development
+        - staging
+        - main
+
 
 permissions:
   contents: read
@@ -14,7 +27,14 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
+      - name: BranchSelector
+        id: BranchSelector
+        run: |
+            echo "BranchName=${{inputs.BranchToDeploy}}" >> $GITHUB_OUTPUT
+
       - uses: actions/checkout@v4
+        with: 
+          ref: ${{ steps.BranchSelector.outputs.BranchName }}
 
       - name: Setup node.js
         uses: actions/setup-node@v4
@@ -51,7 +71,7 @@ jobs:
         if: always()
         with:
           token: ${{ github.token }}
-          environment: 'preview'
+          environment: 'production'
           preview_url: ${{ steps.deploy.outputs.url }}
           description: ${{ github.event.head_commit.message }}
         

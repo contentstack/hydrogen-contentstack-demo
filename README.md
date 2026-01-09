@@ -2,9 +2,9 @@
 
 This demo is compatible with `@shopify/hydrogen >= 2024.01` built on Remix.
 
-> For a more complex reference example, please see our [demo-ecommerce repo](https://github.com/contentstack/shopify-contentstack-app) which features a monorepo with an embedded Contentstack.
 <img src="https://cdn.shopify.com/oxygen-v2/29150/15868/32733/347547/build/_assets/banner-ZAZUZJHV.svg" width="1000" />
-[Demo][hydrogen-contentstack-demo] | [Contentstack Connect for Shopify][[contentstack-connect]]
+
+[Demo][hydrogen-contentstack-demo] 
 
 # About
 
@@ -20,17 +20,14 @@ This starter showcases a few patterns you can adopt when creating your own custo
 
 This TypeScript demo adopts many of Hydrogen's [framework conventions and third-party libraries][hydrogen-framework]. If you've used Hydrogen then you should hopefully feel at home here.
 
-Shopify's Storefront API is exclusively utilized for accessing all inventory data. However, for other marketing data such as banners, footer links, etc., the Contentstack SDK is used.
-
-To retrieve inventory data and content from the Shopify store, users should create content pages by navigating to Online Store -> Pages -> Add page. They should create the page's content type and add entries accordingly.
-
 # Fetching Contentstack data
 
-This demo comes preconfigured Contentstack, which adds a Contentstack client to the Remix context. This enables you to fetch content from Contentstack in Remix loaders and actions.
+Using Contentstack App in Shopify, you can connect your Contentstack stack to your Shopify store. This app will sync all your Contentstack cms data to Shopify metaobjects.
+In this demo all the inventory data is fetched from Shopify's Storefront API(from metaobjects). 
+If you want to fetch marketing data like pages, footer or other assets using Contentstack SDK function, you can use the `getEntry` method from our official [`contentstack-sdk`][contentstack-sdk] library. We have already implemented in app/utils.ts file where you can use the `getEntry` method for achieving this. 
 
 ```tsx
-// <root>/app/routes/($locale).products.$handle.tsx
-import {getEntry} from '~/components/contentstack-sdk';
+import {getEntry} from '~/utils.ts';
 
 const fetchData = async () => {
     try {
@@ -44,8 +41,6 @@ const fetchData = async () => {
     }
   };
 ```
-This uses our official [`contentstack-sdk`][contentstack-sdk] library, so it supports all the methods you would expect to interact with Contentstack API's
-You can also use the [`defer` and `Await` utilities](https://remix.run/docs/en/1.15.0/guides/streaming#using-defer) from Remix to prioritize critical data:
 
 # Viewpoint
 
@@ -76,7 +71,7 @@ We've taken the following viewpoint on how we've approached this demo.
 </details>
 
 <details>
-<summary><strong>Product options are customized in Contenstack</strong></summary>
+<summary><strong>Product options are customized in Contentstack</strong></summary>
 
 - Data added to specific product options is done in Contentstack entries.
 - For the extra fields inside Contentstack gets updated in Shopify in MetaField.
@@ -100,7 +95,7 @@ Contentstack for Shopify is a Shopify Plus-certified app.
 
 ## Getting Started
 
-1.  Create a `.env` file, based on the `.env.template` file.
+1.  Create a `.env` file, based on the `.env.template` file and add the values from the Storefront settings of Hydrogen App.
 
 2.  Install dependencies and start the development server
 
@@ -111,14 +106,18 @@ Contentstack for Shopify is a Shopify Plus-certified app.
 
 3.  Visit the development environment running at http://localhost:3000.
 
+4. Integrate content from Contentstack into Shopify metaobjects and iterate through the JSON to render the user interface.
+
+5. For menus in header, navigate to the Online Store --> Navigation --> Main menu and add the contentstack page entries as menu items.
+
 For information on running production builds and deployment, see the [Hydrogen documentation][hydrogen-framework].
 
 # License
 
 This repository is published under the [MIT][license] license.
 
-[about]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev/about
-[hydrogen-contentstack-demo]: https://01hq4sm3tp6r1g3yas5q5h3qq1-6f2958b70f5894a4ad6d.myshopify.dev/
+[about]: https://hydrogen.contentstackdemos.com/about
+[hydrogen-contentstack-demo]: https://hydrogen.contentstackdemos.com/
 [hydrogen-github]: https://github.com/contentstack/hydrogen-contentstack-demo
 [hydrogen-framework]: https://shopify.dev/docs/custom-storefronts/hydrogen
 [license]: https://github.com/sanity-io/sanity/blob/next/LICENSE

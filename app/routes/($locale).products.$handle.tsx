@@ -1,4 +1,4 @@
-import {Fragment, Suspense, useState} from 'react';
+import {Fragment, Suspense, useState, useEffect} from 'react';
 import parse from 'html-react-parser';
 import {defer, redirect, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 
@@ -14,6 +14,7 @@ import type {
   ProductFragment,
   ProductVariantsQuery,
   ProductVariantFragment,
+  CartApiQueryFragment,
 } from 'storefrontapi.generated';
 import NoImg from '../../public/NoImg.svg';
 
@@ -26,19 +27,57 @@ import {
   CartForm,
 } from '@shopify/hydrogen';
 import type {
-  CartLineInput,
+  CartLineUpdateInput,
   SelectedOption,
 } from '@shopify/hydrogen/storefront-api-types';
 import {getVariantUrl} from '~/utils';
-import {getEntry} from '~/components/contentstack-sdk';
+type CartLine = CartApiQueryFragment['lines']['nodes'][0];
 
 export const meta: MetaFunction<typeof loader> = ({data}) => {
-  return [{title: `Hydrogen | ${data?.product.title ?? ''}`}];
+  return [{title: `Hydrogen | ${data?.product?.title ?? ''}`}];
 };
 
+async function fetchAllMetaobjects(fetchQuery: any, first: number) {
+  let allMetaobjects: any[] = [];
+  let hasNextPage = true;
+  let endCursor: string | null = null;
+
+  while (hasNextPage) {
+    // Fetch the next page of metaobjects
+    const response: any = await fetchQuery({first, after: endCursor});
+
+    if (response && response.metaobjects) {
+      const metaobjects = response.metaobjects;
+
+      if (metaobjects.edges) {
+        allMetaobjects = [...allMetaobjects, ...metaobjects.edges];
+      }
+
+      hasNextPage = metaobjects.pageInfo?.hasNextPage ?? false;
+      endCursor = metaobjects.pageInfo?.endCursor ?? null;
+    } else {
+      hasNextPage = false;
+    }
+  }
+
+  return allMetaobjects;
+}
+function filterMetaobjectsByProductId(metaobjects: any, productId: any) {
+  return metaobjects.filter(({node}: any) =>
+    node.fields.some(
+      (field: any) => field.key === 'product' && field.value === productId,
+    ),
+  );
+}
+
 export async function loader({params, request, context}: LoaderFunctionArgs) {
+  const publicStoreDomain = context?.env?.PUBLIC_STORE_DOMAIN;
+  const match = publicStoreDomain?.match(/^([^.]+)\./);
+  const subdomain = match ? match?.[1] : null;
+  const key = subdomain;
+
   const {handle} = params;
-  const {storefront} = context;
+  const {storefront, cart} = context;
   const selectedOptions = getSelectedProductOptions(request).filter(
     (option) =>
       // Filter out Shopify predictive search query params
@@ -50,20 +89,14 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
       // Filter out third party tracking params
       !option.name.startsWith('fbclid'),
   );
+  const cartPromise = await cart.get();
 
-  const envConfig = context?.env;
-  const fetchData = async () => {
-    try {
-      const result = await getEntry({
-        contentTypeUid: 'product_detail_page',
-        envConfig,
-      });
-      return result;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('ERROR', error);
-    }
-  };
+  // Fetch metaobjects
+  const metaobjects = await fetchAllMetaobjects(async (variables: any) => {
+    return storefront.query(META_OBJECT_QUERY, {variables});
+  }, 100);
+
+  const headingQuery = await storefront?.query(HEADING_QUERY);
 
   if (!handle) {
     throw new Error('Expected product handle to be defined');
@@ -71,12 +104,18 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
 
   // await the query for the critical product data
   const {product} = await storefront.query(PRODUCT_QUERY, {
-    variables: {handle, selectedOptions},
+    variables: {handle, key, selectedOptions},
   });
   if (!product?.id) {
     throw new Response(null, {status: 404});
   }
   const productID = product?.id;
+
+  // // Filter metaobjects by the product ID
+  const filteredMetaobjects = filterMetaobjectsByProductId(
+    metaobjects,
+    productID,
+  );
   // Fetch related products using the product ID
   const relatedProductQueryResults = await storefront.query(
     RELATED_PRODUCT_QUERY,
@@ -86,12 +125,13 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   );
 
   const firstVariant = product.variants?.nodes[0];
-  const firstVariantIsDefault = Boolean(
-    firstVariant?.selectedOptions?.find(
-      (option: SelectedOption) =>
-        option?.name === 'Title' && option?.value === 'Default Title',
-    ),
-  );
+  let firstVariantIsDefault = false;
+
+  firstVariant?.selectedOptions?.forEach((option: SelectedOption) => {
+    if (option?.name === 'Title' && option?.value === 'Default Title') {
+      firstVariantIsDefault = true;
+    }
+  });
 
   if (firstVariantIsDefault) {
     product.selectedVariant = firstVariant;
@@ -103,11 +143,6 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
     }
   }
 
-  // In order to show which variants are available in the UI, we need to query
-  // all of them. But there might be a *lot*, so instead separate the variants
-  // into it's own separate query that is deferred. So there's a brief moment
-  // where variant options might show as available when they're not, but after
-  // this deffered query resolves, the UI will update.
   const variants = storefront.query(VARIANTS_QUERY, {
     variables: {handle},
   });
@@ -115,8 +150,10 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
   return defer({
     product,
     variants,
-    fetchedData: await fetchData(),
     relatedProductQueryResults,
+    metaobjects: filteredMetaobjects,
+    headingQuery,
+    cart: cartPromise,
   });
 }
 
@@ -143,17 +180,66 @@ function redirectToFirstVariant({
   );
 }
 
+interface LoaderData {
+  product: any;
+  variants: any;
+  relatedProductQueryResults: any;
+  metaobjects: any;
+  headingQuery: any;
+  cart: any;
+  // Add other properties if needed
+}
+
 export default function Product() {
   const location = useLocation();
   const {state} = location;
-  const {product, variants, relatedProductQueryResults, fetchedData} =
-    useLoaderData<typeof loader>();
+  const loaderData = useLoaderData<LoaderData>();
+  const {
+    product,
+    variants,
+    relatedProductQueryResults,
+    metaobjects,
+    headingQuery,
+    cart,
+  } = loaderData;
+  useLoaderData<typeof loader>();
+  const [cartData, setCartData] = useState<{
+    id: string;
+    quantity: number;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!cart || !product) {
+      return;
+    }
+
+    let cartQuantity: {id: string; quantity: number} | null = null;
+
+    cart?.lines?.nodes?.forEach((cartItem: any) => {
+      if (cartItem?.merchandise?.product?.id === product?.id) {
+        cartQuantity = {
+          id: cartItem?.id,
+          quantity: cartItem?.quantity,
+        };
+      }
+    });
+    setCartData(cartQuantity);
+  }, [cart, product]);
+
   const {selectedVariant} = product;
   const collectionName = product?.collections?.edges?.[0]?.node?.title;
   const productName = product?.title;
-
   const limitedProducts =
     relatedProductQueryResults?.productRecommendations?.slice(0, 5);
+
+  const matchedField: any[] = [];
+  if (metaobjects?.[0]?.node?.fields) {
+    metaobjects?.[0]?.node?.fields.forEach((node: any) => {
+      matchedField.push(node);
+    });
+  }
+  const fields = headingQuery?.metaobjects?.nodes?.[0]?.fields;
+
   return (
     <>
       <div className="breadcrumbs container">
@@ -189,6 +275,8 @@ export default function Product() {
           selectedVariant={selectedVariant}
           product={product}
           variants={variants}
+          matchedField={matchedField}
+          cart={cartData}
         />
       </div>
       {limitedProducts?.length ? (
@@ -196,7 +284,16 @@ export default function Product() {
           <Suspense fallback={<div>Loading...</div>}>
             <div className="featured-wrapper container">
               <div className="featured-content">
-                <h2 className="product-css">{fetchedData?.heading}</h2>
+                {Array.isArray(fields) &&
+                  fields.map((field: any) => {
+                    return (
+                      <>
+                        {field?.key === 'related_products_heading' && (
+                          <h2 className="product-css">{field?.value}</h2>
+                        )}
+                      </>
+                    );
+                  })}
               </div>
               <div className="feature-products-grid">
                 {limitedProducts?.length
@@ -223,8 +320,12 @@ export default function Product() {
                           <Link
                             className="feature-product"
                             to={`/products/${product?.handle}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              window.location.href = `/products/${product?.handle}`;
+                            }}
                           >
-                            {product?.images?.nodes[0] ? (
+                            {product?.images?.nodes?.[0] ? (
                               <Image
                                 data={product?.images?.nodes[0]}
                                 aspectRatio="1/1"
@@ -311,10 +412,14 @@ function ProductMain({
   selectedVariant,
   product,
   variants,
+  matchedField,
+  cart,
 }: {
-  product: ProductFragment;
+  product: any;
   selectedVariant: ProductFragment['selectedVariant'];
-  variants: Promise<ProductVariantsQuery>;
+  variants?: Promise<ProductVariantsQuery>;
+  matchedField: any;
+  cart: any;
 }) {
   const {title, descriptionHtml, metafield} = product;
   const valueMap = new Map();
@@ -336,6 +441,7 @@ function ProductMain({
               product={product}
               selectedVariant={selectedVariant}
               // variants={data?.product?.variants.nodes || []}
+              cart={cart}
             />
           }
         >
@@ -347,7 +453,8 @@ function ProductMain({
               <ProductForm
                 product={product}
                 selectedVariant={selectedVariant}
-                variants={data.product?.variants.nodes || []}
+                variants={data?.product?.variants?.nodes || []}
+                cart={cart}
               />
             )}
           </Await>
@@ -403,7 +510,24 @@ function ProductMain({
 
           <div className="details-container">
             <span className="Free-Delivery">Free Delivery</span>
-            <span className="Postal-code">Enter your postal code</span>
+
+            {matchedField.length > 0 ? (
+              Array.isArray(matchedField) &&
+              matchedField.map((field: any) => {
+                if (field.key === 'free_delivery') {
+                  return (
+                    <span key={field.key} className="Postal-code">
+                      {field.value === 'true'
+                        ? 'Contentstack sponsered'
+                        : 'Enter your postal code'}
+                    </span>
+                  );
+                }
+                return null;
+              })
+            ) : (
+              <span className="Postal-code">Enter your postal code</span>
+            )}
           </div>
 
           <div className="postalcode-container">
@@ -431,9 +555,22 @@ function ProductMain({
 
           <div className="details-container">
             <span className="Free-Delivery">Return Policy</span>
-            <span className="Postal-code">
-              Free 30 Days Delivery Returns. Details
-            </span>
+            {matchedField.length > 0 ? (
+              Array.isArray(matchedField) &&
+              matchedField.map((field: any) => {
+                return (
+                  <>
+                    {field?.key === 'return_policy' && (
+                      <span className="Postal-code">{field.value}</span>
+                    )}
+                  </>
+                );
+              })
+            ) : (
+              <span className="Postal-code">
+                Free 30 Days Delivery Returns. Details
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -521,10 +658,12 @@ function ProductForm({
   product,
   selectedVariant,
   variants,
+  cart,
 }: {
   product: ProductFragment;
   selectedVariant: ProductFragment['selectedVariant'];
-  variants: Array<ProductVariantFragment>;
+  variants?: Array<ProductVariantFragment>;
+  cart: any;
 }) {
   return (
     <div className="product-form">
@@ -541,9 +680,6 @@ function ProductForm({
       <br />
       <AddToCartButton
         disabled={!selectedVariant || !selectedVariant?.availableForSale}
-        onClick={() => {
-          window.location.href = window.location.href + '#cart-aside';
-        }}
         lines={
           selectedVariant
             ? [
@@ -554,9 +690,8 @@ function ProductForm({
               ]
             : []
         }
-      >
-        {selectedVariant?.availableForSale ? 'Add to cart' : 'Sold out'}
-      </AddToCartButton>
+        cart={cart}
+      />
     </div>
   );
 }
@@ -612,102 +747,121 @@ function ProductOptions({option}: {option: VariantOption}) {
 }
 function AddToCartButton({
   analytics,
-  children,
   disabled,
   lines,
-  onClick,
+  cart,
 }: {
   analytics?: unknown;
-  children: React.ReactNode;
   disabled?: boolean;
-  lines: CartLineInput[];
-  onClick?: () => void;
+  lines: CartLine[];
+  cart: any;
 }) {
-  const [quantity, setQuantity] = useState(1);
+  const [quantity, setQuantity] = useState(cart?.quantity || 0);
+  const [updatedLines, setUpdatedLines] = useState<CartLineUpdateInput[]>([]);
+  const [showMessage, setShowMessage] = useState(false);
+
   const handleIncrement = () => {
     setQuantity(quantity + 1);
+    setShowMessage(true);
+    const updatedLine: CartLineUpdateInput = {
+      id: cart?.id,
+      quantity: quantity + 1,
+    };
+    setUpdatedLines([updatedLine]);
   };
+
   const handleDecrement = () => {
-    if (quantity > 1) {
+    if (quantity > 0) {
+      const updatedLine: CartLineUpdateInput = {
+        id: cart?.id,
+        quantity: quantity - 1,
+      };
+      setUpdatedLines([updatedLine]);
       setQuantity(quantity - 1);
+      setShowMessage(true);
     }
   };
+  useEffect(() => {
+    if (showMessage) {
+      const timer = setTimeout(() => {
+        setShowMessage(false);
+      }, 4000); // 4 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [showMessage]);
   return (
     <>
-      <div className="add-to-cart-container">
-        <CartForm
-          route="/cart"
-          inputs={{lines}}
-          action={CartForm.ACTIONS.LinesAdd}
-        >
-          {(fetcher: FetcherWithComponents<any>) => (
-            <>
-              <input
-                name="analytics"
-                value={JSON.stringify(analytics)}
-                type="hidden"
-              />
-              <div className="addtocartquantiy">
-                <button className="decrement-button" onClick={handleDecrement}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M21 12C21 11.5858 20.69 11.25 20.3077 11.25L3.69231 11.25C3.30996 11.25 3 11.5858 3 12C3 12.4142 3.30996 12.75 3.69231 12.75L20.3077 12.75C20.69 12.75 21 12.4142 21 12Z"
-                      fill="#212121"
-                    />
-                  </svg>
-                </button>
-                <span className="totalquantiy">{quantity - 1}</span>
-
-                <button
-                  className="increment-button"
-                  onClick={handleIncrement}
-                  disabled={disabled || fetcher.state !== 'idle'}
+      <div className="add-to-cart-container flex">
+        <>
+          <input
+            name="analytics"
+            value={JSON.stringify(analytics)}
+            type="hidden"
+          />
+          <div className="addtocartquantiy flex">
+            <CartForm
+              route="/cart"
+              inputs={{lines: updatedLines}}
+              action={CartForm.ACTIONS.LinesUpdate}
+            >
+              <button className="decrement-button" onClick={handleDecrement}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M12 3C12.3824 3 12.6923 3.30996 12.6923 3.69231V20.3077C12.6923 20.69 12.3824 21 12 21C11.6176 21 11.3077 20.69 11.3077 20.3077V3.69231C11.3077 3.30996 11.6176 3 12 3Z"
-                      fill="#212121"
-                    />
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
-                      fill="#212121"
-                    />
-                  </svg>
-                </button>
-              </div>
-              <Link
-                className="banner-repo-cta banner-repo-cta-icon"
-                type="submit"
-                onClick={onClick}
-                disabled={disabled || fetcher.state !== 'idle'}
-                style={{
-                  width: '219px',
-                  padding: '0px',
-                }}
-              >
-                {children}
-              </Link>
-            </>
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M21 12C21 11.5858 20.69 11.25 20.3077 11.25L3.69231 11.25C3.30996 11.25 3 11.5858 3 12C3 12.4142 3.30996 12.75 3.69231 12.75L20.3077 12.75C20.69 12.75 21 12.4142 21 12Z"
+                    fill="#212121"
+                  />
+                </svg>
+              </button>
+            </CartForm>
+            <span className="totalquantiy">{quantity}</span>
+            <CartForm
+              route="/cart"
+              inputs={{lines: cart === null ? lines : updatedLines}}
+              action={
+                cart === null
+                  ? CartForm.ACTIONS.LinesAdd
+                  : CartForm.ACTIONS.LinesUpdate
+              }
+            >
+              <button className="increment-button" onClick={handleIncrement}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                >
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M12 3C12.3824 3 12.6923 3.30996 12.6923 3.69231V20.3077C12.6923 20.69 12.3824 21 12 21C11.6176 21 11.3077 20.69 11.3077 20.3077V3.69231C11.3077 3.30996 11.6176 3 12 3Z"
+                    fill="#212121"
+                  />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M21 12C21 12.3824 20.69 12.6923 20.3077 12.6923L3.69231 12.6923C3.30996 12.6923 3 12.3824 3 12C3 11.6176 3.30996 11.3077 3.69231 11.3077L20.3077 11.3077C20.69 11.3077 21 11.6176 21 12Z"
+                    fill="#212121"
+                  />
+                </svg>
+              </button>
+            </CartForm>
+          </div>
+          {showMessage && (
+            <div className="cart-update-message">
+              Cart updated successfully!!!
+            </div>
           )}
-        </CartForm>
+        </>
       </div>
       <div className="seprrator">
         <svg
@@ -793,7 +947,8 @@ const PRODUCT_QUERY = `#graphql
       $country: CountryCode
       $handle: String!
       $language: LanguageCode
-      $selectedOptions: [SelectedOptionInput!]!
+      $key: String!
+      $selectedOptions: [SelectedOptionInput!]! 
     ) @inContext(country: $country, language: $language) {
       product(handle: $handle) {
         ...Product
@@ -805,7 +960,7 @@ const PRODUCT_QUERY = `#graphql
             }
           }
         }
-        metafield(namespace: "custom", key: "information") {
+        metafield(namespace: "contentstack_products", key: $key) {
           key
           value
           reference {
@@ -891,3 +1046,53 @@ const RELATED_PRODUCT_QUERY = `#graphql
       }
     }
   ` as const;
+
+const META_OBJECT_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $after: String)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: $first, after: $after, type: "product_detail_page") {
+      edges {
+        node {
+          id
+          fields {
+            key
+            value
+            reference {
+              ... on Product {
+                id
+                title
+              }
+            }
+          }
+        }
+        cursor
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+}` as const;
+
+const HEADING_QUERY = `#graphql
+query MetaObject($country: CountryCode, $language: LanguageCode)
+@inContext(country: $country, language: $language) {
+  metaobjects(first: 100, type: "product_page_contents") {
+    nodes {
+      fields {
+        key
+        type
+        value
+        reference {
+          ... on Metaobject {
+            id
+            fields {
+              key
+              value
+            }
+          }
+        }
+      }
+    }
+  }
+}` as const;
