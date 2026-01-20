@@ -12,7 +12,4 @@ export default defineConfig({
     }),
     tsconfigPaths(),
   ],
-  build: {
-    assetsInlineLimit: 0,
-  },
 });
