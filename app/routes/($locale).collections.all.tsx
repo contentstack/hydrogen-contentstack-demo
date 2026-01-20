@@ -183,7 +183,7 @@ function RecommendedProducts({
 }
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
-  fragment Product on Product {
+  fragment CollectionProduct on Product {
     id
     title
     handle
@@ -214,7 +214,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       }
     }
   }
-  query RecommendedProducts ( $country: CountryCode
+  query RecommendedProductsAllPage ( $country: CountryCode
     $endCursor: String
     $first: Int
     $language: LanguageCode
@@ -229,7 +229,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
         reverse: true
         ) {
         nodes {
-            ...Product
+            ...CollectionProduct
         }
         pageInfo {
             hasNextPage
@@ -242,7 +242,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
 ` as const;
 
 const HEADING_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObjectAllProductsPageHeading($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "product_page_contents") {
     nodes {
