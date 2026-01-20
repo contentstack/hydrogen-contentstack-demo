@@ -4,18 +4,18 @@
   "sideEffects": false,
   "version": "1.0.0",
   "scripts": {
-    "dev": "shopify hydrogen dev --codegen",
-    "build": "shopify hydrogen build",
-    "preview": "npm run build && shopify hydrogen preview",
+    "dev": "npx shopify hydrogen dev --codegen",
+    "build": "npx shopify hydrogen build",
+    "preview": "npx shopify hydrogen preview",
     "lint": "eslint --no-error-on-unmatched-pattern --ext .js,.ts,.jsx,.tsx .",
     "typecheck": "tsc --noEmit",
-    "codegen": "shopify hydrogen codegen"
+    "codegen": "npx shopify hydrogen codegen"
   },
   "prettier": "@shopify/prettier-config",
   "dependencies": {
     "@contentstack/utils": "^1.3.1",
     "@graphql-codegen/cli": "^5.0.7",
-    "@remix-run/react": "^2.16.4",
+    "@remix-run/react": "^2.17.4",
     "@shopify/hydrogen": "^2024.10.1",
     "@shopify/hydrogen-react": "^2024.1.1",
     "@shopify/remix-oxygen": "^2.0.0",
