@@ -5,7 +5,7 @@ import type {
   CustomerOrdersFragment,
   OrderItemFragment,
 } from 'storefrontapi.generated';
-import '../styles/pages.css?url';
+import '../styles/pages.css';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Orders'}];

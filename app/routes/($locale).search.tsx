@@ -33,15 +33,7 @@ export async function loader({request, context}: LoaderFunctionArgs) {
   }
 
   const totalResults = Object.values(data).reduce((total, value) => {
-    if (
-      value &&
-      typeof value === 'object' &&
-      'nodes' in value &&
-      Array.isArray((value as {nodes: unknown}).nodes)
-    ) {
-      return total + (value as {nodes: unknown[]}).nodes.length;
-    }
-    return total;
+    return total + value.nodes.length;
   }, 0);
 
   const searchResults = {
