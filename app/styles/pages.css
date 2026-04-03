@@ -113,6 +113,7 @@ img {
   z-index: 2;
   padding-top: 64px;
   margin-bottom: 0;
+  border: 1px solid blue;
 }
 .banner-description {
   max-width: 774px;
