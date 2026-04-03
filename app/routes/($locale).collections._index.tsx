@@ -3,7 +3,7 @@ import {useLoaderData, Link} from '@remix-run/react';
 import {json, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {Pagination, getPaginationVariables, Image} from '@shopify/hydrogen';
 import type {CollectionFragment} from 'storefrontapi.generated';
-import '../styles/pages.css';
+import '../styles/pages.css?url';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Collections'}];
@@ -114,7 +114,7 @@ const COLLECTIONS_QUERY = `#graphql
       height
     }
   }
-  query StoreCollections(
+  query CollectionsListingStoreCollections(
     $country: CountryCode
     $endCursor: String
     $first: Int
@@ -142,7 +142,7 @@ const COLLECTIONS_QUERY = `#graphql
 ` as const;
 
 const HEADING_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query CollectionsListingMetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "product_page_contents") {
     nodes {
