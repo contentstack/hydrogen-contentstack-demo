@@ -915,7 +915,7 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
   ` as const;
 
 const PRODUCT_FRAGMENT = `#graphql
-    fragment Product on Product {
+    fragment ProductDetails on Product {
       id
       title
       vendor
@@ -951,7 +951,7 @@ const PRODUCT_QUERY = `#graphql
       $selectedOptions: [SelectedOptionInput!]! 
     ) @inContext(country: $country, language: $language) {
       product(handle: $handle) {
-        ...Product
+        ...ProductDetails
         collections(first: 1) {
           edges {
             node {
@@ -1048,7 +1048,7 @@ const RELATED_PRODUCT_QUERY = `#graphql
   ` as const;
 
 const META_OBJECT_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $after: String)
+query MetaObjectProductDetailPage($country: CountryCode, $language: LanguageCode, $first: Int, $after: String)
 @inContext(country: $country, language: $language) {
   metaobjects(first: $first, after: $after, type: "product_detail_page") {
       edges {
@@ -1075,7 +1075,7 @@ query MetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $a
 }` as const;
 
 const HEADING_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObjectPdpPageContents($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "product_page_contents") {
     nodes {
