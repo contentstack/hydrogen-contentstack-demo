@@ -1,42 +1,40 @@
-import {defineConfig} from 'vite';
+import {createRequire} from 'node:module';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {defineConfig, loadEnv} from 'vite';
 import {hydrogen} from '@shopify/hydrogen/vite';
-import {oxygen} from '@shopify/mini-oxygen/vite';
 import {vitePlugin as remix} from '@remix-run/dev';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import {
+  createHydrogenRemixLoadContext,
+  hydrogenEnvFromProcess,
+} from './hydrogen-load-context';
+
+const require = createRequire(import.meta.url);
+const {setRemixDevLoadContext} =
+  require('@remix-run/dev/dist/vite/plugin.js') as typeof import('@remix-run/dev/dist/vite/plugin');
+
+const root = path.dirname(fileURLToPath(import.meta.url));
+Object.assign(
+  process.env,
+  loadEnv(process.env.NODE_ENV ?? 'development', root, ''),
+);
+
+setRemixDevLoadContext(async (request: Request) => {
+  const env = hydrogenEnvFromProcess();
+  const waitUntil = (promise: Promise<unknown>) => {
+    void promise.catch(() => {});
+  };
+  return createHydrogenRemixLoadContext(request, env, waitUntil);
+});
 
 export default defineConfig({
   plugins: [
     hydrogen(),
-    oxygen(),
     remix({
       presets: [hydrogen.preset()],
       ignoredRouteFiles: ['**/.*'],
-      future: {
-        v3_fetcherPersist: false,
-        v3_relativeSplatPath: false,
-        v3_throwAbortReason: false,
-        v3_routeConfig: false,
-      },
     }),
     tsconfigPaths(),
   ],
-  build: {
-    // Allow a strict Content-Security-Policy
-    // withtout inlining assets as base64:
-    assetsInlineLimit: 0,
-  },
-  optimizeDeps: {
-    /**
-     * Include dependencies here if they throw CJS<>ESM errors.
-     * For example, for the following error:
-     *
-     * > ReferenceError: module is not defined
-     * >   at /Users/.../node_modules/example-dep/index.js:1:1
-     *
-     * Include 'example-dep' in the array below.
-     * @see https://vitejs.dev/config/dep-optimization-options
-     */
-    include: [],
-  },
-  ssr: {},
 });

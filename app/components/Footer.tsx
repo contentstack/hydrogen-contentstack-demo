@@ -79,9 +79,12 @@ const MenuSection = ({
 export function Footer(fetchdata: any) {
   const footerMetaObject = fetchdata?.footerMetaObject;
   const footerData = footerMetaObject?.metaobjects?.nodes?.[0]?.fields;
-  const sortedFooterData = footerData.sort((a: any, b: any) => {
-    return MENU_ORDER.indexOf(a.key) - MENU_ORDER.indexOf(b.key);
-  });
+  const sortedFooterData = Array.isArray(footerData)
+    ? [...footerData].sort(
+        (a: any, b: any) =>
+          MENU_ORDER.indexOf(a.key) - MENU_ORDER.indexOf(b.key),
+      )
+    : [];
 
   return (
     <footer className="footer-wrapper">
