@@ -21,7 +21,6 @@ import favicon from '../public/favicon.svg';
 import resetStyles from './styles/reset.css?url';
 import appStyles from './styles/app.css?url';
 import {Layout} from '~/components/Layout';
-import {cssBundleHref} from '@remix-run/css-bundle';
 
 /**
  * This is important to avoid re-fetching root queries on sub-navigations
