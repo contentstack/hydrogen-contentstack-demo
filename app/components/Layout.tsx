@@ -20,8 +20,9 @@ export type LayoutProps = {
   footer: Promise<FooterQuery>;
   header: HeaderQuery;
   isLoggedIn: boolean;
-  fetchData: any;
-  footerMetaObject: any;
+  /** Passed through on error boundaries; unused by layout chrome. */
+  fetchData?: unknown;
+  footerMetaObject?: unknown;
 };
 
 export function Layout({

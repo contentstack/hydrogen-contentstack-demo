@@ -162,7 +162,7 @@ function RecommendedProducts({
                         <>
                           {bannerField?.key === 'heading' && (
                             <h5 className="page-banner-heading">
-                              {bannerField?.value}
+                              {bannerField?.value} :
                             </h5>
                           )}
                           {bannerField?.key === 'title' && (
@@ -1092,7 +1092,7 @@ const COLLECTIONS_QUERY = `#graphql
 ` as const;
 
 const NEW_ARRIVALS_QUERY = `#graphql
-query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+query FeaturedCollectionNewArrivals($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   collection(handle: "new-arrivals") {
     handle
@@ -1116,7 +1116,7 @@ query FeaturedCollection($country: CountryCode, $language: LanguageCode)
 }` as const;
 
 const TOP_CATEGORIES_QUERY = `#graphql
-  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+  query FeaturedCollectionTopCategories($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
       collections(first:8, reverse:true) {
         edges {
@@ -1148,7 +1148,7 @@ const TOP_CATEGORIES_QUERY = `#graphql
 ` as const;
 
 const BEST_SELLER_QUERY = `#graphql
-query FeaturedCollection($country: CountryCode, $language: LanguageCode)
+query FeaturedCollectionBestSeller($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   collection(handle: "womens-fashion") {
     handle
@@ -1172,7 +1172,7 @@ query FeaturedCollection($country: CountryCode, $language: LanguageCode)
 }` as const;
 
 const META_OBJECT_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObjectHome($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "home") {
     nodes {
