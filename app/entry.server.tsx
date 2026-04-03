@@ -4,6 +4,8 @@ import {isbot} from 'isbot';
 import {renderToReadableStream} from 'react-dom/server.browser';
 import {createContentSecurityPolicy} from '@shopify/hydrogen';
 
+const {renderToReadableStream} = ReactDOMServer; // destructure from default
+
 export default async function handleRequest(
   request: Request,
   responseStatusCode: number,
