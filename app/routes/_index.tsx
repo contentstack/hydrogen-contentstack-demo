@@ -9,11 +9,11 @@ import {
   Money,
   MediaFile,
 } from '@shopify/hydrogen';
-import type {DefaultIndexStoreCollectionsQuery} from 'storefrontapi.generated';
-
-type StoreCollectionNode =
-  DefaultIndexStoreCollectionsQuery['collections']['nodes'][number];
-import '../styles/pages.css?url';
+import type {
+  CollectionFragment,
+  RecommendedProductsQuery,
+} from 'storefrontapi.generated';
+import '../styles/pages.css';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | Home'}];
@@ -77,7 +77,7 @@ function CollectionItem({
   index,
   className,
 }: {
-  collection: StoreCollectionNode;
+  collection: CollectionFragment;
   index: number;
   className: string;
 }) {
@@ -133,7 +133,7 @@ function RecommendedProducts({
   metaObject,
 }: {
   readonly products: any;
-  readonly collections: readonly StoreCollectionNode[];
+  readonly collections: readonly CollectionFragment[];
   readonly newarrivalproducts: any;
   readonly bestSeller: any;
   readonly topCategory: any;
@@ -1030,7 +1030,7 @@ const RECOMMENDED_PRODUCTS_QUERY = `#graphql
       }
     }
   }
-  query DefaultIndexRecommendedProducts ($country: CountryCode, $language: LanguageCode)
+  query RecommendedProducts ($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
     products(first: 3, sortKey: CREATED_AT, reverse: true) {
       nodes {
@@ -1055,7 +1055,7 @@ const COLLECTIONS_QUERY = `#graphql
       height
     }
   }
-  query DefaultIndexStoreCollections(
+  query StoreCollections(
     $country: CountryCode
     $endCursor: String
     # $first: Int
@@ -1092,7 +1092,7 @@ const COLLECTIONS_QUERY = `#graphql
 ` as const;
 
 const NEW_ARRIVALS_QUERY = `#graphql
-query DefaultIndexNewArrivalsCollection($country: CountryCode, $language: LanguageCode)
+query FeaturedCollection($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   collection(handle: "new-arrivals") {
     handle
@@ -1116,7 +1116,7 @@ query DefaultIndexNewArrivalsCollection($country: CountryCode, $language: Langua
 }` as const;
 
 const TOP_CATEGORIES_QUERY = `#graphql
-  query DefaultIndexTopCategoriesCollection($country: CountryCode, $language: LanguageCode)
+  query FeaturedCollection($country: CountryCode, $language: LanguageCode)
     @inContext(country: $country, language: $language) {
       collections(first:8, reverse:true) {
         edges {
@@ -1148,7 +1148,7 @@ const TOP_CATEGORIES_QUERY = `#graphql
 ` as const;
 
 const BEST_SELLER_QUERY = `#graphql
-query DefaultIndexBestSellerCollection($country: CountryCode, $language: LanguageCode)
+query FeaturedCollection($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   collection(handle: "womens-fashion") {
     handle
@@ -1172,7 +1172,7 @@ query DefaultIndexBestSellerCollection($country: CountryCode, $language: Languag
 }` as const;
 
 const META_OBJECT_QUERY = `#graphql
-query DefaultIndexHomeMetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "home") {
     nodes {

@@ -13,7 +13,7 @@ import {
   useOutletContext,
   type MetaFunction,
 } from '@remix-run/react';
-import '../styles/pages.css?url';
+import '../styles/pages.css';
 
 export type ActionResponse = {
   error: string | null;
