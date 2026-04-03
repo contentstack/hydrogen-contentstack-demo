@@ -32,7 +32,8 @@
   },
   "overrides": {
     "@remix-run/server-runtime": "2.17.4",
-    "@remix-run/router": "1.23.2"
+    "@remix-run/router": "1.23.2",
+    "@graphql-codegen/cli": "6.0.0"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.17.4",
