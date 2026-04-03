@@ -104,7 +104,7 @@ export async function loader({params, request, context}: LoaderFunctionArgs) {
 
   // await the query for the critical product data
   const {product} = await storefront.query(PRODUCT_QUERY, {
-    variables: {handle, key, selectedOptions},
+    variables: {handle, key: key ?? '', selectedOptions},
   });
   if (!product?.id) {
     throw new Response(null, {status: 404});
@@ -467,7 +467,7 @@ function ProductMain({
               <strong>Reviews</strong>
             </p>
             <br />
-            <div>{parse(valueMap.get('product_review') || '')}</div>
+            <div>{parse(String(valueMap.get('product_review') ?? ''))}</div>
             <br />
           </>
         )}
@@ -478,7 +478,7 @@ function ProductMain({
               <strong>Shipping and Return</strong>
             </p>
             <br />
-            <div>{parse(valueMap.get('shipping_return_policy') || '')}</div>
+            <div>{parse(String(valueMap.get('shipping_return_policy') ?? ''))}</div>
             <br />
           </>
         )}
@@ -681,14 +681,14 @@ function ProductForm({
       <AddToCartButton
         disabled={!selectedVariant || !selectedVariant?.availableForSale}
         lines={
-          selectedVariant
+          (selectedVariant
             ? [
                 {
-                  merchandiseId: selectedVariant?.id,
+                  merchandiseId: selectedVariant.id,
                   quantity: 1,
                 },
               ]
-            : []
+            : []) as any
         }
         cart={cart}
       />
@@ -825,7 +825,8 @@ function AddToCartButton({
             <span className="totalquantiy">{quantity}</span>
             <CartForm
               route="/cart"
-              inputs={{lines: cart === null ? lines : updatedLines}}
+              // Cart line shapes from the Storefront API differ slightly from CartForm’s strict union after Hydrogen 2025.
+              inputs={{lines: cart === null ? lines : updatedLines} as any}
               action={
                 cart === null
                   ? CartForm.ACTIONS.LinesAdd
@@ -1048,7 +1049,7 @@ const RELATED_PRODUCT_QUERY = `#graphql
   ` as const;
 
 const META_OBJECT_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $after: String)
+query ProductDetailPagedMetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $after: String)
 @inContext(country: $country, language: $language) {
   metaobjects(first: $first, after: $after, type: "product_detail_page") {
       edges {
@@ -1075,7 +1076,7 @@ query MetaObject($country: CountryCode, $language: LanguageCode, $first: Int, $a
 }` as const;
 
 const HEADING_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query ProductHandleProductPageMetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "product_page_contents") {
     nodes {

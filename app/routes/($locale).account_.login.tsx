@@ -5,7 +5,7 @@ import {
   type LoaderFunctionArgs,
 } from '@shopify/remix-oxygen';
 import {Form, Link, useActionData, type MetaFunction} from '@remix-run/react';
-import '../styles/pages.css';
+import '../styles/pages.css?url';
 
 type ActionResponse = {
   error: string | null;
