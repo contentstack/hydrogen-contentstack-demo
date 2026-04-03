@@ -20,7 +20,7 @@ export type LayoutProps = {
   footer: Promise<FooterQuery>;
   header: HeaderQuery;
   isLoggedIn: boolean;
-  fetchData: any;
+  fetchData?: unknown;
   footerMetaObject: any;
 };
 
