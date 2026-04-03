@@ -39,7 +39,7 @@ export function HeaderMenu({
   primaryDomainUrl: HeaderQuery['shop']['primaryDomain']['url'];
   viewport: Viewport;
 }) {
-  const {publicStoreDomain} = useRootLoaderData();
+  const publicStoreDomain = useRootLoaderData()?.publicStoreDomain ?? '';
   const className = `header-menu-${viewport}`;
 
   function closeAside(event: React.MouseEvent<HTMLAnchorElement>) {
@@ -65,13 +65,24 @@ export function HeaderMenu({
       {(menu || FALLBACK_HEADER_MENU).items.map((item) => {
         if (!item.url) return null;
 
-        // if the url is internal, we strip the domain
-        const url =
+        const isStoreHost =
           item.url.includes('myshopify.com') ||
-          item.url.includes(publicStoreDomain) ||
-          item.url.includes(primaryDomainUrl)
-            ? new URL(item.url).pathname
-            : item.url;
+          (publicStoreDomain !== '' && item.url.includes(publicStoreDomain)) ||
+          (primaryDomainUrl !== '' && item.url.includes(primaryDomainUrl));
+
+        // Relative menu paths (e.g. /collections) are already fine for <NavLink to>.
+        // new URL(relative) throws without a base; only parse absolute store URLs.
+        let url = item.url;
+        if (
+          isStoreHost &&
+          (item.url.startsWith('http://') || item.url.startsWith('https://'))
+        ) {
+          try {
+            url = new URL(item.url).pathname;
+          } catch {
+            /* keep original */
+          }
+        }
         return (
           <NavLink
             className="header-menu-item"
