@@ -1,16 +1,11 @@
 import {useNonce} from '@shopify/hydrogen';
-import {
-  defer,
-  type SerializeFrom,
-  type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen';
+import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
-  LiveReload,
-  useMatches,
+  useRouteLoaderData,
   useRouteError,
   useLoaderData,
   ScrollRestoration,
@@ -18,9 +13,16 @@ import {
   type ShouldRevalidateFunction,
 } from '@remix-run/react';
 import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
+import type {
+  CartApiQueryFragment,
+  FooterQuery,
+  HeaderQuery,
+  RootMetaObjectQuery,
+} from 'storefrontapi.generated';
 import favicon from '../public/favicon.svg';
-import resetStyles from './styles/reset.css';
-import appStyles from './styles/app.css';
+import './styles/reset.css';
+import './styles/app.css';
+
 import {Layout} from '~/components/Layout';
 
 /**
@@ -46,9 +48,8 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export function links() {
   return [
-    ...(cssBundleHref ? [{rel: 'stylesheet', href: cssBundleHref}] : []),
-    {rel: 'stylesheet', href: resetStyles},
-    {rel: 'stylesheet', href: appStyles},
+    { rel: 'stylesheet', href: '/app/styles/reset.css' },
+    { rel: 'stylesheet', href: '/app/styles/app.css' },
     {
       rel: 'preconnect',
       href: 'https://cdn.shopify.com',
@@ -57,13 +58,34 @@ export function links() {
       rel: 'preconnect',
       href: 'https://shop.app',
     },
-    {rel: 'icon', type: 'image/svg+xml', href: favicon},
+    { rel: 'icon', type: 'image/svg+xml', href: favicon },
   ];
 }
 
+
+/**
+ * Remix `SerializeFrom` loses top-level keys on `defer()` payloads; this matches runtime loader data.
+ */
+export type RootLoaderClientData = {
+  cart: Promise<CartApiQueryFragment | null>;
+  footer: Promise<FooterQuery>;
+  header: HeaderQuery;
+  isLoggedIn: boolean;
+  publicStoreDomain: string;
+  footerMetaObject: RootMetaObjectQuery;
+};
+
+const FALLBACK_HEADER: HeaderQuery = {
+  shop: {
+    id: 'gid://shopify/Shop/0',
+    name: '',
+    description: '',
+    primaryDomain: {url: ''},
+  },
+};
+
 export const useRootLoaderData = () => {
-  const [root] = useMatches();
-  return root?.data as SerializeFrom<typeof loader>;
+  return useRouteLoaderData('root') as unknown as RootLoaderClientData | undefined;
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
@@ -112,7 +134,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function App() {
   const nonce = useNonce();
-  const data = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>() as unknown as RootLoaderClientData;
   return (
     <html lang="en">
       <head>
@@ -122,12 +144,17 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout footerMetaObject={data?.footerMetaObject} {...data}>
+        <Layout
+          cart={data.cart}
+          footer={data.footer}
+          header={data.header}
+          isLoggedIn={data.isLoggedIn}
+          footerMetaObject={data.footerMetaObject}
+        >
           <Outlet />
         </Layout>
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
-        <LiveReload nonce={nonce} />
       </body>
     </html>
   );
@@ -156,7 +183,14 @@ export function ErrorBoundary() {
         <Links />
       </head>
       <body>
-        <Layout {...rootData}>
+        <Layout
+          fetchData={rootData}
+          cart={rootData?.cart ?? Promise.resolve(null)}
+          footer={rootData?.footer ?? Promise.resolve({} as FooterQuery)}
+          header={rootData?.header ?? FALLBACK_HEADER}
+          isLoggedIn={rootData?.isLoggedIn ?? false}
+          footerMetaObject={rootData?.footerMetaObject}
+        >
           <div className="route-error">
             <h1>Oops</h1>
             <h2>{errorStatus}</h2>
@@ -169,7 +203,6 @@ export function ErrorBoundary() {
         </Layout>
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
-        <LiveReload nonce={nonce} />
       </body>
     </html>
   );
@@ -282,7 +315,7 @@ const FOOTER_QUERY = `#graphql
 ` as const;
 
 const FOOTER_META_OBJECT_QUERY = `#graphql
-query MetaObject($country: CountryCode, $language: LanguageCode)
+query RootMetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "footer") {
     nodes {
