@@ -1,7 +1,7 @@
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import parse from 'html-react-parser';
 import {useLoaderData, type MetaFunction} from '@remix-run/react';
-import '../styles/pages.css?url';
+import '../styles/pages.css';
 
 export const meta: MetaFunction = () => {
   return [{title: 'Hydrogen | About Us'}];
@@ -58,7 +58,7 @@ function RecommendedProducts({metaObject}: {metaObject: any}) {
 }
 
 const META_OBJECT_QUERY = `#graphql
-query AboutPageMetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "about_us") {
     nodes {
