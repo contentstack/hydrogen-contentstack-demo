@@ -9,6 +9,7 @@ import {
   Meta,
   Outlet,
   Scripts,
+  LiveReload,
   useMatches,
   useRouteError,
   useLoaderData,
@@ -18,8 +19,8 @@ import {
 } from '@remix-run/react';
 import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
 import favicon from '../public/favicon.svg';
-import resetStyles from './styles/reset.css?url';
-import appStyles from './styles/app.css?url';
+import resetStyles from './styles/reset.css';
+import appStyles from './styles/app.css';
 import {Layout} from '~/components/Layout';
 
 /**
@@ -45,6 +46,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
 
 export function links() {
   return [
+    ...(cssBundleHref ? [{rel: 'stylesheet', href: cssBundleHref}] : []),
     {rel: 'stylesheet', href: resetStyles},
     {rel: 'stylesheet', href: appStyles},
     {
@@ -120,11 +122,12 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout {...data}>
+        <Layout footerMetaObject={data?.footerMetaObject} {...data}>
           <Outlet />
         </Layout>
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
+        <LiveReload nonce={nonce} />
       </body>
     </html>
   );
@@ -166,6 +169,7 @@ export function ErrorBoundary() {
         </Layout>
         <ScrollRestoration nonce={nonce} />
         <Scripts nonce={nonce} />
+        <LiveReload nonce={nonce} />
       </body>
     </html>
   );
@@ -278,7 +282,7 @@ const FOOTER_QUERY = `#graphql
 ` as const;
 
 const FOOTER_META_OBJECT_QUERY = `#graphql
-query RootFooterMetaObject($country: CountryCode, $language: LanguageCode)
+query MetaObject($country: CountryCode, $language: LanguageCode)
 @inContext(country: $country, language: $language) {
   metaobjects(first: 100, type: "footer") {
     nodes {
