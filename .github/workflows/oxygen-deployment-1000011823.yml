@@ -1,21 +1,5 @@
-# Don't change the line below!
-#! oxygen_storefront_id: 1000011823
-
 name: Storefront 1000011823
-
-on:
-  workflow_dispatch:
-    inputs:
-      BranchToDeploy:
-        description: 'Select branch to deploy'
-        required: true
-        default: 'development'
-        type: choice
-        options:
-        - development
-        - staging
-        - main
-
+on: [push]
 
 permissions:
   contents: read
@@ -27,24 +11,17 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - name: BranchSelector
-        id: BranchSelector
-        run: |
-            echo "BranchName=${{inputs.BranchToDeploy}}" >> $GITHUB_OUTPUT
-
       - uses: actions/checkout@v4
-        with: 
-          ref: ${{ steps.BranchSelector.outputs.BranchName }}
 
       - name: Setup node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 'lts/*'
+          node-version: "lts/*"
           check-latest: true
 
       - name: Cache node modules
         id: cache-npm
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         env:
           cache-name: cache-node-modules
         with:
@@ -59,19 +36,6 @@ jobs:
         run: npm ci
 
       - name: Build and Publish to Oxygen
-        id: deploy
-        uses: shopify/oxygenctl-action@v4
-        with:
-          oxygen_deployment_token: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000011823 }}
-          build_command: "npm run build"
-
-      # Create GitHub Deployment
-      - name: Create GitHub Deployment
-        uses: shopify/github-deployment-action@v1
-        if: always()
-        with:
-          token: ${{ github.token }}
-          environment: 'production'
-          preview_url: ${{ steps.deploy.outputs.url }}
-          description: ${{ github.event.head_commit.message }}
-        
+        run: npx shopify hydrogen deploy
+        env:
+          SHOPIFY_HYDROGEN_DEPLOYMENT_TOKEN: ${{ secrets.OXYGEN_DEPLOYMENT_TOKEN_1000011823 }}
