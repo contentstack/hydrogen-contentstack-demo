@@ -3,6 +3,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {defineConfig, loadEnv} from 'vite';
 import {hydrogen} from '@shopify/hydrogen/vite';
+import {oxygen} from '@shopify/mini-oxygen/vite';
 import {vitePlugin as remix} from '@remix-run/dev';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import {
@@ -31,6 +32,7 @@ setRemixDevLoadContext(async (request: Request) => {
 export default defineConfig({
   plugins: [
     hydrogen(),
+    oxygen(),
     remix({
       presets: [hydrogen.preset()],
       ignoredRouteFiles: ['**/.*'],
