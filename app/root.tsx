@@ -1,15 +1,11 @@
 import {useNonce} from '@shopify/hydrogen';
-import {
-  defer,
-  type SerializeFrom,
-  type LoaderFunctionArgs,
-} from '@shopify/remix-oxygen';
+import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {
   Links,
   Meta,
   Outlet,
   Scripts,
-  useMatches,
+  useRouteLoaderData,
   useRouteError,
   useLoaderData,
   ScrollRestoration,
@@ -17,6 +13,12 @@ import {
   type ShouldRevalidateFunction,
 } from '@remix-run/react';
 import type {CustomerAccessToken} from '@shopify/hydrogen/storefront-api-types';
+import type {
+  CartApiQueryFragment,
+  FooterQuery,
+  HeaderQuery,
+  RootMetaObjectQuery,
+} from 'storefrontapi.generated';
 import favicon from '../public/favicon.svg';
 import './styles/reset.css';
 import './styles/app.css';
@@ -61,9 +63,29 @@ export function links() {
 }
 
 
+/**
+ * Remix `SerializeFrom` loses top-level keys on `defer()` payloads; this matches runtime loader data.
+ */
+export type RootLoaderClientData = {
+  cart: Promise<CartApiQueryFragment | null>;
+  footer: Promise<FooterQuery>;
+  header: HeaderQuery;
+  isLoggedIn: boolean;
+  publicStoreDomain: string;
+  footerMetaObject: RootMetaObjectQuery;
+};
+
+const FALLBACK_HEADER: HeaderQuery = {
+  shop: {
+    id: 'gid://shopify/Shop/0',
+    name: '',
+    description: '',
+    primaryDomain: {url: ''},
+  },
+};
+
 export const useRootLoaderData = () => {
-  const [root] = useMatches();
-  return root?.data as SerializeFrom<typeof loader>;
+  return useRouteLoaderData('root') as unknown as RootLoaderClientData | undefined;
 };
 
 export async function loader({context}: LoaderFunctionArgs) {
@@ -112,7 +134,7 @@ export async function loader({context}: LoaderFunctionArgs) {
 
 export default function App() {
   const nonce = useNonce();
-  const data = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>() as unknown as RootLoaderClientData;
   return (
     <html lang="en">
       <head>
@@ -122,7 +144,13 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Layout footerMetaObject={data?.footerMetaObject} {...data}>
+        <Layout
+          cart={data.cart}
+          footer={data.footer}
+          header={data.header}
+          isLoggedIn={data.isLoggedIn}
+          footerMetaObject={data.footerMetaObject}
+        >
           <Outlet />
         </Layout>
         <ScrollRestoration nonce={nonce} />
@@ -155,7 +183,14 @@ export function ErrorBoundary() {
         <Links />
       </head>
       <body>
-        <Layout {...rootData}>
+        <Layout
+          fetchData={rootData}
+          cart={rootData?.cart ?? Promise.resolve(null)}
+          footer={rootData?.footer ?? Promise.resolve({} as FooterQuery)}
+          header={rootData?.header ?? FALLBACK_HEADER}
+          isLoggedIn={rootData?.isLoggedIn ?? false}
+          footerMetaObject={rootData?.footerMetaObject}
+        >
           <div className="route-error">
             <h1>Oops</h1>
             <h2>{errorStatus}</h2>
