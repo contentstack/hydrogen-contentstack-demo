@@ -20,7 +20,7 @@
     "@shopify/hydrogen": "^2024.10.1",
     "@shopify/hydrogen-react": "^2024.1.1",
     "@shopify/remix-oxygen": "^2.0.0",
-    "axios": "1.13.5",
+    "axios": "1.15.0",
     "clsx": "^2.1.0",
     "contentstack": "^3.17.2",
     "graphql": "^16.6.0",
