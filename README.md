@@ -6,6 +6,9 @@ This demo is compatible with `@shopify/hydrogen >= 2024.01` built on Remix.
 
 [Demo][hydrogen-contentstack-demo] 
 
+
+hi
+
 # About
 
 Hydrogen Contentstack Demo is our customized [Hydrogen][hydrogen-github] starter that presents a real-world example of how Contentstack and Structured Content can elevate your custom Shopify storefronts.
