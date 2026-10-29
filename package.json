@@ -31,7 +31,7 @@
     "react-intersection-observer": "^9.5.3"
   },
   "overrides": {
-    "@remix-run/server-runtime": "2.17.5",
+    "@remix-run/server-runtime": "^2.17.5",
     "@remix-run/router": "1.23.2",
     "@shopify/cli-kit": {
       "form-data": "^4.0.6"
