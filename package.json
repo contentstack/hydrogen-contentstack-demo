@@ -19,7 +19,7 @@
     "@shopify/hydrogen": "^2024.10.1",
     "@shopify/hydrogen-react": "^2024.1.1",
     "@shopify/remix-oxygen": "^2.0.0",
-    "axios": "1.13.5",
+    "axios": "1.21.0",
     "clsx": "^2.1.0",
     "contentstack": "^3.17.2",
     "graphql": "^16.6.0",
@@ -32,12 +32,13 @@
   },
   "overrides": {
     "@remix-run/server-runtime": "2.17.4",
-    "@remix-run/router": "1.23.2"
+    "@remix-run/router": "1.23.2",
+    "form-data": "4.0.6"
   },
   "devDependencies": {
     "@remix-run/dev": "^2.17.4",
     "@remix-run/eslint-config": "^2.17.4",
-    "@shopify/cli": "^3.63.0",
+    "@shopify/cli": "^3.63.2",
     "@shopify/cli-hydrogen": "^9.0.11",
     "@shopify/hydrogen-codegen": "^0.3.3",
     "@shopify/oxygen-workers-types": "^3.17.3",
