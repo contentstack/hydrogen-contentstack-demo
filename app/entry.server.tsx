@@ -12,13 +12,13 @@ export default async function handleRequest(
 ) {
   const {nonce, header, NonceProvider} = createContentSecurityPolicy();
 
-  // Sanitize URL (path + query only)
-  const url = new URL(request.url);
-  const safeUrl = new URL(`${url.pathname}${url.search}`, url.origin);
+  // Remix 2 RemixServer only parses `url` and routes from remixContext's
+  // staticHandlerContext, so request data never needs to flow into it (Snyk OR).
+  const serverUrl = 'http://localhost/';
 
   const body = await renderToReadableStream(
     <NonceProvider>
-      <RemixServer context={remixContext} url={safeUrl.toString()} />
+      <RemixServer context={remixContext} url={serverUrl} />
     </NonceProvider>,
     {
       nonce,
