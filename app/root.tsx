@@ -1,4 +1,4 @@
-import {useNonce} from '@shopify/hydrogen';
+import {useNonce, type I18nBase} from '@shopify/hydrogen';
 import {defer, type LoaderFunctionArgs} from '@shopify/remix-oxygen';
 import {
   Links,
@@ -73,6 +73,7 @@ export type RootLoaderClientData = {
   isLoggedIn: boolean;
   publicStoreDomain: string;
   footerMetaObject: RootMetaObjectQuery;
+  selectedLocale: I18nBase;
 };
 
 const FALLBACK_HEADER: HeaderQuery = {
@@ -127,6 +128,7 @@ export async function loader({context}: LoaderFunctionArgs) {
       isLoggedIn,
       publicStoreDomain,
       footerMetaObject,
+      selectedLocale: storefront.i18n,
     },
     {headers},
   );
@@ -136,7 +138,7 @@ export default function App() {
   const nonce = useNonce();
   const data = useLoaderData<typeof loader>() as unknown as RootLoaderClientData;
   return (
-    <html lang="en">
+    <html lang={data.selectedLocale.language}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -175,7 +177,7 @@ export function ErrorBoundary() {
   }
 
   return (
-    <html lang="en">
+    <html lang={rootData?.selectedLocale.language ?? 'en'}>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
