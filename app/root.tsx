@@ -43,8 +43,17 @@ export const shouldRevalidate: ShouldRevalidateFunction = ({
     return true;
   }
 
+  // revalidate when the locale changes, e.g. /fr-ca/... -> /
+  if (getLocalePrefix(currentUrl) !== getLocalePrefix(nextUrl)) {
+    return true;
+  }
+
   return false;
 };
+
+function getLocalePrefix(url: URL) {
+  return url.pathname.split('/')[1]?.match(/^[a-z]{2}-[a-z]{2}$/i)?.[0];
+}
 
 export function links() {
   return [
